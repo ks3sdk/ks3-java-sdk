@@ -9,7 +9,7 @@ import com.ksyun.ks3.utils.StringUtils;
  * 
  * @description PUT Object返回的结果
  **/
-public class PutObjectResult {
+public class PutObjectResult extends SSEResultBase{
 	private String eTag;
 	/**
 	 * 如果在请求中设置了数据处理任务的话，将会返回任务id,否则为空

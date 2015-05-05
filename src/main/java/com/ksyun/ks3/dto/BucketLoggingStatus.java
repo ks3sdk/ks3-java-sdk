@@ -13,7 +13,7 @@ import com.ksyun.ks3.utils.StringUtils;
  * 
  * @description 获取bucket的日志配置
  **/
-public class BucketLoggingStatus {
+public class BucketLoggingStatus extends Ks3Result{
 	/**
 	 * 是否开启日志功能
 	 */

@@ -10,12 +10,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.junit.Test;
 
+import com.ksyun.ks3.config.ClientConfig;
 import com.ksyun.ks3.dto.PostObjectFormFields;
 import com.ksyun.ks3.http.HttpClientFactory;
 import com.ksyun.ks3.service.multipartpost.FormFieldKeyValuePair;
@@ -56,7 +58,7 @@ public class PostObjectTest extends Ks3ClientTest{
 		postData.put("KSSAccessKeyId",fields.getKssAccessKeyId());
 		postData.put("signature",fields.getSignature());
 		
-		String serverUrl = "http://kss.ksyun.com/abtest";//上传地址  
+		String serverUrl = "http://"+ClientConfig.getConfig().getStr(ClientConfig.END_POINT)+"/abtest";//上传地址  
           
 	    // 设定要上传的普通Form Field及其对应的value  
 	    ArrayList<FormFieldKeyValuePair> ffkvp = new ArrayList<FormFieldKeyValuePair>();  

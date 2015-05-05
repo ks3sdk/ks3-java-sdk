@@ -3,6 +3,7 @@ package com.ksyun.ks3.service.request;
 import static com.ksyun.ks3.exception.client.ClientIllegalArgumentExceptionGenerator.notNull;
 
 import com.ksyun.ks3.http.HttpMethod;
+import com.ksyun.ks3.http.Request;
 import com.ksyun.ks3.utils.StringUtils;
 
 /**
@@ -21,15 +22,9 @@ public class GetAdpRequest extends Ks3WebServiceRequest {
 	public GetAdpRequest(String taskid){
 		this.taskid = taskid;
 	}
-	@Override
-	protected void configHttpRequest() {
-		this.addParams("queryadp", "");
-		this.setPathVariable(taskid);
-		this.setHttpMethod(HttpMethod.GET);
-	}
 
 	@Override
-	protected void validateParams() throws IllegalArgumentException {
+	public void validateParams() throws IllegalArgumentException {
 		if(StringUtils.isBlank(this.taskid))
 			throw notNull("taskid");
 	}
@@ -38,6 +33,12 @@ public class GetAdpRequest extends Ks3WebServiceRequest {
 	}
 	public void setTaskid(String taskid) {
 		this.taskid = taskid;
+	}
+	@Override
+	public void buildRequest(Request request) {
+		request.setMethod(HttpMethod.GET);
+		request.getQueryParams().put("queryadp", "");
+		request.setKey(taskid);
 	}
 
 }

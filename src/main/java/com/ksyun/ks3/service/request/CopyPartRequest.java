@@ -1,10 +1,13 @@
 package com.ksyun.ks3.service.request;
 
 import com.ksyun.ks3.config.Constants;
+
 import static com.ksyun.ks3.exception.client.ClientIllegalArgumentExceptionGenerator.notNull;
 import static com.ksyun.ks3.exception.client.ClientIllegalArgumentExceptionGenerator.between;
+
 import com.ksyun.ks3.http.HttpHeaders;
 import com.ksyun.ks3.http.HttpMethod;
+import com.ksyun.ks3.http.Request;
 import com.ksyun.ks3.utils.StringUtils;
 
 /**
@@ -15,6 +18,14 @@ import com.ksyun.ks3.utils.StringUtils;
  * @description 分块上传时使用copy
  **/
 public class CopyPartRequest extends Ks3WebServiceRequest{
+	/**
+	 * 目标bucket
+	 */
+	private String destinationBucket;
+	/**
+	 * 目标key
+	 */
+	private String destinationKey;
 	/**
 	 * 数据源bucket
 	 */
@@ -37,8 +48,8 @@ public class CopyPartRequest extends Ks3WebServiceRequest{
 	 */
 	private String uploadId;
 	public CopyPartRequest(String sourceBucket,String sourceObject,String destinationBucket,String destinationObject,long beginRange,long endRange,int partNumber,String uploadId){
-		super.setBucketname(destinationBucket);
-		super.setObjectkey(destinationObject);
+		this.destinationBucket = destinationBucket;
+		this.destinationKey = destinationObject;
 		this.sourceBucket = sourceBucket;
 		this.sourceObject = sourceObject;
 		this.beginRange = beginRange;
@@ -47,23 +58,14 @@ public class CopyPartRequest extends Ks3WebServiceRequest{
 		this.uploadId = uploadId;
 	}
 	@Override
-	protected void configHttpRequest() {
-		this.setHttpMethod(HttpMethod.PUT);
-		this.addParams("partNumber", String.valueOf(this.partNumber));
-		this.addParams("uploadId", String.valueOf(this.uploadId));
-		this.addHeader(HttpHeaders.XKssCopySource,"/"+ this.sourceBucket+"/"+this.sourceObject);
-		this.addHeader(HttpHeaders.XKssCopySourceRange, "bytes="+this.beginRange+"-"+this.endRange);
-	}
-
-	@Override
-	protected void validateParams() throws IllegalArgumentException {
+	public void validateParams() throws IllegalArgumentException {
 		if(StringUtils.isBlank(sourceBucket))
 			throw notNull("sourceBucket");
 		if(StringUtils.isBlank(sourceObject))
 			throw notNull("sourceObject");
-		if(StringUtils.isBlank(this.getBucketname()))
+		if(StringUtils.isBlank(this.destinationBucket))
 			throw notNull("destinationBucket");
-		if(StringUtils.isBlank(this.getObjectkey()))
+		if(StringUtils.isBlank(this.destinationKey))
 			throw notNull("destinationObject");
 		if(beginRange<0||endRange-beginRange<Constants.minPartSize||endRange-beginRange>Constants.maxPartSize)
 	    	throw between("partsize",String.valueOf(endRange-beginRange),String.valueOf(Constants.minPartSize),String.valueOf(Constants.maxPartSize));
@@ -120,6 +122,16 @@ public class CopyPartRequest extends Ks3WebServiceRequest{
 
 	public void setUploadId(String uploadId) {
 		this.uploadId = uploadId;
+	}
+	@Override
+	public void buildRequest(Request request) {
+		request.setBucket(this.destinationBucket);
+		request.setKey(this.destinationKey);
+		request.setMethod(HttpMethod.PUT);
+		request.getQueryParams().put("partNumber", String.valueOf(this.partNumber));
+		request.getQueryParams().put("uploadId", String.valueOf(this.uploadId));
+		request.addHeader(HttpHeaders.XKssCopySource,"/"+ this.sourceBucket+"/"+this.sourceObject);
+		request.addHeader(HttpHeaders.XKssCopySourceRange, "bytes="+this.beginRange+"-"+this.endRange);
 	}
 
 }

@@ -1,6 +1,8 @@
 package com.ksyun.ks3.service.request;
 
 import com.ksyun.ks3.http.HttpMethod;
+import com.ksyun.ks3.http.Request;
+
 import static com.ksyun.ks3.exception.client.ClientIllegalArgumentExceptionGenerator.notNull;
 import static com.ksyun.ks3.exception.client.ClientIllegalArgumentExceptionGenerator.between;
 
@@ -15,6 +17,7 @@ import com.ksyun.ks3.utils.StringUtils;
  *              可以隔一段时间将bucket下未complete或abort的分块上传进行complete或abort操作
  **/
 public class ListMultipartUploadsRequest extends Ks3WebServiceRequest {
+	private String bucket;
 	/**
 	 * prefix和delimiter详解
 	 * <p>
@@ -93,45 +96,38 @@ public class ListMultipartUploadsRequest extends Ks3WebServiceRequest {
 	private String encodingType;
 
 	public ListMultipartUploadsRequest(String bucketName) {
-		super.setBucketname(bucketName);
+		this.bucket = bucketName;
 	}
 
 	public ListMultipartUploadsRequest(String bucketName, String prefix) {
-		super.setBucketname(bucketName);
+		this.bucket = bucketName;
 		this.setPrefix(prefix);
 	}
 
 	public ListMultipartUploadsRequest(String bucketName, String prefix,
 			String keyMarker, String uploadIdMarker) {
-		super.setBucketname(bucketName);
+		this.bucket = bucketName;
 		this.setPrefix(prefix);
 		this.setKeyMarker(keyMarker);
 		this.setUploadIdMarker(uploadIdMarker);
 	}
 
 	@Override
-	protected void configHttpRequest() {
-		this.setHttpMethod(HttpMethod.GET);
-		this.addParams("uploads", null);
-		this.addParams("prefix", prefix);
-		this.addParams("key-marker", this.keyMarker);
-		this.addParams("upload-id-​marker", this.uploadIdMarker);
-		this.addParams("delimiter", delimiter);
-		if (this.maxUploads != null)
-			this.addParams("max-uploads", String.valueOf(maxUploads));
-		if (!StringUtils.isBlank(this.encodingType))
-			this.addParams("encoding-type", this.encodingType);
-
-	}
-
-	@Override
-	protected void validateParams() throws IllegalArgumentException {
-		if (StringUtils.isBlank(super.getBucketname()))
+	public void validateParams() throws IllegalArgumentException {
+		if (StringUtils.isBlank(this.bucket))
 			throw notNull("bucketName");
 		if (this.maxUploads != null
 				&& (this.maxUploads > 1000 || this.maxUploads < 1))
 			throw between(
 					"maxUploads",String.valueOf(this.maxUploads),"1","1000");
+	}
+
+	public String getBucket() {
+		return bucket;
+	}
+
+	public void setBucket(String bucket) {
+		this.bucket = bucket;
 	}
 
 	public String getDelimiter() {
@@ -182,4 +178,18 @@ public class ListMultipartUploadsRequest extends Ks3WebServiceRequest {
 		this.encodingType = encodingType;
 	}
 
+	@Override
+	public void buildRequest(Request request) {
+		request.setMethod(HttpMethod.GET);
+		request.setBucket(bucket);
+		request.getQueryParams().put("uploads", null);
+		request.addQueryParamIfNotNull("prefix", prefix);
+		request.addQueryParamIfNotNull("key-marker", this.keyMarker);
+		request.addQueryParamIfNotNull("upload-id-​marker", this.uploadIdMarker);
+		request.addQueryParamIfNotNull("delimiter", delimiter);
+		if (this.maxUploads != null)
+			request.addQueryParamIfNotNull("max-uploads", String.valueOf(maxUploads));
+		if (!StringUtils.isBlank(this.encodingType))
+			request.addQueryParamIfNotNull("encoding-type", this.encodingType);
+	}
 }

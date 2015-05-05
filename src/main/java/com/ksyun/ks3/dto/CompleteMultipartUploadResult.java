@@ -9,7 +9,7 @@ import com.ksyun.ks3.utils.StringUtils;
  * 
  * @description CompleteMutipartUpload 操作返回的结果
  **/
-public class CompleteMultipartUploadResult {
+public class CompleteMultipartUploadResult extends SSEResultBase{
 	/**
 	 * 新建对象的uri
 	 */

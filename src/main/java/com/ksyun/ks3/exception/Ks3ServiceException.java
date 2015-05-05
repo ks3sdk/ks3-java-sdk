@@ -7,7 +7,9 @@ import java.io.InputStreamReader;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.w3c.dom.Document;
 
 import com.ksyun.ks3.config.Constants;
@@ -45,13 +47,15 @@ public class Ks3ServiceException extends Ks3ClientException {
 	public Ks3ServiceException() {
 		super("");
 	}
-
-	public Ks3ServiceException(HttpResponse response, String expected) {
+	public Ks3ServiceException(HttpRequestBase request,HttpResponse response, String expected){
 		super("");
 		this.expectedStatueCode = expected;
 		this.statueCode = response.getStatusLine().getStatusCode();
 		try {
-			Document document = new XmlReader(response.getEntity().getContent())
+			InputStream  in =  response.getEntity().getContent();
+			String xml = StringUtils.inputStream2String(in);
+			log.debug(xml);
+			Document document = new XmlReader(xml)
 					.getDocument();
 			try {
 				errorMessage = document.getElementsByTagName("Message").item(0)
@@ -79,12 +83,18 @@ public class Ks3ServiceException extends Ks3ClientException {
 			}
 		} catch (Exception e) {
 		} finally {
+			if(request != null)
+				request.abort();
 			try {
 				if (response.getEntity().getContent() != null)
 					response.getEntity().getContent().close();
+				
 			} catch (Exception e) {
 			}
 		}
+	}
+	public Ks3ServiceException(HttpResponse response, String expected) {
+		this(null,response,expected);
 	}
 
 	@Override

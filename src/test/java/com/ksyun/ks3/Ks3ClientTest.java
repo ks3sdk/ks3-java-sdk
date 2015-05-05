@@ -66,6 +66,7 @@ import com.ksyun.ks3.service.request.PutObjectRequest;
 import com.ksyun.ks3.service.request.UploadPartRequest;
 import com.ksyun.ks3.service.response.CompleteMultipartUploadResponse;
 import com.ksyun.ks3.service.response.HeadObjectResponse;
+import com.ksyun.ks3.service.transfer.Ks3UploadClient;
 import com.ksyun.ks3.utils.AuthUtils;
 import com.ksyun.ks3.utils.Timer;
 
@@ -77,15 +78,7 @@ import com.ksyun.ks3.utils.Timer;
  * @description
  **/
 public class Ks3ClientTest extends com.ksyun.ks3.service.Ks3ClientTest{
-	@Test
-	public void url(){
-		
-		client1.putObject("test1-zzy-jr","/中test.txt",new ByteArrayInputStream("1234".getBytes()),null);
-		
-		ResponseHeaderOverrides overrides = new ResponseHeaderOverrides();
-		overrides.setContentType("");
-		System.out.println(client1.generatePresignedUrl("test1-zzy-jr","/中test.txt",60,overrides));
-	}
+
 	 @Test
 	public void ListBuckets() {
 		 System.out.println(client.listBuckets());

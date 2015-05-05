@@ -1,9 +1,12 @@
 package com.ksyun.ks3.service.request;
 
 import com.ksyun.ks3.dto.*;
+
 import static com.ksyun.ks3.exception.client.ClientIllegalArgumentExceptionGenerator.notNull;
+
 import com.ksyun.ks3.http.HttpHeaders;
 import com.ksyun.ks3.http.HttpMethod;
+import com.ksyun.ks3.http.Request;
 import com.ksyun.ks3.utils.HttpUtils;
 import com.ksyun.ks3.utils.StringUtils;
 
@@ -13,6 +16,7 @@ import com.ksyun.ks3.utils.StringUtils;
  *
  */
 public class PutBucketACLRequest extends Ks3WebServiceRequest{
+	private String bucket;
 	/**
 	 * bucket的acl
 	 */
@@ -21,7 +25,16 @@ public class PutBucketACLRequest extends Ks3WebServiceRequest{
      * 一种快捷的配置方式
      */
     private CannedAccessControlList cannedAcl;
-    public CannedAccessControlList getCannedAcl() {
+    
+    public String getBucket() {
+		return bucket;
+	}
+
+	public void setBucket(String bucket) {
+		this.bucket = bucket;
+	}
+
+	public CannedAccessControlList getCannedAcl() {
         return cannedAcl;
     }
 
@@ -38,24 +51,9 @@ public class PutBucketACLRequest extends Ks3WebServiceRequest{
 		this.accessControlList = accessControlList;
 	}
 
-	@Override
-    protected void configHttpRequest() {
-
-        this.setHttpMethod(HttpMethod.PUT);
-        this.addParams("acl", "");
-        if(getCannedAcl()!=null){
-            this.addHeader(HttpHeaders.CannedAcl,getCannedAcl().toString());
-        }
-
-		if(this.accessControlList!=null)
-		{
-			this.getHeader().putAll(HttpUtils.convertAcl2Headers(accessControlList));
-		}
-    }
-
     @Override
-    protected void validateParams() throws IllegalArgumentException {
-    	if(StringUtils.isBlank(this.getBucketname())){
+	public void validateParams() throws IllegalArgumentException {
+    	if(StringUtils.isBlank(this.bucket)){
     		throw notNull("bucketname");
     	}
     	if(this.accessControlList==null&&this.cannedAcl==null)
@@ -63,15 +61,30 @@ public class PutBucketACLRequest extends Ks3WebServiceRequest{
     }
     public PutBucketACLRequest(String bucketName)
     {
-    	super.setBucketname(bucketName);
+    	this.bucket = bucketName;
     }
     public PutBucketACLRequest(String bucketName,CannedAccessControlList cannedAcl)
     {
-    	setBucketname(bucketName);
+    	this.bucket = bucketName;
     	this.setCannedAcl(cannedAcl);
     }
     public PutBucketACLRequest(String bucketName,AccessControlList accessControlList) {
-        setBucketname(bucketName);
+    	this.bucket = bucketName;
         this.accessControlList = accessControlList;
     }
+
+	@Override
+	public void buildRequest(Request request) {
+		request.setMethod(HttpMethod.PUT);
+		request.setBucket(bucket);
+		request.addQueryParam("acl", "");
+        if(getCannedAcl()!=null){
+        	request.addHeader(HttpHeaders.CannedAcl,getCannedAcl().toString());
+        }
+
+		if(this.accessControlList!=null)
+		{
+			request.getHeaders().putAll(HttpUtils.convertAcl2Headers(accessControlList));
+		}
+	}
 }

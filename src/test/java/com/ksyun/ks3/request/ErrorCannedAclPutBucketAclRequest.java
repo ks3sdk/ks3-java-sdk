@@ -2,6 +2,7 @@ package com.ksyun.ks3.request;
 
 import com.ksyun.ks3.http.HttpHeaders;
 import com.ksyun.ks3.http.HttpMethod;
+import com.ksyun.ks3.http.Request;
 import com.ksyun.ks3.service.request.PutBucketACLRequest;
 import com.ksyun.ks3.utils.HttpUtils;
 
@@ -18,14 +19,8 @@ public class ErrorCannedAclPutBucketAclRequest extends PutBucketACLRequest{
 		super(bucketName);
 	}
 	@Override
-    protected void configHttpRequest() {
-
-        this.setHttpMethod(HttpMethod.PUT);
-        this.addParams("acl", "");
-        this.addHeader(HttpHeaders.CannedAcl,acl);
-    }
-	@Override
-	protected void validateParams(){
-		
+	public void buildRequest(Request req){
+		super.buildRequest(req);
+		req.addHeader(HttpHeaders.CannedAcl, acl);
 	}
 }

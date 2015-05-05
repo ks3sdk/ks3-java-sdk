@@ -13,7 +13,7 @@ import com.ksyun.ks3.utils.StringUtils;
  * 
  * @description GET Bucket(List objects)的返回结果
  **/
-public class ObjectListing {
+public class ObjectListing extends Ks3Result{
     private List<Ks3ObjectSummary> objectSummaries = new ArrayList<Ks3ObjectSummary>();
 	/**
 	 * 可以理解为文件夹

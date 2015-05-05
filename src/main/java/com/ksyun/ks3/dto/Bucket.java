@@ -11,7 +11,7 @@ import com.ksyun.ks3.utils.StringUtils;
  * 
  * @description 存储空间
  **/
-public class Bucket {
+public class Bucket extends Ks3Result{
 	private static final long serialVersionUID = -8646831898339939580L;
 
 	/**

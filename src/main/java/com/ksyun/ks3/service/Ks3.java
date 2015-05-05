@@ -919,6 +919,13 @@ public interface Ks3 {
 			throws Ks3ClientException, Ks3ServiceException;
 
 	/**
+	 * 判断object是否存在
+	 * @param bucket
+	 * @param key
+	 * @return boolean
+	 */
+	public boolean objectExists(String bucket,String key);
+	/**
 	 * Initiate Multipart Upload
 	 * 
 	 * @param bucketname
@@ -1315,36 +1322,36 @@ public interface Ks3 {
 	 * @param bucketName 要处理的数据所在的bucket
 	 * @param objectKey 要处理的数据的key
 	 * @param adps 一系列的操作指令{@link Adp}
-	 * @return 任务id(taskid)
+	 * @return PutAdpResult {@link PutAdpResult}
 	 * @throws Ks3ClientException
 	 * @throws Ks3ServiceException
 	 * 
 	 * <p>添加数据处理任务</p>
 	 */
-	public String putAdpTask(String bucketName,String objectKey,List<Adp> adps) throws Ks3ClientException, Ks3ServiceException;;
+	public PutAdpResult putAdpTask(String bucketName,String objectKey,List<Adp> adps) throws Ks3ClientException, Ks3ServiceException;;
 	/**
 	 * 
 	 * @param bucketName 要处理的数据所在的bucket
 	 * @param objectKey 要处理的数据的key
 	 * @param adps 一系列的操作指令{@link Adp}
 	 * @param notifyURL 处理完成后KS3将调用该url,以通知用户
-	 * @return 任务id(taskid)
+	 * @return PutAdpResult {@link PutAdpResult}
 	 * @throws Ks3ClientException
 	 * @throws Ks3ServiceException
 	 * 
 	 * <p>添加数据处理任务</p>
 	 */
-	public String putAdpTask(String bucketName,String objectKey,List<Adp> adps,String notifyURL) throws Ks3ClientException, Ks3ServiceException;
+	public PutAdpResult putAdpTask(String bucketName,String objectKey,List<Adp> adps,String notifyURL) throws Ks3ClientException, Ks3ServiceException;
 	/**
 	 * 
 	 * @param request {@link PutAdpRequest}
-	 * @return 任务id(taskid)
+	 * @return PutAdpResult {@link PutAdpResult}
 	 * @throws Ks3ClientException
 	 * @throws Ks3ServiceException
 	 * 
 	 * <p>添加数据处理任务</p>
 	 */
-	public String putAdpTask(PutAdpRequest request) throws Ks3ClientException, Ks3ServiceException;
+	public PutAdpResult putAdpTask(PutAdpRequest request) throws Ks3ClientException, Ks3ServiceException;
 	/**
 	 * 
 	 * @param taskid 由putpfop，postobject，putobject，complete_mutipart_upload返回的taskid

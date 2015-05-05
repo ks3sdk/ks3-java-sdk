@@ -11,7 +11,7 @@ import com.ksyun.ks3.utils.StringUtils;
  * 
  * @description Copy Object 和 Copy Part的结果
  **/
-public class CopyResult {
+public class CopyResult extends Ks3Result{
 	/**
 	 * 上次修改时间
 	 */

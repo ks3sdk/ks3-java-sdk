@@ -15,6 +15,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.ksyun.ks3.config.ClientConfig;
 import com.ksyun.ks3.dto.Adp;
 import com.ksyun.ks3.dto.GetObjectResult;
 import com.ksyun.ks3.dto.HeadObjectResult;
@@ -153,7 +154,7 @@ public class AutoSelectContentTypeTest extends Ks3ClientTest {
 		postData.put("KSSAccessKeyId", fields.getKssAccessKeyId());
 		postData.put("signature", fields.getSignature());
 
-		String serverUrl = "http://kss.ksyun.com/" + bucketName;// 上传地址
+		String serverUrl = "http://"+ClientConfig.getConfig().getStr(ClientConfig.END_POINT)+"/" + bucketName;// 上传地址
 
 		// 设定要上传的普通Form Field及其对应的value
 		ArrayList<FormFieldKeyValuePair> ffkvp = new ArrayList<FormFieldKeyValuePair>();

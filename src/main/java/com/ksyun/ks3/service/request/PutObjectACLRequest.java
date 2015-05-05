@@ -6,6 +6,7 @@ import static com.ksyun.ks3.exception.client.ClientIllegalArgumentExceptionGener
 
 import com.ksyun.ks3.http.HttpHeaders;
 import com.ksyun.ks3.http.HttpMethod;
+import com.ksyun.ks3.http.Request;
 import com.ksyun.ks3.utils.HttpUtils;
 import com.ksyun.ks3.utils.StringUtils;
 
@@ -15,6 +16,8 @@ import com.ksyun.ks3.utils.StringUtils;
  *
  */
 public class PutObjectACLRequest extends Ks3WebServiceRequest{
+	private String bucket;
+	private String key;
 	/**
 	 * bucket的acl
 	 */
@@ -24,7 +27,23 @@ public class PutObjectACLRequest extends Ks3WebServiceRequest{
      */
     private CannedAccessControlList cannedAcl;
 
-    public CannedAccessControlList getCannedAcl() {
+    public String getBucket() {
+		return bucket;
+	}
+
+	public void setBucket(String bucket) {
+		this.bucket = bucket;
+	}
+
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
+	}
+
+	public CannedAccessControlList getCannedAcl() {
         return cannedAcl;
     }
 
@@ -41,49 +60,47 @@ public class PutObjectACLRequest extends Ks3WebServiceRequest{
 	}
 
     @Override
-    protected void configHttpRequest() {
-
-        this.setHttpMethod(HttpMethod.PUT);
-        this.addParams("acl", "");
-        if(getCannedAcl()!=null){
-            this.addHeader(HttpHeaders.CannedAcl,getCannedAcl().toString());
-        }
-
-        if(this.accessControlList!=null)
-        {
-            this.getHeader().putAll(HttpUtils.convertAcl2Headers(accessControlList));
-        }
-    }
-
-    @Override
-    protected void validateParams() throws IllegalArgumentException {
-    	if(StringUtils.isBlank(this.getBucketname())){
+	public void validateParams() throws IllegalArgumentException {
+    	if(StringUtils.isBlank(this.bucket)){
     		throw notNull("bucketname");
     	}
-    	if(StringUtils.isBlank(this.getObjectkey())){
+    	if(StringUtils.isBlank(this.key)){
     		throw notNull("objectkey");
     	}
     	if(this.accessControlList==null&&this.cannedAcl==null)
     		throw notNull("accessControlList","cannedAcl");
     }
     public PutObjectACLRequest(String bucketName,String objectName) {
-        setBucketname(bucketName);
-        setObjectkey(objectName);
+    	this.bucket = bucketName;
+    	this.key = objectName;
     }
     public PutObjectACLRequest(String bucketName,String objectName,AccessControlList accessControlList){
-    	setBucketname(bucketName);
-        setObjectkey(objectName);
+    	this(bucketName,objectName);
         this.setAccessControlList(accessControlList);
     }
     public PutObjectACLRequest(String bucketName,String objectName,CannedAccessControlList cannedAcl){
-    	setBucketname(bucketName);
-        setObjectkey(objectName);
+    	this(bucketName,objectName);
         this.setCannedAcl(cannedAcl);
     }
     public PutObjectACLRequest(String bucketName,String objectName,AccessControlList accessControlList,CannedAccessControlList cannedAcl){
-    	setBucketname(bucketName);
-        setObjectkey(objectName);
+    	this(bucketName,objectName);
         this.setAccessControlList(accessControlList);
         this.setCannedAcl(cannedAcl);
     }
+
+	@Override
+	public void buildRequest(Request request) {
+		request.setMethod(HttpMethod.PUT);
+		request.setBucket(bucket);
+		request.setKey(key);
+		request.addQueryParam("acl", "");
+        if(getCannedAcl()!=null){
+        	request.addHeader(HttpHeaders.CannedAcl,getCannedAcl().toString());
+        }
+
+        if(this.accessControlList!=null)
+        {
+        	request.getHeaders().putAll(HttpUtils.convertAcl2Headers(accessControlList));
+        }
+	}
 }

@@ -21,6 +21,7 @@ import static com.ksyun.ks3.exception.client.ClientIllegalArgumentExceptionGener
 
 import com.ksyun.ks3.http.HttpHeaders;
 import com.ksyun.ks3.http.HttpMethod;
+import com.ksyun.ks3.http.Request;
 import com.ksyun.ks3.utils.HttpUtils;
 import com.ksyun.ks3.utils.StringUtils;
 import com.ksyun.ks3.utils.XmlWriter;
@@ -33,6 +34,8 @@ import com.ksyun.ks3.utils.XmlWriter;
  * @description 完成分块上传,使Ks3服务器将之前上传的块整合成一个object
  **/
 public class CompleteMultipartUploadRequest extends Ks3WebServiceRequest {
+	private String bucket;
+	private String key;
 	/**
 	 * 通过Init Multipart Upload 初始化得到的uploadId
 	 */
@@ -62,8 +65,8 @@ public class CompleteMultipartUploadRequest extends Ks3WebServiceRequest {
 	 */
 	public CompleteMultipartUploadRequest(String bucketname,String objectkey,String uploadId,List<PartETag> eTags)
 	{
-		this.setBucketname(bucketname);
-		this.setObjectkey(objectkey);
+		this.bucket = bucketname;
+		this.key=objectkey;
 		this.uploadId = uploadId;
 		if(eTags == null)
 			eTags = new ArrayList<PartETag>();
@@ -75,8 +78,8 @@ public class CompleteMultipartUploadRequest extends Ks3WebServiceRequest {
 	 */
 	public CompleteMultipartUploadRequest(ListPartsResult result)
 	{
-		this.setBucketname(result.getBucketname());
-		this.setObjectkey(result.getKey());
+		this.bucket = result.getBucketname();
+		this.key=result.getKey();
 		this.uploadId = result.getUploadId();
 		for(Part p : result.getParts())
 		{
@@ -93,8 +96,8 @@ public class CompleteMultipartUploadRequest extends Ks3WebServiceRequest {
 	 */
 	public CompleteMultipartUploadRequest(String bucketname,String objectkey)
 	{
-		super.setBucketname(bucketname);
-		super.setObjectkey(objectkey);
+		this.bucket = bucketname;
+		this.key=objectkey;
 	}
 	public void addETag(PartETag eTag)
 	{
@@ -104,72 +107,7 @@ public class CompleteMultipartUploadRequest extends Ks3WebServiceRequest {
 		}
 		this.partETags.add(eTag);
 	}
-	@Override
-	protected void configHttpRequest() {
-		XmlWriter writer = new XmlWriter();
-		writer.start("CompleteMultipartUpload");
-		for(PartETag tag:this.partETags)
-		{
-			writer.start("Part").start("PartNumber").value(tag.getPartNumber()).end().start("ETag").value(tag.geteTag()).end().end();
-		}
-		writer.end();
-		String xml = writer.toString();
-		this.setRequestBody(new ByteArrayInputStream(xml.getBytes()));
-		this.setHttpMethod(HttpMethod.POST);
-		this.addParams("uploadId", this.uploadId);
-		
-		if(this.callBackConfiguration!=null){
-			this.addHeader(HttpHeaders.XKssCallbackUrl, callBackConfiguration.getCallBackUrl());
-			StringBuffer body = new StringBuffer();
-			if(callBackConfiguration.getBodyMagicVariables()!=null){
-				for(Entry<String,MagicVariables> mvs : callBackConfiguration.getBodyMagicVariables().entrySet()){
-					body.append(mvs.getKey()+"=${"+mvs.getValue()+"}&");
-				}
-			}
-			if(callBackConfiguration.getBodyKssVariables()!=null){
-				for(Entry<String,String> mvs : callBackConfiguration.getBodyKssVariables().entrySet()){
-					body.append(mvs.getKey()+"=${kss-"+mvs.getKey()+"}&");
-					this.addHeader("kss-"+mvs.getKey(), mvs.getValue());
-				}
-			}
-			String bodyString  = body.toString();
-			if(bodyString.endsWith("&")){
-				bodyString = bodyString.substring(0,bodyString.length()-1);
-			}
-			this.addHeader(HttpHeaders.XKssCallbackBody,bodyString);
-		}
-		if(this.adps!=null&&adps.size()>0){
-			this.addHeader(HttpHeaders.AsynchronousProcessingList, URLEncoder.encode(HttpUtils.convertAdps2String(adps)));
-			if(!StringUtils.isBlank(notifyURL))
-				this.addHeader(HttpHeaders.NotifyURL, notifyURL);
-		}
-	}
 
-	@Override
-	protected void validateParams() throws IllegalArgumentException {
-		if(StringUtils.isBlank(this.getBucketname()))
-			throw notNull("bucketname");
-		if(StringUtils.isBlank(this.getObjectkey()))
-			throw notNull("objectKey");
-		if(StringUtils.isBlank(this.uploadId))
-			throw notNull("uploadId");
-		if(this.partETags == null)
-			throw notNull("partETags");
-		if(this.callBackConfiguration!=null){
-			if(StringUtils.isBlank(this.callBackConfiguration.getCallBackUrl())){
-				throw notNull("callBackConfiguration.callBackUrl");
-			}
-		}
-		if(adps!=null&&adps.size()>0){
-			for(Adp adp : adps){
-				if(StringUtils.isBlank(adp.getCommand())){
-					throw notNullInCondition("adps.command","adps不为空");
-				}
-			}
-			if(StringUtils.isBlank(notifyURL))
-				throw notNullInCondition("notifyURL","adps不为空");
-		}
-	}
 	/**
 	 * 通过Init Multipart Upload 初始化得到的uploadId
 	 */
@@ -194,6 +132,18 @@ public class CompleteMultipartUploadRequest extends Ks3WebServiceRequest {
 	public void setPartETags(List<PartETag> partETags) {
 		this.partETags = partETags;
 	}
+	public String getBucket() {
+		return bucket;
+	}
+	public void setBucket(String bucket) {
+		this.bucket = bucket;
+	}
+	public String getKey() {
+		return key;
+	}
+	public void setKey(String key) {
+		this.key = key;
+	}
 	public CallBackConfiguration getCallBackConfiguration() {
 		return callBackConfiguration;
 	}
@@ -212,5 +162,71 @@ public class CompleteMultipartUploadRequest extends Ks3WebServiceRequest {
 	public void setNotifyURL(String notifyURL) {
 		this.notifyURL = notifyURL;
 	}
-	
+	@Override
+	public void buildRequest(Request request) {
+		request.setMethod(HttpMethod.POST);
+		request.setBucket(bucket);
+		request.setKey(key);
+		XmlWriter writer = new XmlWriter();
+		writer.start("CompleteMultipartUpload");
+		for(PartETag tag:this.partETags)
+		{
+			writer.start("Part").start("PartNumber").value(tag.getPartNumber()).end().start("ETag").value(tag.geteTag()).end().end();
+		}
+		writer.end();
+		String xml = writer.toString();
+		request.setContent(new ByteArrayInputStream(xml.getBytes()));
+		request.getQueryParams().put("uploadId", this.uploadId);
+		
+		if(this.callBackConfiguration!=null){
+			request.addHeader(HttpHeaders.XKssCallbackUrl.toString(), callBackConfiguration.getCallBackUrl());
+			StringBuffer body = new StringBuffer();
+			if(callBackConfiguration.getBodyMagicVariables()!=null){
+				for(Entry<String,MagicVariables> mvs : callBackConfiguration.getBodyMagicVariables().entrySet()){
+					body.append(mvs.getKey()+"=${"+mvs.getValue()+"}&");
+				}
+			}
+			if(callBackConfiguration.getBodyKssVariables()!=null){
+				for(Entry<String,String> mvs : callBackConfiguration.getBodyKssVariables().entrySet()){
+					body.append(mvs.getKey()+"=${kss-"+mvs.getKey()+"}&");
+					request.addHeader("kss-"+mvs.getKey(), mvs.getValue());
+				}
+			}
+			String bodyString  = body.toString();
+			if(bodyString.endsWith("&")){
+				bodyString = bodyString.substring(0,bodyString.length()-1);
+			}
+			request.addHeader(HttpHeaders.XKssCallbackBody.toString(),bodyString);
+		}
+		if(this.adps!=null&&adps.size()>0){
+			request.addHeader(HttpHeaders.AsynchronousProcessingList.toString(), URLEncoder.encode(HttpUtils.convertAdps2String(adps)));
+			if(!StringUtils.isBlank(notifyURL))
+				request.addHeader(HttpHeaders.NotifyURL.toString(), HttpUtils.urlEncode(notifyURL,false));
+		}
+	}
+	@Override
+	public void validateParams() throws IllegalArgumentException {
+		if(StringUtils.isBlank(this.bucket))
+			throw notNull("bucketname");
+		if(StringUtils.isBlank(this.key))
+			throw notNull("objectKey");
+		if(StringUtils.isBlank(this.uploadId))
+			throw notNull("uploadId");
+		if(this.partETags == null)
+			throw notNull("partETags");
+		if(this.callBackConfiguration!=null){
+			if(StringUtils.isBlank(this.callBackConfiguration.getCallBackUrl())){
+				throw notNull("callBackConfiguration.callBackUrl");
+			}
+		}
+		if(adps!=null&&adps.size()>0){
+			for(Adp adp : adps){
+				if(StringUtils.isBlank(adp.getCommand())){
+					throw notNullInCondition("adps.command","adps不为空");
+				}
+			}
+			if(StringUtils.isBlank(notifyURL))
+				throw notNullInCondition("notifyURL","adps不为空");
+		}
+	}
 }

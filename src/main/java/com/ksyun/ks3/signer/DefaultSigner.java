@@ -1,7 +1,10 @@
 package com.ksyun.ks3.signer;
 
+import org.apache.http.HttpHeaders;
+
 import com.ksyun.ks3.dto.Authorization;
 import com.ksyun.ks3.exception.Ks3ClientException;
+import com.ksyun.ks3.http.Request;
 import com.ksyun.ks3.service.request.Ks3WebServiceRequest;
 import com.ksyun.ks3.utils.AuthUtils;
 
@@ -13,10 +16,9 @@ import com.ksyun.ks3.utils.AuthUtils;
  * @description 默认的签名计算器
  **/
 public class DefaultSigner implements Signer {
-
-	public String calculate(Authorization auth, Ks3WebServiceRequest request) {
+	public void sign(Authorization auth, Request request) {
 		try {
-			return AuthUtils.calcAuthorization(auth, request);
+			request.addHeader(HttpHeaders.AUTHORIZATION.toString(),AuthUtils.calcAuthorization(auth, request));
 		} catch (Exception e) {
 			throw new Ks3ClientException(
 					"计算用户签名时出错("

@@ -1,4 +1,7 @@
 package com.ksyun.ks3.service.response;
+
+import com.ksyun.ks3.dto.Ks3Result;
+
 /**
  * @author lijunwei[lijunwei@kingsoft.com]  
  * 
@@ -6,7 +9,7 @@ package com.ksyun.ks3.service.response;
  * 
  * @description 编辑bucket的日志配置
  **/
-public class PutBucketLoggingResponse extends Ks3WebServiceDefaultResponse<Boolean> {
+public class PutBucketLoggingResponse extends Ks3WebServiceDefaultResponse<Ks3Result> {
 
 	public int[] expectedStatus() {
 		return new int[]{200};
@@ -14,7 +17,7 @@ public class PutBucketLoggingResponse extends Ks3WebServiceDefaultResponse<Boole
 
 	@Override
 	public void preHandle() {
-		this.result = true;
+		this.result = new Ks3Result();
 	}
 
 }

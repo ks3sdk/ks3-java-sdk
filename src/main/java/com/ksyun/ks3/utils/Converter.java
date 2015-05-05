@@ -21,7 +21,7 @@ public class Converter {
 	public static String MD52ETag(String md5)
 	{
 		String etag = String.format("\"%s\"", Hex.encodeHexString(Base64.decodeBase64(md5)));
-		log.info("md5 we calculated is :"+md5+",convert to etag is :"+etag);
+		log.debug("md5 :"+md5+",convert to etag is :"+etag);
 		return etag;
 	}
 	
@@ -36,10 +36,10 @@ public class Converter {
 			try {
 				md5 = new String(Base64.encodeBase64(Hex.decodeHex(eTag.toCharArray())),"UTF-8");
 			} catch(Exception e) {
-				log.info("Something Wrong when converter eTag to md5 :" + eTag);
+				log.debug("Something Wrong when converter eTag to md5 :" + eTag);
 			}
 		}
-		log.info("etag we calculated is :"+eTag+",convert to md5 is :"+md5);
+		log.debug("etag :"+eTag+",convert to md5 is :"+md5);
 		return md5;
 	}
 	public static void main(String[] args){

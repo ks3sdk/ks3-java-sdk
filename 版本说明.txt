@@ -1,3 +1,13 @@
+0.4.0
+1、group id更改为com.ksyun
+2、添加客户端数据加密,详见README.md 5.4
+3、添加服务端加密的支持,详见README.md 5.3.3(下载文件) 5.3.7(上传文件) 5.3.9(拷贝文件) 5.3.12(分块上传文件)
+4、添加Ks3UploadClient,可方便用户上传文件使用
+5、优化代码内部逻辑
+6、putAdp接口返回的结果变成 PutAdpResult对象，而不是之前的String类型
+7、修复若干bug
+
+
 2015年4月3号更新
 0.3.1
 1、Ks3Client中添加getBucketCannedACL()和getObjectCannedACL()接口

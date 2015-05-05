@@ -45,5 +45,8 @@ public class GetObjectResult {
 	public void setIfPreconditionSuccess(boolean ifPreconditionSuccess) {
 		this.ifPreconditionSuccess = ifPreconditionSuccess;
 	}
+	public boolean hasContent(){
+		return ifPreconditionSuccess&&ifModified;
+	}
 	
 }

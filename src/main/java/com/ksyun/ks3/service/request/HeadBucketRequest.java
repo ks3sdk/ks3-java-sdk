@@ -1,7 +1,10 @@
 package com.ksyun.ks3.service.request;
 
 import com.ksyun.ks3.http.HttpMethod;
+import com.ksyun.ks3.http.Request;
+
 import static com.ksyun.ks3.exception.client.ClientIllegalArgumentExceptionGenerator.notNull;
+
 import com.ksyun.ks3.utils.StringUtils;
 
 /**
@@ -12,23 +15,26 @@ import com.ksyun.ks3.utils.StringUtils;
  * @description Head请求bucket,一般用于查看一个bucket是否在全局中已经存在
  **/
 public class HeadBucketRequest extends Ks3WebServiceRequest{
+	private String bucket;
 	public HeadBucketRequest(String bucketname)
 	{
-		super.setBucketname(bucketname);
-	}
-	public void setBucketname(String bucketname)
-	{
-		super.setBucketname(bucketname);
+		this.bucket = bucketname;
 	}
 	@Override
-	protected void configHttpRequest() {
-		this.setHttpMethod(HttpMethod.HEAD);
-	}
-
-	@Override
-	protected void validateParams() throws IllegalArgumentException {
-		if(StringUtils.isBlank(this.getBucketname()))
+	public void validateParams() throws IllegalArgumentException {
+		if(StringUtils.isBlank(this.bucket))
 			throw notNull("bucketname");
+	}
+	@Override
+	public void buildRequest(Request request) {
+		request.setMethod(HttpMethod.HEAD);
+		request.setBucket(bucket);
+	}
+	public String getBucket() {
+		return bucket;
+	}
+	public void setBucket(String bucket) {
+		this.bucket = bucket;
 	}
 
 }

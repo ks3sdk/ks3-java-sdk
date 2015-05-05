@@ -4,6 +4,8 @@ import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpRequestBase;
 
+import com.ksyun.ks3.dto.Ks3Result;
+
 /**
  * @author lijunwei[lijunwei@kingsoft.com]  
  * 

@@ -1,6 +1,7 @@
 package com.ksyun.ks3.service.request;
 
 import com.ksyun.ks3.http.HttpMethod;
+import com.ksyun.ks3.http.Request;
 
 /**
  * @author lijunwei[lijunwei@kingsoft.com]  
@@ -12,12 +13,12 @@ import com.ksyun.ks3.http.HttpMethod;
 public class ListBucketsRequest extends Ks3WebServiceRequest{
 
 	@Override
-	protected void configHttpRequest() {
-		this.setHttpMethod(HttpMethod.GET);
+	public void validateParams() throws IllegalArgumentException {
+		
 	}
 
 	@Override
-	protected void validateParams() throws IllegalArgumentException {
-		
+	public void buildRequest(Request request) {
+		request.setMethod(HttpMethod.GET);
 	}
 }

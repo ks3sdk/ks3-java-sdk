@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.ksyun</groupId>
 	<artifactId>ks3-kss-java-sdk</artifactId>
-	<version>0.3.1</version>
+	<version>0.4.0</version>
 	<name>ks3-kss-java-sdk</name>
 	<url>http://maven.apache.org</url>
 	<description>Java SDK for KS3</description>
@@ -40,10 +40,7 @@
 				<version>2.4</version>
 				<configuration>
 					<excludes>
-						<exclude>**/*.properties</exclude>
-						<exclude>**/*.jpeg</exclude>
-						<exclude>**/*.xml</exclude>
-						<exclude>**/*.exe</exclude>
+						<exclude>**/test/resource/**</exclude>
 					</excludes>
 				</configuration>
 			</plugin>

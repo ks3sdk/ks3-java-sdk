@@ -12,7 +12,7 @@ import com.ksyun.ks3.utils.StringUtils;
  * 
  * @description 查询数据处理任务返回结果
  **/
-public class AdpTask {
+public class AdpTask extends Ks3Result{
 	/**
 	 * taskid
 	 */

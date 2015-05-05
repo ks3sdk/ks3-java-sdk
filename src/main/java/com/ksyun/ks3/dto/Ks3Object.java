@@ -4,6 +4,8 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.http.HttpRequest;
+
 import com.ksyun.ks3.AutoAbortInputStream;
 import com.ksyun.ks3.utils.StringUtils;
 /**
@@ -63,6 +65,13 @@ public class Ks3Object  implements Closeable{
 
 	public void setObjectContent(AutoAbortInputStream objectContent) {
 		this.objectContent = objectContent;
+	}
+	public void setObjectContent(InputStream inputStream){
+		AutoAbortInputStream pre = this.getObjectContent();
+		HttpRequest request = null;
+		if(pre!=null)
+			request = pre.getRequest();
+		this.setObjectContent(new AutoAbortInputStream(inputStream,request));
 	}
 
 	public void close() throws IOException {

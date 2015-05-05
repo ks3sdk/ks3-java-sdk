@@ -95,6 +95,7 @@ import com.ksyun.ks3.utils.StringUtils;
  **/
 public class Ks3Client implements Ks3 {
 	private static final Log log = LogFactory.getLog(Ks3Client.class);
+	private ClientConfig config = ClientConfig.getConfig();
 	
 	private Authorization auth;
 
@@ -247,7 +248,7 @@ public class Ks3Client implements Ks3 {
 			throws Ks3ClientException, Ks3ServiceException {
 		Bucket bucket = client.execute(auth, request,
 				CreateBucketResponse.class);
-		bucket.setName(request.getBucketname());
+		bucket.setName(request.getBucket());
 		return bucket;
 	}
 
@@ -259,7 +260,7 @@ public class Ks3Client implements Ks3 {
 	public void makeDir(String bucketName, String dir)
 			throws Ks3ClientException, Ks3ServiceException {
 		if (!dir.endsWith("/"))
-			throw ClientIllegalArgumentExceptionGenerator.notCorrect("dir", dir,"以/结尾");
+			throw ClientIllegalArgumentExceptionGenerator.notCorrect("dir", dir,"ends with /");
 		PutObjectRequest request = new PutObjectRequest(bucketName, dir,
 				new ByteArrayInputStream(new byte[] {}), null);
 		this.putObject(request);
@@ -268,7 +269,7 @@ public class Ks3Client implements Ks3 {
 	public void removeDir(String bucketName, String dir)
 			throws Ks3ClientException, Ks3ServiceException {
 		if (dir != null && !dir.endsWith("/") && !StringUtils.isBlank(dir))
-			throw ClientIllegalArgumentExceptionGenerator.notCorrect("dir", dir,"以/结尾或空");
+			throw ClientIllegalArgumentExceptionGenerator.notCorrect("dir", dir,"ends with / or blank");
 		String marker = null;
 		ObjectListing list = null;
 		do {
@@ -283,6 +284,8 @@ public class Ks3Client implements Ks3 {
 			}
 			if (keys.size() > 0)
 				this.deleteObjects(keys, bucketName);
+			else
+				break;
 		} while (list.isTruncated());
 		if (dir != null) {
 			boolean exists = true;
@@ -341,10 +344,10 @@ public class Ks3Client implements Ks3 {
 
 	public GetObjectResult getObject(GetObjectRequest request)
 			throws Ks3ClientException, Ks3ServiceException {
-		String objectkey = request.getObjectkey();
+		String objectkey = request.getKey();
 		GetObjectResult object = client.execute(auth, request,
 				GetObjectResponse.class);
-		object.getObject().setBucketName(request.getBucketname());
+		object.getObject().setBucketName(request.getBucket());
 		object.getObject().setKey(objectkey);
 		return object;
 	}
@@ -391,20 +394,20 @@ public class Ks3Client implements Ks3 {
 				throw new Ks3ClientException("计算用户签名时出错", e);
 			}
 			if (overrides.getOverrides().size() > 0)
-				return "http://" + bucket + "." + Constants.KS3_CDN_END_POINT
+				return "http://" + bucket + "." + config.getStr(ClientConfig.CDN_END_POINT)
 						+ "/" + key + "?AccessKeyId="
 						+ URLEncoder.encode(auth.getAccessKeyId())
 						+ "&Expires=" + expires + "&Signature="
 						+ URLEncoder.encode(signature) + "&"
 						+ HttpUtils.encodeParams(overrides.getOverrides());
 			else
-				return "http://" + bucket + "." + Constants.KS3_CDN_END_POINT
+				return "http://" + bucket + "." + config.getStr(ClientConfig.CDN_END_POINT)
 						+ "/" + key + "?AccessKeyId="
 						+ URLEncoder.encode(auth.getAccessKeyId())
 						+ "&Expires=" + expires + "&Signature="
 						+ URLEncoder.encode(signature);
 		} else {
-			return "http://" + bucket + "." + Constants.KS3_CDN_END_POINT + "/"
+			return "http://" + bucket + "." + config.getStr(ClientConfig.CDN_END_POINT) + "/"
 					+ key + "?"
 					+ HttpUtils.encodeParams(overrides.getOverrides());
 		}
@@ -494,6 +497,15 @@ public class Ks3Client implements Ks3 {
 			throws Ks3ClientException, Ks3ServiceException {
 		return client.execute(auth, request, HeadObjectResponse.class);
 	}
+	
+	public boolean objectExists(String bucket,String key){
+		try{
+			this.headObject(bucket, key);
+		}catch(NotFoundException e){
+			return false;
+		}
+		return true;
+	}
 
 	public InitiateMultipartUploadResult initiateMultipartUpload(
 			String bucketname, String objectkey) throws Ks3ClientException,
@@ -505,10 +517,10 @@ public class Ks3Client implements Ks3 {
 	public InitiateMultipartUploadResult initiateMultipartUpload(
 			InitiateMultipartUploadRequest request) throws Ks3ClientException,
 			Ks3ServiceException {
-		String objectkey = request.getObjectkey();
+		String objectkey = request.getKey();
 		InitiateMultipartUploadResult result = client.execute(auth, request,
 				InitiateMultipartUploadResponse.class);
-		result.setBucket(request.getBucketname());
+		result.setBucket(request.getBucket());
 		result.setKey(objectkey);
 		return result;
 	}
@@ -762,13 +774,13 @@ public class Ks3Client implements Ks3 {
 		return postObject(policy);
 	}
 
-	public String putAdpTask(String bucketName, String objectKey,
+	public PutAdpResult putAdpTask(String bucketName, String objectKey,
 			List<Adp> adps) throws Ks3ClientException, Ks3ServiceException {
 		PutAdpRequest request = new PutAdpRequest(bucketName,objectKey,adps);
 		return putAdpTask(request);
 	}
 
-	public String putAdpTask(String bucketName, String objectKey,
+	public PutAdpResult putAdpTask(String bucketName, String objectKey,
 			List<Adp> adps, String notifyURL) throws Ks3ClientException,
 			Ks3ServiceException {
 		PutAdpRequest request = new PutAdpRequest(bucketName,objectKey,adps);
@@ -776,7 +788,7 @@ public class Ks3Client implements Ks3 {
 		return putAdpTask(request);
 	}
 
-	public String putAdpTask(PutAdpRequest request)
+	public PutAdpResult putAdpTask(PutAdpRequest request)
 			throws Ks3ClientException, Ks3ServiceException {
 		return client.execute(auth, request, PutAdpResponse.class);
 	}

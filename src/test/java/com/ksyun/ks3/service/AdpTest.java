@@ -164,7 +164,7 @@ public class AdpTest extends Ks3ClientTest{
 		
 		request.setAdps(fops);
 		request.setNotifyURL("http://10.4.2.38:19090/");
-		String id = client.putAdpTask(request);
+		String id = client.putAdpTask(request).getTaskId();
 		AdpTask task;
 		while(true){
 			task = client.getAdpTask(id);
@@ -191,7 +191,7 @@ public class AdpTest extends Ks3ClientTest{
 		
 		request.setAdps(fops);
 		request.setNotifyURL("http://10.4.2.38:19090/");
-		String id = client.putAdpTask(request);
+		String id = client.putAdpTask(request).getTaskId();
 		AdpTask task;
 		while(true){
 			task = client.getAdpTask(id);
@@ -365,7 +365,7 @@ public class AdpTest extends Ks3ClientTest{
 		
 		request.setAdps(fops);
 		request.setNotifyURL("http://10.4.2.38:19090/");
-		String id = client.putAdpTask(request);
+		String id = client.putAdpTask(request).getTaskId();
 		AdpTask task;
 		while(true){
 			task = client.getAdpTask(id);
@@ -419,7 +419,7 @@ public class AdpTest extends Ks3ClientTest{
 		
 		request.setAdps(fops);
 		request.setNotifyURL("http://10.4.2.38:19090/");
-		String taskId = client.putAdpTask(request);
+		String taskId = client.putAdpTask(request).getTaskId();
 		assertNotNull(taskId);
 		AdpTask task;
 		while(true){
@@ -448,7 +448,7 @@ public class AdpTest extends Ks3ClientTest{
 		
 		request1.setAdps(fops1);
 		request1.setNotifyURL("http://10.4.2.38:19090/");
-		String taskId1 = client.putAdpTask(request1);
+		String taskId1 = client.putAdpTask(request1).getTaskId();
 		assertNotNull(taskId1);
 		AdpTask task1;
 		while(true){
@@ -483,7 +483,7 @@ public class AdpTest extends Ks3ClientTest{
 		
 		request.setAdps(fops);
 		request.setNotifyURL("http://10.4.2.38:19090/");
-		String taskId = client.putAdpTask(request);
+		String taskId = client.putAdpTask(request).getTaskId();
 		assertNotNull(taskId);
 		AdpTask task;
 		while(true){
@@ -514,7 +514,7 @@ public class AdpTest extends Ks3ClientTest{
 		
 		request.setAdps(fops);
 		request.setNotifyURL("http://10.4.2.38:19090/");
-		String taskId = client.putAdpTask(request);
+		String taskId = client.putAdpTask(request).getTaskId();
 		assertNotNull(taskId);
 		AdpTask task;
 		while(true){

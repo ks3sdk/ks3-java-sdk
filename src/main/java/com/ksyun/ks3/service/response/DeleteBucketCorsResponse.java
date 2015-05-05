@@ -1,4 +1,7 @@
 package com.ksyun.ks3.service.response;
+
+import com.ksyun.ks3.dto.Ks3Result;
+
 /**
  * @author lijunwei[lijunwei@kingsoft.com]  
  * 
@@ -6,7 +9,7 @@ package com.ksyun.ks3.service.response;
  * 
  * @description 
  **/
-public class DeleteBucketCorsResponse extends Ks3WebServiceDefaultResponse<Boolean>{
+public class DeleteBucketCorsResponse extends Ks3WebServiceDefaultResponse<Ks3Result>{
 
 	public int[] expectedStatus() {
 		//200是为了兼容现在的ks3 api正确应该是204
@@ -15,7 +18,7 @@ public class DeleteBucketCorsResponse extends Ks3WebServiceDefaultResponse<Boole
 
 	@Override
 	public void preHandle() {
-		this.result = true;
+		this.result = new Ks3Result();
 	}
 
 }

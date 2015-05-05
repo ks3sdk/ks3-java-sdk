@@ -1,6 +1,8 @@
 package com.ksyun.ks3.service.request;
 
 import com.ksyun.ks3.http.HttpMethod;
+import com.ksyun.ks3.http.Request;
+
 import static com.ksyun.ks3.exception.client.ClientIllegalArgumentExceptionGenerator.notNull;
 import static com.ksyun.ks3.exception.client.ClientIllegalArgumentExceptionGenerator.between;
 
@@ -14,6 +16,8 @@ import com.ksyun.ks3.utils.StringUtils;
  * @description 列出某个uploadid下已上传的块
  **/
 public class ListPartsRequest extends Ks3WebServiceRequest{
+	private String bucket;
+	private String key;
 	/**
 	 * 由init multipart upload 获取到的upload id
 	 */
@@ -32,34 +36,39 @@ public class ListPartsRequest extends Ks3WebServiceRequest{
 	private String encodingType;
 	public ListPartsRequest(String bucketname,String objectkey,String uploadId)
 	{
-		super.setBucketname(bucketname);
-		super.setObjectkey(objectkey);
+		this.bucket = bucketname;
+		this.key =  objectkey;
 		this.uploadId = uploadId;
-	}
-	@Override
-	protected void configHttpRequest() {
-		this.setHttpMethod(HttpMethod.GET);
-		this.addParams("max-parts",String.valueOf(this.maxParts));
-		this.addParams("uploadId",this.uploadId);
-		if(partNumberMarker!=null&&this.partNumberMarker>=0)
-		{
-			this.addParams("part-number​-marker", String.valueOf(this.partNumberMarker));
-		}
-		if(!StringUtils.isBlank(this.encodingType))
-			this.addParams("encoding-type",this.encodingType);
 	}
 
 	@Override
-	protected void validateParams() throws IllegalArgumentException {
-		if(StringUtils.isBlank(this.getBucketname()))
+	public void validateParams() throws IllegalArgumentException {
+		if(StringUtils.isBlank(this.bucket))
 			throw notNull("bucketname");
-		if(StringUtils.isBlank(this.getObjectkey()))
+		if(StringUtils.isBlank(this.key))
 			throw notNull("objectkey");
 		if(StringUtils.isBlank(this.uploadId))
 			throw notNull("uploadId");
 		if(this.maxParts!=null&&(this.maxParts>1000||this.maxParts<1))
 			throw between("maxParts",String.valueOf(this.maxParts),"1","1000");
 	}
+	
+	public String getBucket() {
+		return bucket;
+	}
+
+	public void setBucket(String bucket) {
+		this.bucket = bucket;
+	}
+
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
+	}
+
 	public String getUploadId() {
 		return uploadId;
 	}
@@ -84,5 +93,18 @@ public class ListPartsRequest extends Ks3WebServiceRequest{
 	public void setEncodingType(String encodingType) {
 		this.encodingType = encodingType;
 	}
-	
+	@Override
+	public void buildRequest(Request request) {
+		request.setMethod(HttpMethod.GET);
+		request.setBucket(bucket);
+		request.setKey(key);
+		if(this.maxParts!=null)
+			request.addQueryParamIfNotNull("max-parts",String.valueOf(this.maxParts));
+		request.addQueryParamIfNotNull("uploadId",this.uploadId);
+		if(partNumberMarker!=null&&this.partNumberMarker>=0)
+		{
+			request.addQueryParamIfNotNull("part-number​-marker", String.valueOf(this.partNumberMarker));
+		}
+		request.addQueryParamIfNotNull("encoding-type",this.encodingType);
+	}
 }

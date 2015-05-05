@@ -12,7 +12,7 @@ import com.ksyun.ks3.utils.StringUtils;
  * 
  * @description 列出bucket下分块上传未abort或complete的块
  **/
-public class ListMultipartUploadsResult {
+public class ListMultipartUploadsResult extends Ks3Result{
 	private String bucket;
 	/**
 	 * <p>keyMarker为空，uploadIdMarker不为空<P>

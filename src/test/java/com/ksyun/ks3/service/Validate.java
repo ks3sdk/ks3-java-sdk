@@ -107,7 +107,7 @@ public class Validate extends Ks3ClientTest{
 		List<String> allowedOrigins = new ArrayList<String>();
 		allowedOrigins.add("http://*.ele.com");
 		List<String> exposedHeaders = new ArrayList<String>();
-		exposedHeaders.add(HttpHeaders.ServerSideEncryption.toString());
+		exposedHeaders.add(HttpHeaders.XKssServerSideEncryption.toString());
 		List<String> allowedHeaders = new ArrayList<String>();
 		allowedHeaders.add("*"); 
 
@@ -199,7 +199,7 @@ public class Validate extends Ks3ClientTest{
 	}
 	@Test
 	public void putObjectAclAndGetObjectAcl() throws Exception{
-		client.putObject(bucketName, objectkey, file);
+		System.out.println(client.putObject(bucketName, objectkey, file));
 		
 		client.putObjectACL(bucketName, objectkey, CannedAccessControlList.PublicReadWrite);
 		

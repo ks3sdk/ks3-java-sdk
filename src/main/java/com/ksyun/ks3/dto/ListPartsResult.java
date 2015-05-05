@@ -12,7 +12,7 @@ import com.ksyun.ks3.utils.StringUtils;
  * 
  * @description 列出一个分块上传操作中，已上传的块
  **/
-public class ListPartsResult {
+public class ListPartsResult extends Ks3Result{
 	private String bucketname;
 	private String key;
 	/**

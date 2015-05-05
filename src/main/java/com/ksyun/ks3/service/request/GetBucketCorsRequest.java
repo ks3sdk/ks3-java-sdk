@@ -1,6 +1,7 @@
 package com.ksyun.ks3.service.request;
 
 import com.ksyun.ks3.http.HttpMethod;
+import com.ksyun.ks3.http.Request;
 import com.ksyun.ks3.utils.StringUtils;
 
 import static com.ksyun.ks3.exception.client.ClientIllegalArgumentExceptionGenerator.notNull;
@@ -14,20 +15,29 @@ import static com.ksyun.ks3.exception.client.ClientIllegalArgumentExceptionGener
  * @description 获取bucket的跨域资源共享配置
  **/
 public class GetBucketCorsRequest extends Ks3WebServiceRequest{
-
+	private String bucket;
 	public GetBucketCorsRequest(String bucketName){
-		super.setBucketname(bucketName);
-	}
-	@Override
-	protected void configHttpRequest() {
-		this.setHttpMethod(HttpMethod.GET);
-		this.addParams("cors","");
+		this.bucket = bucketName;
 	}
 
 	@Override
-	protected void validateParams() throws IllegalArgumentException {
-		if(StringUtils.isBlank(super.getBucketname()))
+	public void validateParams() throws IllegalArgumentException {
+		if(StringUtils.isBlank(this.bucket))
 			throw notNull("bucketName");
+	}
+	@Override
+	public void buildRequest(Request request) {
+		request.setMethod(HttpMethod.GET);
+		request.setBucket(bucket);
+		request.getQueryParams().put("cors","");
+	}
+
+	public String getBucket() {
+		return bucket;
+	}
+
+	public void setBucket(String bucket) {
+		this.bucket = bucket;
 	}
 
 }

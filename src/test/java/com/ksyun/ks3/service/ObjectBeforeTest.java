@@ -66,7 +66,7 @@ public class ObjectBeforeTest {
 		bucketOther = "test2-zzy-jr";
 		
 		//若第一次运行测试用例需要将initFile配置为 true，运行后改为false，避免重复上传影响效率
-		Boolean initFile = false;
+		Boolean initFile = true;
 		
 		filePath = "D:/objectTest";
 		File fileDir = new File(filePath);

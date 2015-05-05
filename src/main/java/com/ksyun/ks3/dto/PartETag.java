@@ -9,7 +9,7 @@ import com.ksyun.ks3.utils.StringUtils;
  * 
  * @description 
  **/
-public class PartETag {
+public class PartETag extends SSEResultBase{
 	private int partNumber;
 	private String eTag;
 	

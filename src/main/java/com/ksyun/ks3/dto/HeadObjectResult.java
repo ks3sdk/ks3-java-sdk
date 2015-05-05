@@ -11,7 +11,7 @@ import com.ksyun.ks3.utils.StringUtils;
  * 
  * @description Head请求一个object
  **/
-public class HeadObjectResult {
+public class HeadObjectResult extends Ks3Result{
 	private ObjectMetadata objectMetadata = new ObjectMetadata();
 	/**
 	 * false 

@@ -2,7 +2,9 @@ package com.ksyun.ks3.request;
 
 import java.io.ByteArrayInputStream;
 
+import com.ksyun.ks3.http.HttpHeaders;
 import com.ksyun.ks3.http.HttpMethod;
+import com.ksyun.ks3.http.Request;
 import com.ksyun.ks3.service.request.CreateBucketRequest;
 
 /**
@@ -18,9 +20,8 @@ public class ErrorRegionCreateBucketRequest extends CreateBucketRequest{
 		super(bucketName);
 	}
 	@Override
-	protected void configHttpRequest() {
-		this.setHttpMethod(HttpMethod.PUT);
-		this.setRequestBody(new ByteArrayInputStream("<CreateBucketConfiguration xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"> <LocationConstraint>TAIYUAN</LocationConstraint> </CreateBucketConfiguration>".getBytes()));
+	public void buildRequest(Request req){
+		super.buildRequest(req);
+		req.setContent(new ByteArrayInputStream("<CreateBucketConfiguration xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"> <LocationConstraint>TAIYUAN</LocationConstraint> </CreateBucketConfiguration>".getBytes()));
 	}
-
 }

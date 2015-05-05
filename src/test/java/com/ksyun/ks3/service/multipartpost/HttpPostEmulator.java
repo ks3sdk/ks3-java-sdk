@@ -120,14 +120,16 @@ public class HttpPostEmulator {
 			InputStream stream = null;
 			int length = 0;
 			String name = ufi.getFileName();
-			if(name.substring(1).startsWith("://")){
+			try{
 				File file = new File(ufi.getFileName());
 				stream = new FileInputStream(file);
 				length = (int) file.length();
-			}else{
+			}
+			catch(Exception e){
 				stream = new ByteArrayInputStream(name.getBytes());
 				length = name.length();
 			}
+		
 
 			DataInputStream dis = new DataInputStream(stream);
 
@@ -141,7 +143,9 @@ public class HttpPostEmulator {
 
 			dis.close();
 
-			contentBody.append("------------HV2ymHFg03ehbqgZCaKO6jyH");
+			contentBody = new StringBuffer();
+			
+			contentBody.append("\r\n------------HV2ymHFg03ehbqgZCaKO6jyH");
 
 			String boundaryMessage = contentBody.toString();
 
@@ -150,9 +154,6 @@ public class HttpPostEmulator {
 			// System.out.println(boundaryMessage);
 
 		}
-
-		out.write("------------HV2ymHFg03ehbqgZCaKO6jyH--\r\n"
-				.getBytes("UTF-8"));
 
 		// 3. 写结尾
 

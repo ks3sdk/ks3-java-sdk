@@ -1,9 +1,11 @@
 package com.ksyun.ks3.dto;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.ksyun.ks3.config.ClientConfig;
 import com.ksyun.ks3.config.Constants;
 import com.ksyun.ks3.http.HttpHeaders;
 import com.ksyun.ks3.utils.StringUtils;
@@ -15,7 +17,8 @@ import com.ksyun.ks3.utils.StringUtils;
  * 
  * @description object元数据
  **/
-public class ObjectMetadata {
+public class ObjectMetadata implements ServerSideEncryptionResult{
+	private String usermeta_prefix =  ClientConfig.getConfig().getStr(ClientConfig.USER_META_PREFIX);
 	/**
 	 * 用户自定义的元数据
 	 */
@@ -33,16 +36,22 @@ public class ObjectMetadata {
 	
 	public void setUserMeta(String key,String value)
 	{
-		this.userMetadata.put(key.startsWith(Constants.KS3_USER_META_PREFIX)?key:Constants.KS3_USER_META_PREFIX+key, value);
+		this.userMetadata.put(key.startsWith(usermeta_prefix)?key:(usermeta_prefix+key), value);
 	}
 	public String getUserMeta(String key)
 	{
-		return userMetadata.get(key.startsWith(Constants.KS3_USER_META_PREFIX)?key:Constants.KS3_USER_META_PREFIX+key);
+		return userMetadata.get(key.startsWith(usermeta_prefix)?key:(usermeta_prefix+key));
+	}
+	public boolean containsUserMeta(String key){
+		return userMetadata.containsKey(key.startsWith(usermeta_prefix)?key:(usermeta_prefix+key));
 	}
 	public Map<String, String> getAllUserMeta()
 	{
 		return this.userMetadata;
 	}
+	public Map<String, Object> getRawMetadata() {
+        return Collections.unmodifiableMap(new HashMap<String,Object>(metadata));
+    }
 	/**仅供内部使用
 	 * @param key
 	 * @param value
@@ -124,6 +133,37 @@ public class ObjectMetadata {
     }
     public Date getHttpExpiresDate() {
         return httpExpiresDate;
+    }
+    
+    public String getSseAlgorithm(){
+    	return (String) metadata.get(HttpHeaders.XKssServerSideEncryption.toString());
+    }
+    public void setSseAlgorithm(String value){
+    	this.metadata.put(HttpHeaders.XKssServerSideEncryption.toString(), value);
+    }
+    public String getSseKMSKeyId(){
+    	return (String) metadata.get(HttpHeaders.XKssServerSideEncryptionKMSKeyId.toString());
+    }
+    public void setSseKMSKeyId(String value){
+    	this.metadata.put(HttpHeaders.XKssServerSideEncryptionKMSKeyId.toString(), value);
+    }
+    public String getSseCustomerAlgorithm(){
+    	return (String) this.metadata.get(HttpHeaders.XKssServerSideEncryptionCustomerAlgorithm.toString());
+    }
+    /**
+     * 仅供内部使用，设置加密请使用</br>{@link PutObjectRequest#setSseCustomerKey(SSECustomerKey key) }</br>{@link UploadPartRequest#setSseCustomerKey(SSECustomerKey key) }
+     */
+    public void setSseCustomerAlgorithm(String value){
+    	this.metadata.put(HttpHeaders.XkssServerSideEncryptionCustomerKey.toString(), value);
+    }
+    public String getSseCustomerKeyMD5(){
+    	return (String) this.metadata.get(HttpHeaders.XkssServerSideEncryptionCustomerKeyMD5.toString());
+    }
+    /**
+     * 仅供内部使用，设置加密请使用</br>{@link PutObjectRequest#setSseCustomerKey(SSECustomerKey key) }</br>{@link UploadPartRequest#setSseCustomerKey(SSECustomerKey key) }
+     */
+    public void setSseCustomerKeyMD5(String value){
+    	this.metadata.put(HttpHeaders.XkssServerSideEncryptionCustomerKeyMD5.toString(), value);
     }
     public Object getMeta(String key)
     {

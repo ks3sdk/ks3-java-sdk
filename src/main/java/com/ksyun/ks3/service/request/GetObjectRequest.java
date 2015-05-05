@@ -10,9 +10,12 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import com.ksyun.ks3.dto.ResponseHeaderOverrides;
+import com.ksyun.ks3.dto.SSECustomerKey;
 import com.ksyun.ks3.http.HttpHeaders;
 import com.ksyun.ks3.http.HttpMethod;
+import com.ksyun.ks3.http.Request;
 import com.ksyun.ks3.utils.DateUtils;
+import com.ksyun.ks3.utils.HttpUtils;
 import com.ksyun.ks3.utils.DateUtils.DATETIME_PROTOCOL;
 import com.ksyun.ks3.utils.StringUtils;
 
@@ -27,7 +30,9 @@ import com.ksyun.ks3.utils.StringUtils;
  * <p>支持重写返回的http headers,通过修改overrides实现</p>
  **/
 public class GetObjectRequest extends Ks3WebServiceRequest {
-	private String range = null;
+	private String bucket;
+	private String key;
+	private long [] range = null;
 	/**
 	 * object的etag能匹配到则返回，否则返回结果的ifPreconditionSuccess为false，object为空
 	 */
@@ -49,48 +54,53 @@ public class GetObjectRequest extends Ks3WebServiceRequest {
 	 */
 	private ResponseHeaderOverrides overrides = new ResponseHeaderOverrides();
 	/**
+	 * 指定服务端加密使用的算法及key
+	 */
+	private SSECustomerKey sseCustomerKey;
+	/**
 	 * 
 	 * @param bucketname
 	 * @param key
 	 */
 	public GetObjectRequest(String bucketname,String key)
 	{
-		this.setBucketname(bucketname);
-		this.setObjectkey(key);
-	}
-	@Override
-	protected void configHttpRequest() {
-		this.setHttpMethod(HttpMethod.GET);
-		if(!StringUtils.isBlank(range))
-			this.addHeader(HttpHeaders.Range,range);
-		if(matchingETagConstraints.size()>0)
-			this.addHeader(HttpHeaders.IfMatch, StringUtils.join(matchingETagConstraints, ","));
-		if(nonmatchingEtagConstraints.size()>0)
-			this.addHeader(HttpHeaders.IfNoneMatch, StringUtils.join(nonmatchingEtagConstraints, ","));
-		if(this.unmodifiedSinceConstraint !=null)
-			this.addHeader(HttpHeaders.IfUnmodifiedSince, DateUtils.convertDate2Str(this.unmodifiedSinceConstraint, DATETIME_PROTOCOL.RFC1123).toString());
-		if(this.modifiedSinceConstraint !=null)
-			this.addHeader(HttpHeaders.IfModifiedSince, DateUtils.convertDate2Str(this.modifiedSinceConstraint, DATETIME_PROTOCOL.RFC1123).toString());
-		this.getParams().putAll(this.getOverrides().getOverrides());
+		this.bucket = bucketname;
+		this.key = key;
 	}
 
 	@Override
-	protected void validateParams() throws IllegalArgumentException {
-		if(StringUtils.isBlank(this.getBucketname()))
+	public void validateParams() throws IllegalArgumentException {
+		if(StringUtils.isBlank(this.bucket))
 			throw notNull("bucketname");
-		if(StringUtils.isBlank(this.getObjectkey()))
+		if(StringUtils.isBlank(this.key))
 			throw notNull("objectkey");
-		if(!StringUtils.isBlank(range))
-		{
-			if(!range.startsWith("bytes="))
-				throw notCorrect("Range",range," bytes=x-y,y>=x");
-		}
 	}
-	public String getRange() {
+	
+	public String getBucket() {
+		return bucket;
+	}
+
+	public void setBucket(String bucket) {
+		this.bucket = bucket;
+	}
+
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
+	}
+
+	public void setRange(long[] range) {
+		this.range = range;
+	}
+
+	public long [] getRange() {
 		return range;
 	}
 	public void setRange(long start,long end) {
-		this.range = "bytes="+start+"-"+end;
+		this.range = new long[]{start,end};
 	}
 	/**
 	 * object的etag能匹配到则返回，否则返回结果的ifPreconditionSuccess为false，object为空
@@ -149,6 +159,32 @@ public class GetObjectRequest extends Ks3WebServiceRequest {
 	 */
 	public void setOverrides(ResponseHeaderOverrides overrides) {
 		this.overrides = overrides;
+	}
+	public SSECustomerKey getSseCustomerKey() {
+		return sseCustomerKey;
+	}
+	public void setSseCustomerKey(SSECustomerKey sseCustomerKey) {
+		this.sseCustomerKey = sseCustomerKey;
+	}
+	
+	@Override
+	public void buildRequest(Request request) {
+		request.setMethod(HttpMethod.GET);
+		request.setBucket(bucket);
+		request.setKey(key);
+		if(range!=null&&range.length==2)
+			request.addHeader(HttpHeaders.Range,"bytes="+range[0]+"-"+range[1]);
+		if(matchingETagConstraints.size()>0)
+			request.addHeader(HttpHeaders.IfMatch, StringUtils.join(matchingETagConstraints, ","));
+		if(nonmatchingEtagConstraints.size()>0)
+			request.addHeader(HttpHeaders.IfNoneMatch, StringUtils.join(nonmatchingEtagConstraints, ","));
+		if(this.unmodifiedSinceConstraint !=null)
+			request.addHeader(HttpHeaders.IfUnmodifiedSince, DateUtils.convertDate2Str(this.unmodifiedSinceConstraint, DATETIME_PROTOCOL.RFC1123).toString());
+		if(this.modifiedSinceConstraint !=null)
+			request.addHeader(HttpHeaders.IfModifiedSince, DateUtils.convertDate2Str(this.modifiedSinceConstraint, DATETIME_PROTOCOL.RFC1123).toString());
+		request.getQueryParams().putAll(this.getOverrides().getOverrides());
+		//添加服务端加密相关
+		request.getHeaders().putAll(HttpUtils.convertSSECustomerKey2Headers(sseCustomerKey));
 	}
 	
 }

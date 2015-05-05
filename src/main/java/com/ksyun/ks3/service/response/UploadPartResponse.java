@@ -2,7 +2,6 @@ package com.ksyun.ks3.service.response;
 
 import com.ksyun.ks3.dto.PartETag;
 import com.ksyun.ks3.http.HttpHeaders;
-import com.ksyun.ks3.service.response.support.Md5CheckAble;
 
 /**
  * @author lijunwei[lijunwei@kingsoft.com]  
@@ -11,7 +10,7 @@ import com.ksyun.ks3.service.response.support.Md5CheckAble;
  * 
  * @description 
  **/
-public class UploadPartResponse extends Ks3WebServiceDefaultResponse<PartETag> implements Md5CheckAble{
+public class UploadPartResponse extends Ks3WebServiceDefaultResponse<PartETag>{
 
 	public int[] expectedStatus() {
 		return new int[]{200};
@@ -21,8 +20,9 @@ public class UploadPartResponse extends Ks3WebServiceDefaultResponse<PartETag> i
 	public void preHandle() {
 		result = new PartETag();
 		result.seteTag(this.getHeader(HttpHeaders.ETag.toString()));
-	}
-	public String getETag() {
-		return this.getHeader(HttpHeaders.ETag.toString());
+		result.setSseAlgorithm(super.getHeader(HttpHeaders.XKssServerSideEncryption.toString()));
+		result.setSseCustomerAlgorithm(super.getHeader(HttpHeaders.XKssServerSideEncryptionCustomerAlgorithm.toString()));
+		result.setSseCustomerKeyMD5(super.getHeader(HttpHeaders.XkssServerSideEncryptionCustomerKeyMD5.toString()));
+		result.setSseKMSKeyId(super.getHeader(HttpHeaders.XKssServerSideEncryptionKMSKeyId.toString()));
 	}
 }

@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 
 import com.ksyun.ks3.http.HttpHeaders;
 import com.ksyun.ks3.http.HttpMethod;
+import com.ksyun.ks3.http.Request;
 import com.ksyun.ks3.service.request.CreateBucketRequest;
 
 /**
@@ -22,8 +23,8 @@ public class ErrorCannedAclCreateBucketRequest extends CreateBucketRequest{
 		// TODO Auto-generated constructor stub
 	}
 	@Override
-	protected void configHttpRequest() {
-		this.setHttpMethod(HttpMethod.PUT);
-		this.addHeader(HttpHeaders.CannedAcl.toString(),acl);
+	public void buildRequest(Request req){
+		super.buildRequest(req);
+		req.addHeader(HttpHeaders.CannedAcl, acl);
 	}
 }

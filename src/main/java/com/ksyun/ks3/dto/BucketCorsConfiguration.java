@@ -12,7 +12,7 @@ import com.ksyun.ks3.utils.StringUtils;
  * 
  * @description bucket的跨域资源共享配置
  **/
-public class BucketCorsConfiguration {
+public class BucketCorsConfiguration extends Ks3Result{
 	//一系列的跨域资源共享规则
 	private List<CorsRule> rules = new ArrayList<CorsRule>();
 

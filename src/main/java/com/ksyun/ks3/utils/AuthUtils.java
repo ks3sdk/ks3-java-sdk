@@ -19,7 +19,10 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.ksyun.ks3.config.ClientConfig;
 import com.ksyun.ks3.dto.Authorization;
+import com.ksyun.ks3.http.HttpHeaders;
+import com.ksyun.ks3.http.Request;
 import com.ksyun.ks3.service.request.Ks3WebServiceRequest;
 import com.ksyun.ks3.utils.DateUtils.DATETIME_PROTOCOL;
 
@@ -32,10 +35,10 @@ import com.ksyun.ks3.utils.DateUtils.DATETIME_PROTOCOL;
  **/
 public class AuthUtils {
 	private static final Log log = LogFactory.getLog(AuthUtils.class); 
-	public static String calcAuthorization (Authorization auth,Ks3WebServiceRequest request) throws SignatureException
+	public static String calcAuthorization (Authorization auth,Request request) throws SignatureException
 	{
 		String signature = calcSignature(auth.getAccessKeySecret(),request);
-		String value = "KSS "+auth.getAccessKeyId()+":"+signature;
+		String value = ClientConfig.getConfig().getStr(ClientConfig.AUTH_HEADER_PREFIX)+" "+auth.getAccessKeyId()+":"+signature;
 		return value;
 	}
 	//post表单时的签名
@@ -48,7 +51,7 @@ public class AuthUtils {
 	 */
 	public static String calcSignature(String accessKeySecret,String policy) throws SignatureException{
 		String signStr = policy;
-		log.info("StringToSign:"+signStr);
+		log.debug("StringToSign:"+signStr);
 		return calculateRFC2104HMAC(signStr,accessKeySecret);
 	}
 	//post表单时的policy
@@ -63,7 +66,7 @@ public class AuthUtils {
 		String policy = "{\"expiration\": \""
 						+DateUtils.convertDate2Str(expiration, DATETIME_PROTOCOL.ISO8861)
 						+"\",\"conditions\": [ {\"bucket\": \""+bucket+"\"}]}";
-		log.info("policy:"+policy);
+		log.debug("policy:"+policy);
 		try {
 			String _policy = new String(Base64.encodeBase64(policy.getBytes("UTF-8")),"UTF-8");
 			return _policy;
@@ -85,20 +88,19 @@ public class AuthUtils {
 	                requestMethod,"","",String.valueOf(_signDate),resource
 	        }));
 	    String signStr = StringUtils.join(signList.toArray(), "\n");
-	    log.info("StringToSign:"+signStr.replace("\n","\\n"));
+	    log.debug("StringToSign:"+signStr.replace("\n","\\n"));
 		return calculateRFC2104HMAC(signStr, accessKeySecret);
 	}
 	//普通
-	public static String calcSignature (String accessKeySecret,Ks3WebServiceRequest request) throws SignatureException
+	public static String calcSignature (String accessKeySecret,Request request) throws SignatureException
 	{
         String resource = CanonicalizedKSSResource(request);
-        String requestMethod = request.getHttpMethod().toString();
-        String contentMd5 = request.getContentMD5()==null?"":request.getContentMD5();
-        String contentType = request.getContentType()==null?"": request.getContentType();
-
+        String requestMethod = request.getMethod().toString();
+        String contentMd5 = request.getHeaders().containsKey(HttpHeaders.ContentMD5.toString())?request.getHeaders().get(HttpHeaders.ContentMD5.toString()):"";
+        String contentType = request.getHeaders().containsKey(HttpHeaders.ContentType.toString())?request.getHeaders().get(HttpHeaders.ContentType.toString()):"";
+        request.addHeaderIfNotContains(HttpHeaders.Date.toString(), DateUtils.convertDate2Str(new Date(), DATETIME_PROTOCOL.RFC1123));
         
-        String _signDate = DateUtils.convertDate2Str(request.getDate(),
-        		DateUtils.DATETIME_PROTOCOL.RFC1123);
+        String _signDate = request.getHeaders().get(HttpHeaders.Date.toString());
 
         List<String> signList = new ArrayList<String>();
         signList.addAll(Arrays.asList(new String[] {
@@ -114,16 +116,16 @@ public class AuthUtils {
         
         String signStr = StringUtils.join(signList.toArray(), "\n");
         
-        log.info("StringToSign:"+signStr.replace("\n","\\n"));
+        log.debug("StringToSign:"+signStr.replace("\n","\\n"));
         
         String serverSignature = calculateRFC2104HMAC(signStr, accessKeySecret);
         return serverSignature;
 	}
-    public static String CanonicalizedKSSResource(Ks3WebServiceRequest request) {
+    public static String CanonicalizedKSSResource(Request request) {
     	boolean escapeDoubleSlash = true;
 
-        String bucketName = request.getBucketname();
-        String objectKey = request.getObjectkey();
+        String bucketName = request.getBucket();
+        String objectKey = request.getKey();
 
         StringBuffer buffer = new StringBuffer();
         buffer.append("/");
@@ -141,14 +143,14 @@ public class AuthUtils {
         	resource = resource.replace("//", "/%2F");
         }
 
-        String queryParams = encodeParams(request.getParams());
+        String queryParams = encodeParams(request.getQueryParams());
         if (queryParams != null && !queryParams.equals(""))
         	resource = resource + "?" + queryParams;
         return resource;
     }
-    private static String CanonicalizedKSSHeaders(Ks3WebServiceRequest request) {
-    	String prefix = "x-kss";
-        Map<String, String> headers = request.getHeader();
+    private static String CanonicalizedKSSHeaders(Request request) {
+    	String prefix = ClientConfig.getConfig().getStr(ClientConfig.HEADER_PREFIX);
+        Map<String, String> headers = request.getHeaders();
 
         List<String> headList = new ArrayList<String>();
 
@@ -168,7 +170,7 @@ public class AuthUtils {
         StringBuffer buffer = new StringBuffer();
         for (int i = 0; i < headList.size(); i++) {
             String _key = headList.get(i);
-            buffer.append(headList.get(i) + ":" + headers.get(_key));
+            buffer.append(headList.get(i).toLowerCase() + ":" + headers.get(_key));
             if (i < (headList.size() - 1))
                 buffer.append("\n");
         }

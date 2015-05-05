@@ -12,8 +12,7 @@ import com.ksyun.ks3.utils.StringUtils;
  * 
  * @description Ks3用户
  **/
-public class Owner implements Serializable{
-    private static final long serialVersionUID = -8916731456944569115L;
+public class Owner{
 
     private String displayName;
     private String id;

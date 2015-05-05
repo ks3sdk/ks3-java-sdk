@@ -3,6 +3,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
 
+import com.ksyun.ks3.config.ClientConfig;
 import com.ksyun.ks3.config.Constants;
 import com.ksyun.ks3.dto.HeadObjectResult;
 import com.ksyun.ks3.dto.ObjectMetadata;
@@ -37,7 +38,7 @@ public class HeadObjectResponse extends
 			Header[] headers = this.getResponse().getAllHeaders();
 			for (int i = 0; i < headers.length; i++) {
 				if (headers[i].getName().startsWith(
-						Constants.KS3_USER_META_PREFIX)) {
+						ClientConfig.getConfig().getStr(ClientConfig.USER_META_PREFIX))) {
 					metaData.setUserMeta(headers[i].getName(),
 							headers[i].getValue());
 				} else {

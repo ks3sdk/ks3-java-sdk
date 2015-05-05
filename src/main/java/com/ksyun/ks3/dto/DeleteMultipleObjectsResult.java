@@ -12,7 +12,7 @@ import com.ksyun.ks3.utils.StringUtils;
  * 
  * @description 批量删除结果
  **/
-public class DeleteMultipleObjectsResult {
+public class DeleteMultipleObjectsResult extends Ks3Result{
 	/**
 	 * 删除成功的object key
 	 */

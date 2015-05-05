@@ -18,9 +18,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.ksyun.ks3.LengthCheckInputStream;
 import com.ksyun.ks3.MD5DigestCalculatingInputStream;
 import com.ksyun.ks3.RepeatableFileInputStream;
 import com.ksyun.ks3.RepeatableInputStream;
+import com.ksyun.ks3.config.ClientConfig;
 import com.ksyun.ks3.config.Constants;
 import com.ksyun.ks3.dto.AccessControlList;
 import com.ksyun.ks3.dto.CallBackConfiguration;
@@ -30,12 +32,14 @@ import com.ksyun.ks3.dto.Adp;
 import com.ksyun.ks3.dto.Grant;
 import com.ksyun.ks3.dto.ObjectMetadata;
 import com.ksyun.ks3.dto.Permission;
+import com.ksyun.ks3.dto.SSECustomerKey;
+import com.ksyun.ks3.dto.SSEKssKMSParams;
 import com.ksyun.ks3.exception.Ks3ClientException;
 import com.ksyun.ks3.exception.client.ClientFileNotFoundException;
 import com.ksyun.ks3.http.HttpHeaders;
 import com.ksyun.ks3.http.HttpMethod;
 import com.ksyun.ks3.http.Mimetypes;
-import com.ksyun.ks3.service.request.support.MD5CalculateAble;
+import com.ksyun.ks3.http.Request;
 import com.ksyun.ks3.utils.DateUtils;
 import com.ksyun.ks3.utils.HttpUtils;
 import com.ksyun.ks3.utils.Md5Utils;
@@ -59,12 +63,20 @@ import com.ksyun.ks3.utils.DateUtils.DATETIME_PROTOCOL;
  *              -length,否则有可能导致jvm内存溢出。可以再metadata中指定contentMD5
  *              </p>
  **/
-public class PutObjectRequest extends Ks3WebServiceRequest implements
-		MD5CalculateAble {
+public class PutObjectRequest extends Ks3WebServiceRequest implements SSECustomerKeyRequest{
+	/**
+	 * 目标bucket
+	 */
+	private String bucket;
+	/**
+	 * 目标key
+	 */
+	private String key;
 	/**
 	 * 要上传的文件
 	 */
 	private File file;
+	private InputStream inputStream;
 	/**
 	 * 将要上传的object的元数据
 	 */
@@ -91,7 +103,11 @@ public class PutObjectRequest extends Ks3WebServiceRequest implements
 	private String notifyURL;
 	private String redirectLocation;
 	
-	private String serverSideEncryption;
+	/**
+	 * 使用用户指定的key进行服务端加密
+	 */
+	private SSECustomerKey sseCustomerKey;
+	
 	/**
 	 * 
 	 * @param bucketname
@@ -100,8 +116,8 @@ public class PutObjectRequest extends Ks3WebServiceRequest implements
 	 *            要上传的文件
 	 */
 	public PutObjectRequest(String bucketname, String key, File file) {
-		this.setBucketname(bucketname);
-		this.setObjectkey(key);
+		this.bucket = bucketname;
+		this.key = key;
 		this.setFile(file);
 	}
 
@@ -115,133 +131,21 @@ public class PutObjectRequest extends Ks3WebServiceRequest implements
 	 */
 	public PutObjectRequest(String bucketname, String key,
 			InputStream inputStream, ObjectMetadata metadata) {
-		this.setBucketname(bucketname);
-		this.setObjectkey(key);
+		if(metadata == null)
+			metadata = new ObjectMetadata();
+		this.bucket = bucketname;
+		this.key = key;
 		this.setObjectMeta(metadata);
-		this.setRequestBody(new RepeatableInputStream(inputStream,
-				Constants.DEFAULT_STREAM_BUFFER_SIZE));
-	}
-
-	@SuppressWarnings("deprecation")
-	@Override
-	protected void configHttpRequest() {
-		this.setContentType("binary/octet-stream");
-		if (this.objectMeta == null)
-			this.objectMeta = new ObjectMetadata();
-		/**
-		 * 设置request body meta
-		 */
-		if (file != null) {
-			try {
-				this.setRequestBody(new RepeatableFileInputStream(file));
-			} catch (FileNotFoundException e) {
-				throw new ClientFileNotFoundException(e);
-			}
-			if (StringUtils.isBlank(objectMeta.getContentType()))
-				objectMeta.setContentType(Mimetypes.getInstance().getMimetype(
-						file));
-			long length = file.length();
-			long lengthInmeta = objectMeta.getContentLength();
-			if(lengthInmeta==0l||lengthInmeta>length)
-				objectMeta.setContentLength(length);
-			try {
-				String contentMd5_b64 = Md5Utils.md5AsBase64(file);
-				this.objectMeta.setContentMD5(contentMd5_b64);
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-				throw new ClientFileNotFoundException(e);
-			} catch (IOException e) {
-				e.printStackTrace();
-				throw new Ks3ClientException("计算文件的MD5值出错 (" + e + ")", e);
-			}
-		}
-		// 根据object key匹配content-type
-		if (StringUtils.isBlank(objectMeta.getContentType()))
-			objectMeta.setContentType(Mimetypes.getInstance().getMimetype(
-					super.getObjectkey()));
-		if (!StringUtils.isBlank(this.objectMeta.getContentType()))
-			this.addHeader(HttpHeaders.ContentType,
-					this.objectMeta.getContentType());
-		if (!StringUtils.isBlank(this.objectMeta.getCacheControl()))
-			this.addHeader(HttpHeaders.CacheControl,
-					this.objectMeta.getCacheControl());
-		if (!StringUtils.isBlank(this.objectMeta.getContentDisposition()))
-			this.addHeader(HttpHeaders.ContentDisposition,
-					this.objectMeta.getContentDisposition());
-		if (!StringUtils.isBlank(this.objectMeta.getContentEncoding()))
-			this.addHeader(HttpHeaders.ContentEncoding,
-					this.objectMeta.getContentEncoding());
-		if (this.objectMeta.getContentLength() > 0)
-			this.addHeader(HttpHeaders.ContentLength,
-					String.valueOf(this.objectMeta.getContentLength()));
-		if (this.objectMeta.getHttpExpiresDate() != null)
-			this.addHeader(
-					HttpHeaders.Expires,
-					DateUtils.convertDate2Str(
-							this.objectMeta.getHttpExpiresDate(),
-							DATETIME_PROTOCOL.RFC1123).toString());
-		if (this.objectMeta.getContentMD5() != null)
-			this.addHeader(HttpHeaders.ContentMD5,
-					this.objectMeta.getContentMD5());
-		// 添加user meta
-		for (Entry<String, String> entry : this.objectMeta.getAllUserMeta()
-				.entrySet()) {
-			if (entry.getKey().startsWith(Constants.KS3_USER_META_PREFIX))
-				this.addHeader(entry.getKey(), entry.getValue());
-		}
-		// acl
-		if (this.cannedAcl != null) {
-			this.addHeader(HttpHeaders.CannedAcl.toString(),
-					cannedAcl.toString());
-		}
-		if (this.acl != null) {
-			this.getHeader().putAll(HttpUtils.convertAcl2Headers(acl));
-		}
-		if (this.redirectLocation != null) {
-			this.addHeader(HttpHeaders.XKssWebsiteRedirectLocation,
-					this.redirectLocation);
-		}
-		if (this.callBackConfiguration != null) {
-			this.addHeader(HttpHeaders.XKssCallbackUrl,
-					callBackConfiguration.getCallBackUrl());
-			StringBuffer body = new StringBuffer();
-			if (callBackConfiguration.getBodyMagicVariables() != null) {
-				for (Entry<String, MagicVariables> mvs : callBackConfiguration
-						.getBodyMagicVariables().entrySet()) {
-					body.append(mvs.getKey() + "=${" + mvs.getValue() + "}&");
-				}
-			}
-			if (callBackConfiguration.getBodyKssVariables() != null) {
-				for (Entry<String, String> mvs : callBackConfiguration
-						.getBodyKssVariables().entrySet()) {
-					body.append(mvs.getKey() + "=${kss-" + mvs.getKey() + "}&");
-					this.addHeader("kss-" + mvs.getKey(), mvs.getValue());
-				}
-			}
-			String bodyString = body.toString();
-			if (bodyString.endsWith("&")) {
-				bodyString = bodyString.substring(0, bodyString.length() - 1);
-			}
-			this.addHeader(HttpHeaders.XKssCallbackBody, bodyString);
-		}
-		if (this.adps != null && adps.size() > 0) {
-			this.addHeader(HttpHeaders.AsynchronousProcessingList,
-					URLEncoder.encode(HttpUtils.convertAdps2String(adps)));
-			if (!StringUtils.isBlank(notifyURL))
-				this.addHeader(HttpHeaders.NotifyURL, notifyURL);
-		}
-		if(!StringUtils.isBlank(this.serverSideEncryption))
-			this.addHeader(HttpHeaders.ServerSideEncryption, this.serverSideEncryption);
-		this.setHttpMethod(HttpMethod.PUT);
+		this.inputStream = inputStream;
 	}
 
 	@Override
-	protected void validateParams() throws IllegalArgumentException {
-		if (StringUtils.isBlank(this.getBucketname()))
+	public void validateParams() throws IllegalArgumentException {
+		if (StringUtils.isBlank(this.bucket))
 			throw notNull("bucketname");
-		if (StringUtils.isBlank(this.getObjectkey()))
+		if (StringUtils.isBlank(this.key))
 			throw notNull("objectkey");
-		if (file == null && this.getRequestBody() == null)
+		if (file == null && this.inputStream == null)
 			throw notNull("file", "inputStream");
 		if (this.redirectLocation != null) {
 			if (!this.redirectLocation.startsWith("/")
@@ -279,12 +183,31 @@ public class PutObjectRequest extends Ks3WebServiceRequest implements
 				throw notNullInCondition("notifyURL", "adps is not null");
 		}
 	}
-	public void setBucketName(String bucket){
-		super.setBucketname(bucket);
+	
+	public String getBucket() {
+		return bucket;
 	}
-	public void setObjectKey(String key){
-		super.setObjectkey(key);
+
+	public void setBucket(String bucket) {
+		this.bucket = bucket;
 	}
+
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
+	}
+
+	public InputStream getInputStream() {
+		return inputStream;
+	}
+
+	public void setInputStream(InputStream inputStream) {
+		this.inputStream = inputStream;
+	}
+
 	public File getFile() {
 		return file;
 	}
@@ -292,12 +215,6 @@ public class PutObjectRequest extends Ks3WebServiceRequest implements
 	public void setFile(File file) {
 		this.file = file;
 	}
-	
-	public void setInputStream(InputStream inputStream){
-		this.setRequestBody(new RepeatableInputStream(inputStream,
-				Constants.DEFAULT_STREAM_BUFFER_SIZE));
-	}
-
 	public ObjectMetadata getObjectMeta() {
 		return objectMeta;
 	}
@@ -355,20 +272,114 @@ public class PutObjectRequest extends Ks3WebServiceRequest implements
 		this.notifyURL = notifyURL;
 	}
 
-	public String getMd5() {
-		if (!StringUtils.isBlank(this.getContentMD5()))
-			return this.getContentMD5();
-		else
-			return com.ksyun.ks3.utils.Base64
-					.encodeAsString(((MD5DigestCalculatingInputStream) super
-							.getRequestBody()).getMd5Digest());
+	public SSECustomerKey getSseCustomerKey() {
+		return sseCustomerKey;
 	}
 
-	public String getServerSideEncryption() {
-		return serverSideEncryption;
+	public void setSseCustomerKey(SSECustomerKey sseCustomerKey) {
+		this.sseCustomerKey = sseCustomerKey;
 	}
 
-	public void setServerSideEncryption(String serverSideEncryption) {
-		this.serverSideEncryption = serverSideEncryption;
+	@Override
+	public void buildRequest(Request request) {
+		request.setMethod(HttpMethod.PUT);
+		request.setBucket(bucket);
+		request.setKey(key);
+		request.addHeader(HttpHeaders.ContentType,"binary/octet-stream");
+		if (this.objectMeta == null)
+			this.objectMeta = new ObjectMetadata();
+		
+		InputStream input= null;
+		/**
+		 * 设置request body meta
+		 */
+		if (file != null) {
+			try {
+				input = new RepeatableFileInputStream(file);
+			} catch (FileNotFoundException e) {
+				throw new ClientFileNotFoundException(e);
+			}
+			if (StringUtils.isBlank(objectMeta.getContentType()))
+				objectMeta.setContentType(Mimetypes.getInstance().getMimetype(
+						file));
+			long length = file.length();
+			objectMeta.setContentLength(length);
+			try {
+				String contentMd5_b64 = Md5Utils.md5AsBase64(file);
+				this.objectMeta.setContentMD5(contentMd5_b64);
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+				if(input!=null)
+					try {
+						input.close();
+					} catch (IOException e1) {
+					}
+				throw new ClientFileNotFoundException(e);
+			} catch (IOException e) {
+				if(input!=null)
+					try {
+						input.close();
+					} catch (IOException e1) {
+					}
+				throw new Ks3ClientException("计算文件的MD5值出错 (" + e + ")", e);
+			}
+		}else{
+			input = inputStream;
+		}
+		long length = objectMeta.getContentLength();
+		if(length > 0)
+			request.setContent(new LengthCheckInputStream(input,length,false));
+		else{
+			request.setContent(input);
+		}
+		// 根据object key匹配content-type
+		if (StringUtils.isBlank(objectMeta.getContentType()))
+			objectMeta.setContentType(Mimetypes.getInstance().getMimetype(
+					key));
+		//添加元数据
+		request.getHeaders().putAll(HttpUtils.convertMeta2Headers(objectMeta));
+		//添加服务端加密相关
+		request.getHeaders().putAll(HttpUtils.convertSSECustomerKey2Headers(sseCustomerKey));
+		// acl
+		if (this.cannedAcl != null) {
+			request.addHeader(HttpHeaders.CannedAcl.toString(),
+					cannedAcl.toString());
+		}
+		if (this.acl != null) {
+			request.getHeaders().putAll(HttpUtils.convertAcl2Headers(acl));
+		}
+		if (this.redirectLocation != null) {
+			request.addHeader(HttpHeaders.XKssWebsiteRedirectLocation,
+					this.redirectLocation);
+		}
+		if (this.callBackConfiguration != null) {
+			request.addHeader(HttpHeaders.XKssCallbackUrl,
+					callBackConfiguration.getCallBackUrl());
+			StringBuffer body = new StringBuffer();
+			if (callBackConfiguration.getBodyMagicVariables() != null) {
+				for (Entry<String, MagicVariables> mvs : callBackConfiguration
+						.getBodyMagicVariables().entrySet()) {
+					body.append(mvs.getKey() + "=${" + mvs.getValue() + "}&");
+				}
+			}
+			if (callBackConfiguration.getBodyKssVariables() != null) {
+				for (Entry<String, String> mvs : callBackConfiguration
+						.getBodyKssVariables().entrySet()) {
+					body.append(mvs.getKey() + "=${kss-" + mvs.getKey() + "}&");
+					request.addHeader("kss-" + mvs.getKey(), mvs.getValue());
+				}
+			}
+			String bodyString = body.toString();
+			if (bodyString.endsWith("&")) {
+				bodyString = bodyString.substring(0, bodyString.length() - 1);
+			}
+			request.addHeader(HttpHeaders.XKssCallbackBody, bodyString);
+		}
+		if (this.adps != null && adps.size() > 0) {
+			request.addHeader(HttpHeaders.AsynchronousProcessingList,
+					URLEncoder.encode(HttpUtils.convertAdps2String(adps)));
+			if (!StringUtils.isBlank(notifyURL))
+				request.addHeader(HttpHeaders.NotifyURL, HttpUtils.urlEncode(notifyURL,false));
+		}
 	}
 }

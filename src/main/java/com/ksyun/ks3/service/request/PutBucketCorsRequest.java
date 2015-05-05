@@ -9,8 +9,10 @@ import com.ksyun.ks3.config.Constants;
 import com.ksyun.ks3.dto.BucketCorsConfiguration;
 import com.ksyun.ks3.dto.CorsRule;
 import com.ksyun.ks3.dto.CorsRule.AllowedMethods;
+import com.ksyun.ks3.http.HttpHeaders;
 import com.ksyun.ks3.http.HttpMethod;
-import com.ksyun.ks3.service.request.support.MD5CalculateAble;
+import com.ksyun.ks3.http.Request;
+import com.ksyun.ks3.utils.Md5Utils;
 import com.ksyun.ks3.utils.StringUtils;
 import com.ksyun.ks3.utils.XmlWriter;
 
@@ -24,23 +26,62 @@ import static com.ksyun.ks3.exception.client.ClientIllegalArgumentExceptionGener
  * 
  * @description 设置bucket的跨域资源共享
  **/
-public class PutBucketCorsRequest extends Ks3WebServiceRequest implements MD5CalculateAble{
+public class PutBucketCorsRequest extends Ks3WebServiceRequest{
+	private String bucket;
 	//bucket跨域资源共享规则配置
-	public BucketCorsConfiguration bucketCorsConfiguration;
+	private BucketCorsConfiguration bucketCorsConfiguration;
 	/**
 	 * 
 	 * @param bucketName
 	 * @param bucketCorsConfiguration {@link BucketCorsConfiguration}
 	 */
 	public PutBucketCorsRequest(String bucketName,BucketCorsConfiguration bucketCorsConfiguration){
-		super.setBucketname(bucketName);
+		this.bucket = bucketName;
 		this.setBucketCorsConfiguration(bucketCorsConfiguration);
 	}
+
 	@Override
-	protected void configHttpRequest() {	
-		this.setHttpMethod(HttpMethod.PUT);
-		this.addParams("cors","");
-		this.setContentType("application/xml");
+	public void validateParams() throws IllegalArgumentException {
+		if(StringUtils.isBlank(this.bucket))
+			throw notNull("bucketName");
+		if(bucketCorsConfiguration==null)
+			throw notNull("bucketCorsConfiguration");
+		if(bucketCorsConfiguration.getRules()==null||bucketCorsConfiguration.getRules().size()==0)
+			throw notNull("bucketCorsConfiguration.rules");
+		if(bucketCorsConfiguration.getRules().size()>Constants.corsMaxRules)
+			throw between("bucketCorsConfiguration.rules.size()",String.valueOf(bucketCorsConfiguration.getRules().size()),"0",String.valueOf(Constants.corsMaxRules));
+		List<CorsRule> rules = bucketCorsConfiguration.getRules();
+		for(CorsRule rule:rules){
+			if(rule.getAllowedMethods()==null||rule.getAllowedMethods().size()==0){
+				throw notNull("bucketCorsConfiguration.rules.allowedMethods");
+			}
+			if(rule.getAllowedOrigins()==null||rule.getAllowedOrigins().size()==0){
+				throw notNull("bucketCorsConfiguration.rules.allowedOrigins");
+			}
+		}
+		
+	}
+	public BucketCorsConfiguration getBucketCorsConfiguration() {
+		return bucketCorsConfiguration;
+	}
+	public void setBucketCorsConfiguration(
+			BucketCorsConfiguration bucketCorsConfiguration) {
+		this.bucketCorsConfiguration = bucketCorsConfiguration;
+	}
+	
+	public String getBucket() {
+		return bucket;
+	}
+
+	public void setBucket(String bucket) {
+		this.bucket = bucket;
+	}
+
+	@Override
+	public void buildRequest(Request request) {
+		request.setMethod(HttpMethod.PUT);
+		request.setBucket(bucket);
+		request.addQueryParam("cors","");
 		XmlWriter writer = new XmlWriter();
 		writer.startWithNs("CORSConfiguration");
 		List<CorsRule> rules = bucketCorsConfiguration.getRules();
@@ -68,41 +109,8 @@ public class PutBucketCorsRequest extends Ks3WebServiceRequest implements MD5Cal
 			writer.end();
 		}
 		writer.end();
-		this.setRequestBody(new ByteArrayInputStream(writer.toString().getBytes()));
+		String xml = writer.toString();
+		request.addHeader(HttpHeaders.ContentMD5, Md5Utils.md5AsBase64(xml.getBytes()));
+		request.setContent(new ByteArrayInputStream(xml.getBytes()));
 	}
-
-	@Override
-	protected void validateParams() throws IllegalArgumentException {
-		if(StringUtils.isBlank(super.getBucketname()))
-			throw notNull("bucketName");
-		if(bucketCorsConfiguration==null)
-			throw notNull("bucketCorsConfiguration");
-		if(bucketCorsConfiguration.getRules()==null||bucketCorsConfiguration.getRules().size()==0)
-			throw notNull("bucketCorsConfiguration.rules");
-		if(bucketCorsConfiguration.getRules().size()>Constants.corsMaxRules)
-			throw between("bucketCorsConfiguration.rules.size()",String.valueOf(bucketCorsConfiguration.getRules().size()),"0",String.valueOf(Constants.corsMaxRules));
-		List<CorsRule> rules = bucketCorsConfiguration.getRules();
-		for(CorsRule rule:rules){
-			if(rule.getAllowedMethods()==null||rule.getAllowedMethods().size()==0){
-				throw notNull("bucketCorsConfiguration.rules.allowedMethods");
-			}
-			if(rule.getAllowedOrigins()==null||rule.getAllowedOrigins().size()==0){
-				throw notNull("bucketCorsConfiguration.rules.allowedOrigins");
-			}
-		}
-		
-	}
-	public BucketCorsConfiguration getBucketCorsConfiguration() {
-		return bucketCorsConfiguration;
-	}
-	public void setBucketCorsConfiguration(
-			BucketCorsConfiguration bucketCorsConfiguration) {
-		this.bucketCorsConfiguration = bucketCorsConfiguration;
-	}
-	public String getMd5() {
-		return com.ksyun.ks3.utils.Base64
-				.encodeAsString(((MD5DigestCalculatingInputStream)super.getRequestBody())
-						.getMd5Digest());
-	}
-
 }

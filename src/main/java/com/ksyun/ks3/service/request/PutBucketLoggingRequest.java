@@ -1,8 +1,10 @@
 package com.ksyun.ks3.service.request;
 
 import java.io.ByteArrayInputStream;
+
 import static com.ksyun.ks3.exception.client.ClientIllegalArgumentExceptionGenerator.notNull;
 import static com.ksyun.ks3.exception.client.ClientIllegalArgumentExceptionGenerator.notNullInCondition;
+
 import java.util.HashSet;
 
 import com.ksyun.ks3.dto.BucketLoggingStatus;
@@ -11,6 +13,7 @@ import com.ksyun.ks3.dto.GranteeEmail;
 import com.ksyun.ks3.dto.GranteeId;
 import com.ksyun.ks3.dto.GranteeUri;
 import com.ksyun.ks3.http.HttpMethod;
+import com.ksyun.ks3.http.Request;
 import com.ksyun.ks3.utils.StringUtils;
 import com.ksyun.ks3.utils.XmlWriter;
 
@@ -30,6 +33,7 @@ import com.ksyun.ks3.utils.XmlWriter;
  *              </p>
  **/
 public class PutBucketLoggingRequest extends Ks3WebServiceRequest {
+	private String bucket;
 	/**
 	 * 
 	 * @param bucketName
@@ -76,15 +80,56 @@ public class PutBucketLoggingRequest extends Ks3WebServiceRequest {
 	}
 
 	public PutBucketLoggingRequest(String bucketName) {
-		super.setBucketname(bucketName);
+		this.bucket = bucketName;
 	}
 
 	private BucketLoggingStatus bucketLoggingStatus = new BucketLoggingStatus();
 
 	@Override
-	protected void configHttpRequest() {
-		this.setHttpMethod(HttpMethod.PUT);
-		this.addParams("logging", null);
+	public void validateParams() throws IllegalArgumentException {
+		if (StringUtils.isBlank(this.bucket))
+			throw notNull("bucketname");
+		if (this.bucketLoggingStatus == null)
+			throw notNull("bucketLoggingStatus");
+		if (this.bucketLoggingStatus.isEnable()
+				&& this.bucketLoggingStatus.getTargetBucket() == null)
+			throw notNullInCondition("targetBucket", "enable 为 true");
+	}
+
+	public BucketLoggingStatus getBucketLoggingStatus() {
+		return bucketLoggingStatus;
+	}
+
+	public void setBucketLoggingStatus(BucketLoggingStatus bucketLoggingStatus) {
+		this.bucketLoggingStatus = bucketLoggingStatus;
+	}
+
+	/** 设置是否开启 */
+	public void setEnable(boolean enable) {
+		if (this.bucketLoggingStatus == null)
+			this.bucketLoggingStatus = new BucketLoggingStatus();
+		this.bucketLoggingStatus.setEnable(enable);
+	}
+
+	/** 设置日志文件存放位置 */
+	public void setTargetBucket(String bucket) {
+		if (this.bucketLoggingStatus == null)
+			this.bucketLoggingStatus = new BucketLoggingStatus();
+		this.bucketLoggingStatus.setTargetBucket(bucket);
+	}
+
+	/** 设置日志文件前缀 */
+	public void setTargetPrefix(String prefix) {
+		if (this.bucketLoggingStatus == null)
+			this.bucketLoggingStatus = new BucketLoggingStatus();
+		this.bucketLoggingStatus.setTargetPrefix(prefix);
+	}
+
+	@Override
+	public void buildRequest(Request request) {
+		request.setBucket(bucket);
+		request.setMethod(HttpMethod.PUT);
+		request.addQueryParam("logging", null);
 
 		XmlWriter writer = new XmlWriter();
 		writer.startWithNs("BucketLoggingStatus");
@@ -130,47 +175,15 @@ public class PutBucketLoggingRequest extends Ks3WebServiceRequest {
 		} else {
 			writer.end();
 		}
-		this.setRequestBody(new ByteArrayInputStream(writer.toString()
+		request.setContent(new ByteArrayInputStream(writer.toString()
 				.getBytes()));
 	}
 
-	@Override
-	protected void validateParams() throws IllegalArgumentException {
-		if (StringUtils.isBlank(super.getBucketname()))
-			throw notNull("bucketname");
-		if (this.bucketLoggingStatus == null)
-			throw notNull("bucketLoggingStatus");
-		if (this.bucketLoggingStatus.isEnable()
-				&& this.bucketLoggingStatus.getTargetBucket() == null)
-			throw notNullInCondition("targetBucket", "enable 为 true");
+	public String getBucket() {
+		return bucket;
 	}
 
-	public BucketLoggingStatus getBucketLoggingStatus() {
-		return bucketLoggingStatus;
-	}
-
-	public void setBucketLoggingStatus(BucketLoggingStatus bucketLoggingStatus) {
-		this.bucketLoggingStatus = bucketLoggingStatus;
-	}
-
-	/** 设置是否开启 */
-	public void setEnable(boolean enable) {
-		if (this.bucketLoggingStatus == null)
-			this.bucketLoggingStatus = new BucketLoggingStatus();
-		this.bucketLoggingStatus.setEnable(enable);
-	}
-
-	/** 设置日志文件存放位置 */
-	public void setTargetBucket(String bucket) {
-		if (this.bucketLoggingStatus == null)
-			this.bucketLoggingStatus = new BucketLoggingStatus();
-		this.bucketLoggingStatus.setTargetBucket(bucket);
-	}
-
-	/** 设置日志文件前缀 */
-	public void setTargetPrefix(String prefix) {
-		if (this.bucketLoggingStatus == null)
-			this.bucketLoggingStatus = new BucketLoggingStatus();
-		this.bucketLoggingStatus.setTargetPrefix(prefix);
+	public void setBucket(String bucket) {
+		this.bucket = bucket;
 	}
 }

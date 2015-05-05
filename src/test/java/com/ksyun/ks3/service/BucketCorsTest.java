@@ -68,7 +68,7 @@ public class BucketCorsTest extends Ks3ClientTest {
 				allowedOrigins.add("http://*.ele.com1");
 			}
 			List<String> exposedHeaders = new ArrayList<String>();
-			exposedHeaders.add(HttpHeaders.ServerSideEncryption.toString());
+			exposedHeaders.add(HttpHeaders.XKssServerSideEncryption.toString());
 			List<String> allowedHeaders = new ArrayList<String>();
 			allowedHeaders.add("*");
 
@@ -125,7 +125,7 @@ public class BucketCorsTest extends Ks3ClientTest {
 		allowedOrigins.add("http://*.ele.com1");
 		allowedOrigins.add("http://*.ele.com3");
 		List<String> exposedHeaders = new ArrayList<String>();
-		exposedHeaders.add(HttpHeaders.ServerSideEncryption.toString());
+		exposedHeaders.add(HttpHeaders.XKssServerSideEncryption.toString());
 		List<String> allowedHeaders = new ArrayList<String>();
 		allowedHeaders.add("*");
 

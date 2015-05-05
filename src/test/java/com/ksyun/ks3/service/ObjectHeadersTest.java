@@ -212,7 +212,6 @@ public class ObjectHeadersTest extends ObjectBeforeTest {
 		objectMeta.setContentMD5("123dbPZABzVDPALLG2yQ8w==");
 		objectMeta.setContentType("txt");
 		objectMeta.setHttpExpiresDate(new Date());
-		objectMeta.setHeader(HttpHeaders.Expect.toString(), "Expect: 100-continue");
 		
 		request.setObjectMeta(objectMeta);
 		request.setRedirectLocation("http://ks3.ksyun.com/");

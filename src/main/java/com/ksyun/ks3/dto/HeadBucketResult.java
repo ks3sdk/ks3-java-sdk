@@ -12,7 +12,7 @@ import com.ksyun.ks3.utils.StringUtils;
  * 
  * @description HEAD请求一个bucket
  **/
-public class HeadBucketResult {
+public class HeadBucketResult extends Ks3Result{
 	/**
 	 * http 状态码
 	 */

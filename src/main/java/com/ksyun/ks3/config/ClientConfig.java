@@ -101,11 +101,18 @@ public class ClientConfig {
 	 * httpclient配置  值为配置的key
 	 */
 	public static final String IS_PREEMPTIVE_BASIC_PROXY_AUTH = "httpclient.isPreemptiveBasicProxyAuth";
-	
+	/**
+	 * http 或者 https
+	 */
+	public static final String HTTP_PROTOCOL  = "httpclient.protocol ";
 	/**
 	 * Ks3服务地址
 	 */
 	public static final String END_POINT = "ks3client.endpoint";
+	/**
+	 * KS3 cdn服务地址
+	 */
+	public static final String 	CDN_END_POINT = "ks3client.cdn.endpoint";
 	/**
 	 * ks3 client auth加载器
 	 */
@@ -117,7 +124,25 @@ public class ClientConfig {
 	 * 1  kss.ksyun.com/bucket
 	 */
 	public static final String CLIENT_URLFORMAT = "ks3client.urlformat";
+	
 	/**
+	 * 特殊header的前缀
+	 */
+	public static final String HEADER_PREFIX = "ks3client.header.prefix";
+	/**
+	 * 用户元数据的前缀
+	 */
+	public static final String USER_META_PREFIX = "ks3client.usermeta.prefix";
+	/**
+	 * grantee alluser
+	 */
+	public static final String GRANTEE_ALLUSER = "ks3client.grantee.alluser";
+	/**
+	 * authoration header prefix
+	 */
+	public static final String AUTH_HEADER_PREFIX = "ks3client.auth.prefix";
+	
+ 	/**
 	 * 配置加载器列表
 	 */
 	private static List<ConfigLoader> configLoaders = new ArrayList<ConfigLoader>();
@@ -130,8 +155,18 @@ public class ClientConfig {
 	 * @param loader {@link ConfigLoader}
 	 */
 	public static void addConfigLoader(ConfigLoader loader) {
-		reload = true;
-		configLoaders.add(loader);
+		if(getConfigLoader(loader.getClass())==null){
+			reload = true;
+			configLoaders.add(loader);
+		}
+	}
+	public static ConfigLoader getConfigLoader(Class<?> clazz){
+		for(ConfigLoader loader : configLoaders){
+			if(loader.getClass().equals(clazz)){
+				return loader;
+			}
+		}
+		return null;
 	}
 
 	static {
@@ -160,20 +195,12 @@ public class ClientConfig {
 				for (int i = 0; i < configLoaders.size(); i++) {
 					ConfigLoader loader = configLoaders.get(i);
 					instance = loader.load(instance);
-					log.info("complete load config from "+loader.getClass());
+					log.debug("complete load config from "+loader.getClass());
 				}
 				reload = false;
 			}
 		}
 		return instance;
-	}
-	/**
-	 * 该方法获取到的ClientConfig一定是重新调用configLoaders加载过的
-	 */
-	public static ClientConfig reloadConfig()
-	{
-		reload = true;
-		return getConfig();
 	}
 	/**
 	 * 以字符串方式返回配置值
@@ -223,5 +250,8 @@ public class ClientConfig {
 		if ("null".equals(value))
 			value = null;
 		config.put(key.toLowerCase(), value);
+	}
+	public static boolean isAws(){
+		return getConfigLoader(AWSConfigLoader.class)==null?false:true;
 	}
 }

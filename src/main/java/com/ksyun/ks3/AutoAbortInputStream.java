@@ -36,6 +36,8 @@ public class AutoAbortInputStream extends FilterInputStream{
 		return i;
 	}
 	public void abort(){
+		if(this.request == null)
+			return;
 		if(this.request instanceof HttpRequestBase){
 			((HttpRequestBase) request).abort();
 		}

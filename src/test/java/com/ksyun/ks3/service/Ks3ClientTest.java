@@ -5,6 +5,7 @@ import java.util.Properties;
 
 import org.junit.Before;
 
+import com.ksyun.ks3.config.AWSConfigLoader;
 import com.ksyun.ks3.config.ClientConfig;
 import com.ksyun.ks3.dto.Authorization;
 import com.ksyun.ks3.http.Ks3CoreController;
@@ -37,6 +38,8 @@ public class Ks3ClientTest {
 	public void init() throws IOException {
 
 		ClientConfig.getConfig().set(ClientConfig.CLIENT_URLFORMAT, "1");
+		//nginx把数据刷到服务端需要时间较长
+		ClientConfig.getConfig().set(ClientConfig.SOCKET_TIMEOUT,"300000");
 		
 		
 		final Properties credential = new Properties();

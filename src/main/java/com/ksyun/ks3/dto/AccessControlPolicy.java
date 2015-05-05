@@ -13,7 +13,7 @@ import com.ksyun.ks3.utils.StringUtils;
  * @author LIJUNWEI
  *
  */
-public class AccessControlPolicy {
+public class AccessControlPolicy extends Ks3Result{
 
 	/**
 	 * acl

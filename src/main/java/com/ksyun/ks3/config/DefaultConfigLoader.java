@@ -31,6 +31,12 @@ public class DefaultConfigLoader implements ConfigLoader{
 		config.set(ClientConfig.END_POINT,"kss.ksyun.com");
 		config.set(ClientConfig.CLIENT_SIGNER,"com.ksyun.ks3.signer.DefaultSigner");
 		config.set(ClientConfig.CLIENT_URLFORMAT, "0");
+		config.set(ClientConfig.CDN_END_POINT, "kssws.ks-cdn.com");
+		config.set(ClientConfig.HEADER_PREFIX, "x-kss-");
+		config.set(ClientConfig.USER_META_PREFIX,"x-kss-meta-");
+		config.set(ClientConfig.GRANTEE_ALLUSER,"http://acs.ksyun.com/groups/global/AllUsers");
+		config.set(ClientConfig.AUTH_HEADER_PREFIX, "KSS");
+		config.set(ClientConfig.HTTP_PROTOCOL,"http");
 		return config;
 	}
 

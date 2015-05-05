@@ -1,6 +1,8 @@
 package com.ksyun.ks3.service.request;
 
 import com.ksyun.ks3.http.HttpHeaders;
+import com.ksyun.ks3.http.Request;
+
 import static com.ksyun.ks3.exception.client.ClientIllegalArgumentExceptionGenerator.notNull;
 import static com.ksyun.ks3.exception.client.ClientIllegalArgumentExceptionGenerator.between;
 
@@ -30,6 +32,7 @@ import com.ksyun.ks3.utils.StringUtils;
  *              </p>
  **/
 public class ListObjectsRequest extends Ks3WebServiceRequest {
+	private String bucket;
 
 	/**
 	 * prefix和delimiter详解
@@ -136,6 +139,15 @@ public class ListObjectsRequest extends Ks3WebServiceRequest {
 	 */
 	private String encodingType;
 
+	
+	public String getBucket() {
+		return bucket;
+	}
+
+	public void setBucket(String bucket) {
+		this.bucket = bucket;
+	}
+
 	/**
 	 * 前缀
 	 */
@@ -219,7 +231,7 @@ public class ListObjectsRequest extends Ks3WebServiceRequest {
 	 */
 	public ListObjectsRequest(String bucketName, String prefix, String marker,
 			String delimiter, Integer maxKeys) {
-		setBucketname(bucketName);
+		this.bucket = bucketName;
 		this.prefix = prefix;
 		this.marker = marker;
 		this.delimiter = delimiter;
@@ -227,24 +239,8 @@ public class ListObjectsRequest extends Ks3WebServiceRequest {
 	}
 
 	@Override
-	protected void configHttpRequest() {
-		this.setHttpMethod(HttpMethod.GET);
-		if(prefix!=null)
-			this.addParams("prefix", prefix);
-		if(marker!=null)
-			this.addParams("marker", marker);
-		if(delimiter!=null)
-			this.addParams("delimiter", delimiter);
-		if (maxKeys != null)
-			this.addParams("max-keys", String.valueOf(maxKeys));
-		if (!StringUtils.isBlank(this.encodingType))
-			this.addParams("encoding-type", this.encodingType);
-		this.addHeader(HttpHeaders.ContentType, "text/plain");
-	}
-
-	@Override
-	protected void validateParams() throws IllegalArgumentException {
-		if (StringUtils.isBlank(super.getBucketname()))
+	public void validateParams() throws IllegalArgumentException {
+		if (StringUtils.isBlank(this.bucket))
 			throw notNull(
 					"bucketName");
 		if (this.maxKeys != null && (this.maxKeys > 1000 || this.maxKeys < 1))
@@ -259,5 +255,18 @@ public class ListObjectsRequest extends Ks3WebServiceRequest {
 	public void setEncodingType(String encodingType) {
 		this.encodingType = encodingType;
 	}
+
+	@Override
+	public void buildRequest(Request request) {
+		request.setMethod(HttpMethod.GET);
+		request.setBucket(bucket);
+		request.addQueryParamIfNotNull("prefix", prefix);
+		request.addQueryParamIfNotNull("marker", marker);
+		request.addQueryParamIfNotNull("delimiter", delimiter);
+		if(maxKeys!=null)
+			request.addQueryParamIfNotNull("max-keys", String.valueOf(maxKeys));
+		request.addQueryParamIfNotNull("encoding-type", this.encodingType);
+	}
+
 
 }

@@ -4,6 +4,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 import com.ksyun.ks3.dto.InitiateMultipartUploadResult;
+import com.ksyun.ks3.http.HttpHeaders;
 
 /**
  * @author lijunwei[lijunwei@kingsoft.com]  
@@ -20,12 +21,16 @@ public class InitiateMultipartUploadResponse extends Ks3WebServiceXmlResponse<In
 
 	@Override
 	public void preHandle() {
-		
+		result = new InitiateMultipartUploadResult();
+		result.setSseAlgorithm(super.getHeader(HttpHeaders.XKssServerSideEncryption.toString()));
+		result.setSseCustomerAlgorithm(super.getHeader(HttpHeaders.XKssServerSideEncryptionCustomerAlgorithm.toString()));
+		result.setSseCustomerKeyMD5(super.getHeader(HttpHeaders.XkssServerSideEncryptionCustomerKeyMD5.toString()));
+		result.setSseKMSKeyId(super.getHeader(HttpHeaders.XKssServerSideEncryptionKMSKeyId.toString()));
 	}
 
 	@Override
 	public void startDocument() throws SAXException {
-		result = new InitiateMultipartUploadResult();
+		
 	}
 
 	@Override

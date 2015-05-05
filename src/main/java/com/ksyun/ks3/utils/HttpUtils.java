@@ -11,19 +11,25 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpRequestBase;
 
+import com.ksyun.ks3.config.ClientConfig;
 import com.ksyun.ks3.dto.AccessControlList;
 import com.ksyun.ks3.dto.AccessControlPolicy;
 import com.ksyun.ks3.dto.Adp;
 import com.ksyun.ks3.dto.Grant;
+import com.ksyun.ks3.dto.ObjectMetadata;
 import com.ksyun.ks3.dto.Permission;
+import com.ksyun.ks3.dto.SSECustomerKey;
+import com.ksyun.ks3.dto.SSEKssKMSParams;
 import com.ksyun.ks3.exception.client.ClientIllegalArgumentExceptionGenerator;
 import com.ksyun.ks3.http.HttpHeaders;
+import com.ksyun.ks3.utils.DateUtils.DATETIME_PROTOCOL;
 
 /**
  * @author lijunwei[lijunwei@kingsoft.com]  
@@ -48,11 +54,11 @@ public class HttpUtils {
 	}
 
 	public static void printHttpRequest(HttpRequestBase request) {
-		log.info("the http request info:");
+		log.debug("the http request info:");
 		for (Header s : request.getAllHeaders()) {
-			log.info("headers:" + s.getName() + " " + s.getValue());
+			log.debug("headers:" + s.getName() + " " + s.getValue());
 		}
-		log.info("requestline:" + request.getRequestLine().getMethod() + " "
+		log.debug("requestline:" + request.getRequestLine().getMethod() + " "
 				+ request.getRequestLine().getUri() + " "
 				+ request.getRequestLine().getProtocolVersion());
 	}
@@ -190,5 +196,80 @@ public class HttpUtils {
 
 		String queryParams = StringUtils.join(list.toArray(), "&");
 		return queryParams;
+	}
+	public static Map<String,String> convertMeta2Headers(ObjectMetadata meta){
+		Map<String,String> map = new HashMap<String,String>();
+		if(meta == null)
+			return map;
+		for(Entry<String,Object>  entry : meta.getRawMetadata().entrySet()){
+			map.put(entry.getKey(),entry.getValue().toString());
+		}
+		// 添加user meta
+		for (Entry<String, String> entry : meta.getAllUserMeta()
+				.entrySet()) {
+			if (entry.getKey().startsWith(ClientConfig.getConfig().getStr(ClientConfig.HEADER_PREFIX)))
+				map.put(entry.getKey(), entry.getValue());
+		}
+		if (meta.getHttpExpiresDate() != null)
+			map.put(
+					HttpHeaders.Expires.toString(),
+					DateUtils.convertDate2Str(
+							meta.getHttpExpiresDate(),
+							DATETIME_PROTOCOL.RFC1123).toString());
+		return map;
+	}
+	public static Map<String,String> convertSSECustomerKey2Headers(SSECustomerKey key){
+		Map<String,String> map = new HashMap<String,String>();
+		if(key == null)
+			return map;
+		putAndCheckNotNull(map,HttpHeaders.XKssServerSideEncryptionCustomerAlgorithm.toString(),key.getAlgorithm());
+		putAndCheckNotNull(map,HttpHeaders.XkssServerSideEncryptionCustomerKey.toString(),key.getBase64EncodedKey());
+		putIfNotNull(map,HttpHeaders.XkssServerSideEncryptionCustomerKeyMD5.toString(),key.getBase64EncodedMd5());
+		if (key.getBase64EncodedKey() != null
+                && key.getBase64EncodedMd5() == null) {
+            String encryptionKey_b64 = key.getBase64EncodedKey();
+            byte[] encryptionKey = Base64.decode(encryptionKey_b64);
+            map.put(HttpHeaders.XkssServerSideEncryptionCustomerKeyMD5.toString(),
+                    Md5Utils.md5AsBase64(encryptionKey));
+        }
+		return map;
+	}
+	public static Map<String,String> convertSSEKssKMSParams2Headers(SSEKssKMSParams params){
+		Map<String,String> map = new HashMap<String,String>();
+		if(params == null)
+			return map;
+		map.put(HttpHeaders.XKssServerSideEncryption.toString(),ClientConfig.isAws()?"awz:kms":"kss:kms");
+		if(!StringUtils.isBlank(params.getKeyId()))
+			map.put(HttpHeaders.XKssServerSideEncryptionKMSKeyId.toString(),params.getKeyId());
+		return map;
+	}
+	public static void putIfNotNull(Map<String,String> dest,String key,String value){
+		if(!StringUtils.isBlank(value))
+			dest.put(key, value);
+	}
+	public static void putAndCheckNotNull(Map<String,String> dest,String key,String value){
+		if(!StringUtils.isBlank(value))
+			dest.put(key, value);
+		else
+			throw ClientIllegalArgumentExceptionGenerator.notNullInCondition("SSECustomerKey."+key,"SSECustomerKey is not null");
+	}
+
+
+	public static Map<? extends String, ? extends String> convertCopySourceSSECustomerKey2Headers(
+			SSECustomerKey key) {
+		Map<String,String> map = new HashMap<String,String>();
+		if(key == null)
+			return map;
+		putAndCheckNotNull(map,HttpHeaders.XKssCPSourceServerSideEncryptionCustomerAlgorithm.toString(),key.getAlgorithm());
+		putAndCheckNotNull(map,HttpHeaders.XkssCPSourceServerSideEncryptionCustomerKey.toString(),key.getBase64EncodedKey());
+		putIfNotNull(map,HttpHeaders.XkssCPSourceServerSideEncryptionCustomerKeyMD5.toString(),key.getBase64EncodedMd5());
+		if (key.getBase64EncodedKey() != null
+                && key.getBase64EncodedMd5() == null) {
+            String encryptionKey_b64 = key.getBase64EncodedKey();
+            byte[] encryptionKey = Base64.decode(encryptionKey_b64);
+            map.put(HttpHeaders.XkssCPSourceServerSideEncryptionCustomerKeyMD5.toString(),
+                    Md5Utils.md5AsBase64(encryptionKey));
+        }
+		return map;
 	}
 }

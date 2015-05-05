@@ -1,5 +1,6 @@
 package com.ksyun.ks3.service.response;
 
+import com.ksyun.ks3.dto.PutAdpResult;
 import com.ksyun.ks3.http.HttpHeaders;
 
 /**
@@ -9,7 +10,7 @@ import com.ksyun.ks3.http.HttpHeaders;
  * 
  * @description 添加处理结果持久化任务结果
  **/
-public class PutAdpResponse extends Ks3WebServiceDefaultResponse<String>{
+public class PutAdpResponse extends Ks3WebServiceDefaultResponse<PutAdpResult>{
 
 	public int[] expectedStatus() {
 		return new int[]{200};
@@ -17,7 +18,8 @@ public class PutAdpResponse extends Ks3WebServiceDefaultResponse<String>{
 
 	@Override
 	public void preHandle() {
-		this.result = super.getHeader(HttpHeaders.TaskId.toString());
+		this.result = new PutAdpResult();
+		result.setTaskId(super.getHeader(HttpHeaders.TaskId.toString()));
 	}
 
 }

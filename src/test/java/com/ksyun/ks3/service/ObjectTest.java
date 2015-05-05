@@ -608,18 +608,6 @@ public class ObjectTest extends ObjectBeforeTest{
 	
 	/**
 	 * @tag 功能测试	 PUT Object
-	 * @Test 正确的bucket，文件名为"."  上传文件.直接点是创建bucket
-	 * @Then {@value SignatureDoesNotMatchException 异常}
-	 */
-	@Test(expected=SignatureDoesNotMatchException.class)
-	public void putObjectTest5005(){
-		PutObjectResult result = client.putObject(bucket, ".",new File(filePath + "/putObjectTest.txt"));
-		System.out.println(result);
-		
-	}
-	
-	/**
-	 * @tag 功能测试	 PUT Object
 	 * @Test 正确的bucket，文件名为".."  上传文件
 	 * @Then {@value Ks3ServiceException 异常}
 	 */

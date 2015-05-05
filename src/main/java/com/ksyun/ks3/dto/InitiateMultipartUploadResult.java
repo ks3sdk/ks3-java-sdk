@@ -9,7 +9,7 @@ import com.ksyun.ks3.utils.StringUtils;
  * 
  * @description 初始化分块上传的返回结果
  **/
-public class InitiateMultipartUploadResult {
+public class InitiateMultipartUploadResult extends SSEResultBase{
 	/**
 	 * 目标bucket
 	 */

@@ -1,7 +1,10 @@
 package com.ksyun.ks3.service.request;
 
 import com.ksyun.ks3.http.HttpMethod;
+import com.ksyun.ks3.http.Request;
+
 import static com.ksyun.ks3.exception.client.ClientIllegalArgumentExceptionGenerator.notNull;
+
 import com.ksyun.ks3.utils.StringUtils;
 
 /**
@@ -12,19 +15,29 @@ import com.ksyun.ks3.utils.StringUtils;
  * @description 获取bucket的日志配置
  **/
 public class GetBucketLoggingRequest extends Ks3WebServiceRequest{
+	private String bucket;
 	public GetBucketLoggingRequest(String bucketName){
-		super.setBucketname(bucketName);
-	}
-	@Override
-	protected void configHttpRequest() {
-		this.setHttpMethod(HttpMethod.GET);
-		this.addParams("logging",null);
+		this.bucket = bucketName;
 	}
 
 	@Override
-	protected void validateParams() throws IllegalArgumentException {
-		if(StringUtils.isBlank(this.getBucketname()))
+	public void validateParams() throws IllegalArgumentException {
+		if(StringUtils.isBlank(this.bucket))
 			throw notNull("bucketname");
+	}
+	@Override
+	public void buildRequest(Request request) {
+		request.setMethod(HttpMethod.GET);
+		request.setBucket(bucket);
+		request.getQueryParams().put("logging", "");
+	}
+
+	public String getBucket() {
+		return bucket;
+	}
+
+	public void setBucket(String bucket) {
+		this.bucket = bucket;
 	}
 
 }

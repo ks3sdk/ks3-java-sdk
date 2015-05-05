@@ -1,13 +1,16 @@
 package com.ksyun.ks3.service.request;
 
 import java.io.ByteArrayInputStream;
+
 import static com.ksyun.ks3.exception.client.ClientIllegalArgumentExceptionGenerator.notNull;
 import static com.ksyun.ks3.exception.client.ClientIllegalArgumentExceptionGenerator.notCorrect;
+
 import com.ksyun.ks3.dto.AccessControlList;
 import com.ksyun.ks3.dto.CannedAccessControlList;
 import com.ksyun.ks3.dto.CreateBucketConfiguration;
 import com.ksyun.ks3.http.HttpHeaders;
 import com.ksyun.ks3.http.HttpMethod;
+import com.ksyun.ks3.http.Request;
 import com.ksyun.ks3.utils.HttpUtils;
 import com.ksyun.ks3.utils.StringUtils;
 import com.ksyun.ks3.utils.XmlWriter;
@@ -41,6 +44,7 @@ import com.ksyun.ks3.utils.XmlWriter;
  *              </ul>
  **/
 public class CreateBucketRequest extends Ks3WebServiceRequest {
+	private String bucket;
 	/**
 	 * {@link CannedAccessControlList}设置新建的bucket的acl
 	 */
@@ -55,7 +59,7 @@ public class CreateBucketRequest extends Ks3WebServiceRequest {
 	private CreateBucketConfiguration config = null;
 
 	public CreateBucketRequest(String bucketName) {
-		this.setBucketname(bucketName);
+		this.bucket = bucketName;
 	}
 
 	public CreateBucketRequest(String bucketName,
@@ -92,29 +96,9 @@ public class CreateBucketRequest extends Ks3WebServiceRequest {
 	}
 
 	@Override
-	protected void configHttpRequest() {
-		this.setHttpMethod(HttpMethod.PUT);
-		if (this.config != null && this.config.getLocation() != null) {
-			XmlWriter writer = new XmlWriter();
-			writer.startWithNs("CreateBucketConfiguration")
-					.start("LocationConstraint")
-					.value(config.getLocation().toString()).end().end();
-			this.setRequestBody(new ByteArrayInputStream(writer.toString()
-					.getBytes()));
-		}
-		if (this.cannedAcl != null) {
-			this.addHeader(HttpHeaders.CannedAcl.toString(),
-					cannedAcl.toString());
-		}
-		if (this.acl != null) {
-			this.getHeader().putAll(HttpUtils.convertAcl2Headers(acl));
-		}
-	}
-
-	@Override
-	protected void validateParams() throws IllegalArgumentException {
-		if (StringUtils.validateBucketName(this.getBucketname()) == null)
-			throw notCorrect("bucketname",this.getBucketname(),"请参考KS3 API文档");
+	public void validateParams() throws IllegalArgumentException {
+		if (StringUtils.validateBucketName(this.bucket) == null)
+			throw notCorrect("bucketname",this.bucket,"请参考KS3 API文档");
 	}
 
 	public CreateBucketConfiguration getConfig() {
@@ -128,4 +112,34 @@ public class CreateBucketRequest extends Ks3WebServiceRequest {
 	public void setConfig(CreateBucketConfiguration config) {
 		this.config = config;
 	}
+
+	@Override
+	public void buildRequest(Request request) {
+		request.setMethod(HttpMethod.PUT);
+		request.setBucket(bucket);
+		if (this.config != null && this.config.getLocation() != null) {
+			XmlWriter writer = new XmlWriter();
+			writer.startWithNs("CreateBucketConfiguration")
+					.start("LocationConstraint")
+					.value(config.getLocation().toString()).end().end();
+			request.setContent(new ByteArrayInputStream(writer.toString()
+					.getBytes()));
+		}
+		if (this.cannedAcl != null) {
+			request.addHeader(HttpHeaders.CannedAcl.toString(),
+					cannedAcl.toString());
+		}
+		if (this.acl != null) {
+			request.getHeaders().putAll(HttpUtils.convertAcl2Headers(acl));
+		}
+	}
+
+	public String getBucket() {
+		return bucket;
+	}
+
+	public void setBucket(String bucket) {
+		this.bucket = bucket;
+	}
+	
 }
