@@ -28,8 +28,13 @@ public class WhmPhenixClientTest extends PhenixClientTest {
 //		client.createBucket("murongsyifei");//只创建一次,相当于/home/murongyifei这样的概念,   如果有拒绝创建,409 Conflict代表已经存在
 
 		client.putObject("murongyifei", "test1", new FileInputStream(new File("/Users/whm/Desktop/test")),null);
-		String oldMd5 = Md5Utils.md5AsBase64(new File("/Users/whm/Desktop/test"));
-		System.out.println("oldMd5:"+oldMd5);
+		System.out.println("oldMd5:"+Md5Utils.md5AsBase64(new File("/Users/whm/Desktop/test")));
+		
+		client.putObject("murongyifei", "test2", new FileInputStream(new File("/Users/whm/Desktop/test")),null);
+		System.out.println("oldMd5:"+Md5Utils.md5AsBase64(new File("/Users/whm/ksyun/ks3-kss-java-sdk/src/test/resources/1234.jpeg")));
+		
+		client.putObject("murongyifei", "test3", new FileInputStream(new File("/Users/whm/Desktop/test")),null);
+		System.out.println("oldMd5:"+Md5Utils.md5AsBase64(new File("/Users/whm/ksyun/ks3-kss-java-sdk/src/test/resources/IMG.jpg")));
 		
 //		GetObjectResult object = client.getObject("murongyifei", "test1");
 //		String newMd5 = Md5Utils.md5AsBase64(object.getObject().getObjectContent());
