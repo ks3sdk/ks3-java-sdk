@@ -110,7 +110,7 @@ public class EncryptionTest extends Ks3ClientTest{
 		getReq.getRequestConfig().getExtendHeaders().put(HttpHeaders.XKssServerSideEncryption.toString(), "AES256");
 		client1.getObject(getReq);
 	}
-	@Test(expected=Md5NotMatchForOldMd5Exception.class)
+	@Test(expected=InvalidArgumentException.class)
 	public void putObjectWithSSES3AndGetWithSSEC(){
 		PutObjectRequest req = new PutObjectRequest(bucket,key,file);
 		ObjectMetadata meta = new ObjectMetadata();
@@ -254,7 +254,7 @@ public class EncryptionTest extends Ks3ClientTest{
 		GetObjectRequest getReq = new GetObjectRequest(bucket,this.key);
 		client1.getObject(getReq);
 	}
-	@Test(expected=InvalidArgumentException.class)
+	@Test(expected=MissingCustomerKeyException.class)
 	public void putObjectWithSSECAndGetWithSSES3(){
 		PutObjectRequest req = new PutObjectRequest(bucket,"test",file);
 		SSECustomerKey key = new SSECustomerKey(this.symKey);
@@ -442,7 +442,7 @@ public class EncryptionTest extends Ks3ClientTest{
 		UploadPartRequest upReq = new UploadPartRequest(bucket,key,initRet.getUploadId(),1,new ByteArrayInputStream("1234".getBytes()),4);
 		client1.uploadPart(upReq);
 	}
-	@Test(expected=InvalidArgumentException.class)
+	@Test(expected=MissingCustomerKeyException.class)
 	public void initMultipartUploadWithSSECAndUploadWithSSES3(){
 		InitiateMultipartUploadRequest req = new InitiateMultipartUploadRequest(bucket,this.key);
 		SSECustomerKey sse = new SSECustomerKey(this.symKey);
