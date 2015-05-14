@@ -16,6 +16,7 @@ import org.apache.http.auth.ChallengeState;
 import org.apache.http.auth.NTCredentials;
 import org.apache.http.client.AuthCache;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.params.ClientPNames;
 import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.conn.scheme.PlainSocketFactory;
@@ -103,6 +104,7 @@ public class HttpClientFactory {
                 httpClient.addRequestInterceptor(new PreemptiveProxyAuth(proxyHttpHost), 0);
             }
         }
+        httpClient.getParams().setBooleanParameter(ClientPNames.HANDLE_REDIRECTS, false);
         return httpClient;
     }
 

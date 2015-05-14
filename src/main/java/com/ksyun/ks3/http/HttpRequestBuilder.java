@@ -23,6 +23,7 @@ import com.ksyun.ks3.config.ClientConfig;
 import com.ksyun.ks3.config.Constants;
 import com.ksyun.ks3.dto.Authorization;
 import com.ksyun.ks3.exception.Ks3ClientException;
+import com.ksyun.ks3.service.Ks3ClientConfig;
 import com.ksyun.ks3.service.request.Ks3WebServiceRequest;
 import com.ksyun.ks3.service.request.SSECustomerKeyRequest;
 import com.ksyun.ks3.signer.Signer;
@@ -37,13 +38,20 @@ import com.ksyun.ks3.utils.StringUtils;
  * @description 
  **/
 public class HttpRequestBuilder {
-	public static HttpRequestBase build(Ks3WebServiceRequest ks3Request,Request request,Authorization auth){	
+	public static HttpRequestBase build(Ks3WebServiceRequest ks3Request,Request request,Authorization auth,Ks3ClientConfig ks3config){	
 		ks3Request.validateParams();
 		request.getHeaders().putAll(ks3Request.getRequestConfig().getExtendHeaders());
 		ks3Request.buildRequest(request);
 		request.addHeaderIfNotContains(HttpHeaders.UserAgent.toString(),ks3Request.getRequestConfig().getUserAgent());
 		request.addHeaderIfNotContains(HttpHeaders.ContentType.toString(),"application/xml");
-		request.setEndpoint(ClientConfig.getConfig().getStr(ClientConfig.END_POINT));
+		
+		String endpoint0 = ks3Request.getRequestConfig().getEndpoint();
+		if(StringUtils.isBlank(endpoint0)){
+			endpoint0 = ks3config.getEndpoint();
+			if(StringUtils.isBlank(endpoint0))
+				endpoint0 = ClientConfig.getConfig().getStr(ClientConfig.END_POINT);
+		}
+		request.setEndpoint(endpoint0);
 		//sign request
 		try {
 			String signerString = ClientConfig.getConfig().getStr(

@@ -31,6 +31,7 @@ import com.ksyun.ks3.exception.Ks3ServiceException;
 import com.ksyun.ks3.exception.client.ClientHttpException;
 import com.ksyun.ks3.exception.client.ClientIllegalArgumentException;
 import com.ksyun.ks3.exception.client.ClientInvalidDigestException;
+import com.ksyun.ks3.service.Ks3ClientConfig;
 import com.ksyun.ks3.service.request.Ks3WebServiceRequest;
 import com.ksyun.ks3.service.request.SSECustomerKeyRequest;
 import com.ksyun.ks3.service.request.UploadPartRequest;
@@ -54,13 +55,18 @@ public class Ks3CoreController {
 	private static final Log log = LogFactory.getLog(Ks3CoreController.class);
 	private HttpClientFactory factory = new HttpClientFactory();
 	private HttpClient client;
-
 	public <X extends Ks3WebServiceResponse<Y>, Y> Y execute(
+			Authorization auth, Ks3WebServiceRequest request, Class<X> clazz) {
+		return execute(new Ks3ClientConfig(),auth,request,clazz);
+	}
+	public <X extends Ks3WebServiceResponse<Y>, Y> Y execute(Ks3ClientConfig ks3config,
 			Authorization auth, Ks3WebServiceRequest request, Class<X> clazz) {
 		if (request == null)
 			throw new Ks3ClientException("request can not be null");
 		log.debug("Ks3WebServiceRequest:" + request.getClass()
 				+ ";Ks3WebServiceResponse:" + clazz);
+		if(ks3config == null)
+			ks3config = new Ks3ClientConfig();
 		Y result = null;
 		try {
 			if (auth == null || StringUtils.isBlank(auth.getAccessKeyId())
@@ -69,7 +75,7 @@ public class Ks3CoreController {
 						"AccessKeyId or AccessKeySecret can't be null");
 			if (request == null || clazz == null)
 				throw new IllegalArgumentException();
-			result = doExecute(auth, request, clazz);
+			result = doExecute(ks3config,auth, request, clazz);
 			return result;
 		} catch (RuntimeException e) {
 			if (e instanceof Ks3ClientException) {
@@ -92,14 +98,14 @@ public class Ks3CoreController {
 		}
 	}
 
-	private <X extends Ks3WebServiceResponse<Y>, Y> Y doExecute(
+	private <X extends Ks3WebServiceResponse<Y>, Y> Y doExecute(Ks3ClientConfig ks3config,
 			Authorization auth, Ks3WebServiceRequest request, Class<X> clazz)
 			throws IllegalStateException, IOException {
 		Timer.start();
 		this.client = this.factory.createHttpClient();
 		HttpResponse response = null;
 		Request req = new Request();
-		HttpRequestBase httpRequest = HttpRequestBuilder.build(request,req, auth);
+		HttpRequestBase httpRequest = HttpRequestBuilder.build(request,req, auth,ks3config);
 		try {
 			log.debug(httpRequest.getRequestLine());
 			response = client.execute(httpRequest);

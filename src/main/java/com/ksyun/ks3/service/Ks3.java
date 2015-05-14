@@ -35,7 +35,7 @@ import com.ksyun.ks3.service.request.UploadPartRequest;
  * 
  * @date 2014年10月14日 下午5:30:30
  * 
- * @description ks3客户端，用户使用时需要先配置ClientConfig{@link ClientConfig}
+ * @description ks3客户端，用户使用时需要先配置ClientConfig{@link Ks3ClientConfig}
  *              ,然后初始化一个Ks3Client进行操作
  **/
 public interface Ks3 {
@@ -45,7 +45,11 @@ public interface Ks3 {
 	 * @param auth
 	 */
 	public void setAuth(Authorization auth);
-
+	/**
+	 * 设置服务地址
+	 * @param endpoint
+	 */
+	public void setEndpoint(String endpoint);
 	/**
 	 * GET SERVICE
 	 * 

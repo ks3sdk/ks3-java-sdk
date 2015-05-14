@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.ksyun.ks3.config.Constants;
+import com.ksyun.ks3.dto.Authorization;
 
 /**
  * @author lijunwei[lijunwei@kingsoft.com]  
@@ -15,6 +16,7 @@ import com.ksyun.ks3.config.Constants;
 public class WebServiceRequestConfig {
 	private String userAgent = Constants.KS3_SDK_USER_AGENT;
 	private Map<String,String> extendHeaders = new HashMap<String,String>();
+	private String endpoint = null;
 
 	public String getUserAgent() {
 		return userAgent;
@@ -30,5 +32,13 @@ public class WebServiceRequestConfig {
 
 	public void setExtendHeaders(Map<String,String> extendHeaders) {
 		this.extendHeaders = extendHeaders;
+	}
+
+	public String getEndpoint() {
+		return endpoint;
+	}
+
+	public void setEndpoint(String endpoint) {
+		this.endpoint = endpoint;
 	}
 }

@@ -19,6 +19,7 @@ import java.util.Map.Entry;
  
 
 
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -96,6 +97,7 @@ import com.ksyun.ks3.utils.StringUtils;
 public class Ks3Client implements Ks3 {
 	private static final Log log = LogFactory.getLog(Ks3Client.class);
 	private ClientConfig config = ClientConfig.getConfig();
+	private Ks3ClientConfig ks3config = null;
 	
 	private Authorization auth;
 
@@ -106,18 +108,35 @@ public class Ks3Client implements Ks3 {
 	public void setAuth(Authorization auth) {
 		this.auth = auth;
 	}
+	public void setEndpoint(String endpoint) {
+		if(this.ks3config == null)
+			this.ks3config = new Ks3ClientConfig();
+		ks3config.setEndpoint(endpoint);
+	}
+	
+	public Ks3ClientConfig getKs3config() {
+		return ks3config;
+	}
+
+	public void setKs3config(Ks3ClientConfig ks3config) {
+		this.ks3config = ks3config;
+	}
 
 	public Ks3Client() {
+		this(null);
 	}
 
 	public Ks3Client(Authorization auth) {
-		this.auth = auth;
+		this(auth.getAccessKeyId(),auth.getAccessKeySecret(),null);
 	}
 
 	public Ks3Client(String accesskeyid, String accesskeysecret) {
-		this.auth = new Authorization(accesskeyid, accesskeysecret);
+		this(new Authorization(accesskeyid, accesskeysecret));
 	}
-
+	public Ks3Client(String accesskeyid, String accesskeysecret,Ks3ClientConfig config){
+		this.auth =new Authorization(accesskeyid, accesskeysecret);
+		this.ks3config = config;
+	}
 	private Ks3CoreController client = new Ks3CoreController();
 
 	public List<Bucket> listBuckets() throws Ks3ClientException,
@@ -128,7 +147,7 @@ public class Ks3Client implements Ks3 {
 	public List<Bucket> listBuckets(ListBucketsRequest request)
 			throws Ks3ClientException, Ks3ServiceException {
 
-		return client.execute(auth, request, ListBucketsResponse.class);
+		return client.execute(ks3config,auth, request, ListBucketsResponse.class);
 	}
 
 	public REGION getBucketLoaction(String bucketName)
@@ -140,7 +159,7 @@ public class Ks3Client implements Ks3 {
 
 	public REGION getBucketLoaction(GetBucketLocationRequest request)
 			throws Ks3ClientException, Ks3ServiceException {
-		return this.client.execute(auth, request,
+		return this.client.execute(ks3config,auth, request,
 				GetBucketLocationResponse.class);
 	}
 
@@ -153,7 +172,7 @@ public class Ks3Client implements Ks3 {
 
 	public BucketLoggingStatus getBucketLogging(GetBucketLoggingRequest request)
 			throws Ks3ClientException, Ks3ServiceException {
-		return client.execute(auth, request, GetBucketLoggingResponse.class);
+		return client.execute(ks3config,auth, request, GetBucketLoggingResponse.class);
 	}
 
 	public void putBucketLogging(String bucketName, boolean enable,
@@ -174,7 +193,7 @@ public class Ks3Client implements Ks3 {
 
 	public void putBucketLogging(PutBucketLoggingRequest request)
 			throws Ks3ClientException, Ks3ServiceException {
-		client.execute(auth, request, PutBucketLoggingResponse.class);
+		client.execute(ks3config,auth, request, PutBucketLoggingResponse.class);
 	}
 
 	public AccessControlPolicy getBucketACL(String bucketName)
@@ -193,7 +212,7 @@ public class Ks3Client implements Ks3 {
 	}
 	public AccessControlPolicy getBucketACL(GetBucketACLRequest request)
 			throws Ks3ClientException, Ks3ServiceException {
-		return client.execute(auth, request, GetBucketACLResponse.class);
+		return client.execute(ks3config,auth, request, GetBucketACLResponse.class);
 	}
 
 	public void putBucketACL(String bucketName,
@@ -204,7 +223,7 @@ public class Ks3Client implements Ks3 {
 
 	public void putBucketACL(PutBucketACLRequest request)
 			throws Ks3ClientException, Ks3ServiceException {
-		client.execute(auth, request, PutBucketACLResponse.class);
+		client.execute(ks3config,auth, request, PutBucketACLResponse.class);
 	}
 
 	public void putObjectACL(String bucketName, String objectName,
@@ -216,7 +235,7 @@ public class Ks3Client implements Ks3 {
 
 	public void putObjectACL(PutObjectACLRequest request)
 			throws Ks3ClientException, Ks3ServiceException {
-		client.execute(auth, request, PutObjectACLResponse.class);
+		client.execute(ks3config,auth, request, PutObjectACLResponse.class);
 	}
 
 	public AccessControlPolicy getObjectACL(String bucketName, String objectName)
@@ -236,7 +255,7 @@ public class Ks3Client implements Ks3 {
 	}
 	public AccessControlPolicy getObjectACL(GetObjectACLRequest request)
 			throws Ks3ClientException, Ks3ServiceException {
-		return client.execute(auth, request, GetObjectACLResponse.class);
+		return client.execute(ks3config,auth, request, GetObjectACLResponse.class);
 	}
 
 	public Bucket createBucket(String bucketname) throws Ks3ClientException,
@@ -246,7 +265,7 @@ public class Ks3Client implements Ks3 {
 
 	public Bucket createBucket(CreateBucketRequest request)
 			throws Ks3ClientException, Ks3ServiceException {
-		Bucket bucket = client.execute(auth, request,
+		Bucket bucket = client.execute(ks3config,auth, request,
 				CreateBucketResponse.class);
 		bucket.setName(request.getBucket());
 		return bucket;
@@ -307,7 +326,7 @@ public class Ks3Client implements Ks3 {
 
 	public void deleteBucket(DeleteBucketRequest request)
 			throws Ks3ClientException, Ks3ServiceException {
-		client.execute(auth, request, DeleteBucketResponse.class);
+		client.execute(ks3config,auth, request, DeleteBucketResponse.class);
 	}
 
 	public ObjectListing listObjects(String bucketname)
@@ -324,7 +343,7 @@ public class Ks3Client implements Ks3 {
 
 	public ObjectListing listObjects(ListObjectsRequest request)
 			throws Ks3ClientException, Ks3ServiceException {
-		return client.execute(auth, request, ListObjectsResponse.class);
+		return client.execute(ks3config,auth, request, ListObjectsResponse.class);
 	}
 
 	public void deleteObject(String bucketname, String key)
@@ -334,7 +353,7 @@ public class Ks3Client implements Ks3 {
 
 	public void deleteObject(DeleteObjectRequest request)
 			throws Ks3ClientException, Ks3ServiceException {
-		client.execute(auth, request, DeleteObjectResponse.class);
+		client.execute(ks3config,auth, request, DeleteObjectResponse.class);
 	}
 
 	public GetObjectResult getObject(String bucketname, String key)
@@ -345,7 +364,7 @@ public class Ks3Client implements Ks3 {
 	public GetObjectResult getObject(GetObjectRequest request)
 			throws Ks3ClientException, Ks3ServiceException {
 		String objectkey = request.getKey();
-		GetObjectResult object = client.execute(auth, request,
+		GetObjectResult object = client.execute(ks3config,auth, request,
 				GetObjectResponse.class);
 		object.getObject().setBucketName(request.getBucket());
 		object.getObject().setKey(objectkey);
@@ -420,7 +439,7 @@ public class Ks3Client implements Ks3 {
 
 	public HeadBucketResult headBucket(HeadBucketRequest request)
 			throws Ks3ClientException, Ks3ServiceException {
-		return client.execute(auth, request, HeadBucketResponse.class);
+		return client.execute(ks3config,auth, request, HeadBucketResponse.class);
 	}
 
 	public boolean bucketExists(String bucketname) throws Ks3ClientException,
@@ -452,7 +471,7 @@ public class Ks3Client implements Ks3 {
 
 	public PutObjectResult putObject(PutObjectRequest request)
 			throws Ks3ClientException, Ks3ServiceException {
-		PutObjectResult obj = client.execute(auth, request,
+		PutObjectResult obj = client.execute(ks3config,auth, request,
 				PutObjectResponse.class);
 		return obj;
 	}
@@ -485,7 +504,7 @@ public class Ks3Client implements Ks3 {
 
 	public CopyResult copyObject(CopyObjectRequest request)
 			throws Ks3ClientException, Ks3ServiceException {
-		return client.execute(auth, request, CopyObjectResponse.class);
+		return client.execute(ks3config,auth, request, CopyObjectResponse.class);
 	}
 
 	public HeadObjectResult headObject(String bucketname, String objectkey)
@@ -495,7 +514,7 @@ public class Ks3Client implements Ks3 {
 
 	public HeadObjectResult headObject(HeadObjectRequest request)
 			throws Ks3ClientException, Ks3ServiceException {
-		return client.execute(auth, request, HeadObjectResponse.class);
+		return client.execute(ks3config,auth, request, HeadObjectResponse.class);
 	}
 	
 	public boolean objectExists(String bucket,String key){
@@ -518,7 +537,7 @@ public class Ks3Client implements Ks3 {
 			InitiateMultipartUploadRequest request) throws Ks3ClientException,
 			Ks3ServiceException {
 		String objectkey = request.getKey();
-		InitiateMultipartUploadResult result = client.execute(auth, request,
+		InitiateMultipartUploadResult result = client.execute(ks3config,auth, request,
 				InitiateMultipartUploadResponse.class);
 		result.setBucket(request.getBucket());
 		result.setKey(objectkey);
@@ -527,7 +546,7 @@ public class Ks3Client implements Ks3 {
 
 	public PartETag uploadPart(UploadPartRequest request)
 			throws Ks3ClientException, Ks3ServiceException {
-		PartETag result = client.execute(auth, request,
+		PartETag result = client.execute(ks3config,auth, request,
 				UploadPartResponse.class);
 		result.setPartNumber(request.getPartNumber());
 		return result;
@@ -535,7 +554,7 @@ public class Ks3Client implements Ks3 {
 
 	public CopyResult copyPart(CopyPartRequest request)
 			throws Ks3ClientException, Ks3ServiceException {
-		return client.execute(auth, request, CopyPartResponse.class);
+		return client.execute(ks3config,auth, request, CopyPartResponse.class);
 	}
 
 	public CompleteMultipartUploadResult completeMultipartUpload(
@@ -556,7 +575,7 @@ public class Ks3Client implements Ks3 {
 	public CompleteMultipartUploadResult completeMultipartUpload(
 			CompleteMultipartUploadRequest request) throws Ks3ClientException,
 			Ks3ServiceException {
-		return client.execute(auth, request,
+		return client.execute(ks3config,auth, request,
 				CompleteMultipartUploadResponse.class);
 	}
 
@@ -568,7 +587,7 @@ public class Ks3Client implements Ks3 {
 
 	public void abortMultipartUpload(AbortMultipartUploadRequest request)
 			throws Ks3ClientException, Ks3ServiceException {
-		this.client.execute(auth, request, AbortMultipartUploadResponse.class);
+		this.client.execute(ks3config,auth, request, AbortMultipartUploadResponse.class);
 	}
 
 	public ListPartsResult listParts(String bucketname, String objectkey,
@@ -599,7 +618,7 @@ public class Ks3Client implements Ks3 {
 
 	public ListPartsResult listParts(ListPartsRequest request)
 			throws Ks3ClientException, Ks3ServiceException {
-		return client.execute(auth, request, ListPartsResponse.class);
+		return client.execute(ks3config,auth, request, ListPartsResponse.class);
 	}
 
 	public void putObjectACL(String bucketName, String objectName,
@@ -618,7 +637,7 @@ public class Ks3Client implements Ks3 {
 	public DeleteMultipleObjectsResult deleteObjects(
 			DeleteMultipleObjectsRequest request) throws Ks3ClientException,
 			Ks3ServiceException {
-		return client.execute(auth, request,
+		return client.execute(ks3config,auth, request,
 				DeleteMultipleObjectsResponse.class);
 	}
 
@@ -660,12 +679,12 @@ public class Ks3Client implements Ks3 {
 			ListMultipartUploadsRequest request) throws Ks3ClientException,
 			Ks3ServiceException {
 		return client
-				.execute(auth, request, ListMultipartUploadsResponse.class);
+				.execute(ks3config,auth, request, ListMultipartUploadsResponse.class);
 	}
 
 	public void putBucketCors(PutBucketCorsRequest request)
 			throws Ks3ClientException, Ks3ServiceException {
-		client.execute(auth, request, PutBucketCorsResponse.class);
+		client.execute(ks3config,auth, request, PutBucketCorsResponse.class);
 	}
 
 	public BucketCorsConfiguration getBucketCors(String bucketname)
@@ -675,7 +694,7 @@ public class Ks3Client implements Ks3 {
 
 	public BucketCorsConfiguration getBucketCors(GetBucketCorsRequest request)
 			throws Ks3ClientException, Ks3ServiceException {
-		return client.execute(auth, request, GetBucketCorsResponse.class);
+		return client.execute(ks3config,auth, request, GetBucketCorsResponse.class);
 	}
 
 	public void deleteBucketCors(String bucketname) throws Ks3ClientException,
@@ -685,13 +704,13 @@ public class Ks3Client implements Ks3 {
 
 	public void deleteBucketCors(DeleteBucketCorsRequest request)
 			throws Ks3ClientException, Ks3ServiceException {
-		client.execute(auth, request, DeleteBucketCorsResponse.class);
+		client.execute(ks3config,auth, request, DeleteBucketCorsResponse.class);
 	}
 
 	public <X extends Ks3WebServiceResponse<Y>, Y> Y execute(
 			Ks3WebServiceRequest request, Class<X> clazz)
 			throws Ks3ClientException, Ks3ServiceException {
-		return client.execute(auth, request, clazz);
+		return client.execute(ks3config,auth, request, clazz);
 	}
 
 	public PostObjectFormFields postObject(PostPolicy policy)
@@ -790,7 +809,7 @@ public class Ks3Client implements Ks3 {
 
 	public PutAdpResult putAdpTask(PutAdpRequest request)
 			throws Ks3ClientException, Ks3ServiceException {
-		return client.execute(auth, request, PutAdpResponse.class);
+		return client.execute(ks3config,auth, request, PutAdpResponse.class);
 	}
 
 	public AdpTask getAdpTask(String taskid) throws Ks3ClientException,
@@ -801,6 +820,6 @@ public class Ks3Client implements Ks3 {
 
 	public AdpTask getAdpTask(GetAdpRequest request)
 			throws Ks3ClientException, Ks3ServiceException {
-		return client.execute(auth, request, GetAdpResponse.class);
+		return client.execute(ks3config,auth, request, GetAdpResponse.class);
 	}
 }

@@ -51,6 +51,7 @@ import com.ksyun.ks3.exception.Ks3ClientException;
 import com.ksyun.ks3.exception.Ks3ServiceException;
 import com.ksyun.ks3.http.HttpHeaders;
 import com.ksyun.ks3.http.Ks3CoreController;
+import com.ksyun.ks3.service.Ks3;
 import com.ksyun.ks3.service.Ks3Client;
 import com.ksyun.ks3.service.request.CompleteMultipartUploadRequest;
 import com.ksyun.ks3.service.request.CreateBucketRequest;
@@ -81,8 +82,9 @@ public class Ks3ClientTest extends com.ksyun.ks3.service.Ks3ClientTest{
 
 	 @Test
 	public void ListBuckets() {
-		 System.out.println(client.listBuckets());
-	//	System.out.println(client.listObjects("aposttest"));
+		 ClientConfig.getConfig().set(ClientConfig.END_POINT, "kss.hangzhou.ksyun.com");
+		 Ks3 client = new Ks3Client("2HITWMQXL2VBB3XMAEHQ","ilZQ9p/NHAK1dOYA/dTKKeIqT/t67rO6V2PrXUNr");
+		 client.getBucketACL("test-region");
 	}
 
 	// @Test
