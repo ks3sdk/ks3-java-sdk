@@ -107,9 +107,15 @@ public class Ks3CoreController {
 		Request req = new Request();
 		HttpRequestBase httpRequest = HttpRequestBuilder.build(request,req, auth,ks3config);
 		try {
-			log.debug(httpRequest.getRequestLine());
+			log.info(httpRequest.getRequestLine());
+			for(Header header : httpRequest.getAllHeaders()){
+				log.info("Request Header->"+header.getName()+":"+header.getValue());
+			}
 			response = client.execute(httpRequest);
-			log.debug(response.getStatusLine());
+			log.info(response.getStatusLine());
+			for(Header header : response.getAllHeaders()){
+				log.info("Response Header->"+header.getName()+":"+header.getValue());
+			}
 			if (response.getStatusLine().getStatusCode() == 307
 					&& response.containsHeader("Location")) {
 				String location = response.getHeaders("Location")[0].getValue();
@@ -119,6 +125,10 @@ public class Ks3CoreController {
 					restRequest(httpRequest);
 					httpRequest.setURI(new URI(location));
 					response = client.execute(httpRequest);
+					log.info(response.getStatusLine());
+					for(Header header : response.getAllHeaders()){
+						log.info("Response Header->"+header.getName()+":"+header.getValue());
+					}
 				}
 			}
 			closeInputStream(httpRequest);

@@ -82,9 +82,7 @@ public class Ks3ClientTest extends com.ksyun.ks3.service.Ks3ClientTest{
 
 	 @Test
 	public void ListBuckets() {
-		 ClientConfig.getConfig().set(ClientConfig.END_POINT, "kss.hangzhou.ksyun.com");
-		 Ks3 client = new Ks3Client("2HITWMQXL2VBB3XMAEHQ","ilZQ9p/NHAK1dOYA/dTKKeIqT/t67rO6V2PrXUNr");
-		 client.getBucketACL("test-region");
+		 client.listBuckets();
 	}
 
 	// @Test
