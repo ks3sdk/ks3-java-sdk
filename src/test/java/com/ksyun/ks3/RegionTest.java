@@ -34,7 +34,7 @@ public class RegionTest{
 		 client.getBucketACL(bucket);
 		 
 		 client.putObject(bucket,"key",new File("D://phpput"));
-		 client.copyObject(bucket,"key1", bucket,"key");
+	//	 client.copyObject(bucket,"key1", bucket,"key");
 		 client.getObjectACL(bucket,"key");
 		 client.putObjectACL(bucket,"key",CannedAccessControlList.Private);
 		 client.getObjectACL(bucket,"key");

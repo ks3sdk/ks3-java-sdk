@@ -24,6 +24,7 @@ import com.ksyun.ks3.config.Constants;
 import com.ksyun.ks3.dto.Authorization;
 import com.ksyun.ks3.exception.Ks3ClientException;
 import com.ksyun.ks3.service.Ks3ClientConfig;
+import com.ksyun.ks3.service.Ks3ClientConfig.PROTOCOL;
 import com.ksyun.ks3.service.request.Ks3WebServiceRequest;
 import com.ksyun.ks3.service.request.SSECustomerKeyRequest;
 import com.ksyun.ks3.signer.Signer;
@@ -80,7 +81,17 @@ public class HttpRequestBuilder {
 		key = HttpUtils.urlEncode(key, true);
 		int format = ClientConfig.getConfig().getInt(
 				ClientConfig.CLIENT_URLFORMAT);
+		Boolean format0 = ks3config.getPathStyleAccess();
+		if(format0 !=null){
+			format = format0?1:0;
+		}
+		
 		String protocol = ClientConfig.getConfig().getStr(ClientConfig.HTTP_PROTOCOL);
+		PROTOCOL spePro = ks3config.getProtocol();
+		if(spePro!=null)
+			protocol = spePro.toString();
+		if(StringUtils.isBlank(protocol))
+			protocol ="http";
 		if (format == 0) {
 			url = new StringBuffer(protocol+"://")
 					.append(StringUtils.isBlank(bucket) ? "" : bucket

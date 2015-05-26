@@ -116,12 +116,12 @@ public class Ks3CoreController {
 			for(Header header : response.getAllHeaders()){
 				log.info("Response Header->"+header.getName()+":"+header.getValue());
 			}
-			if (response.getStatusLine().getStatusCode() == 307
+			if (response.getStatusLine().getStatusCode() >=300&&response.getStatusLine().getStatusCode() <400
 					&& response.containsHeader("Location")) {
 				String location = response.getHeaders("Location")[0].getValue();
 				// TODO 这个只是为了兼容当前api
 				if (location.startsWith("http")) {
-					log.debug("returned 307,retry request to " + location);
+					log.debug("returned "+response.getStatusLine().getStatusCode()+",retry request to " + location);
 					restRequest(httpRequest);
 					httpRequest.setURI(new URI(location));
 					response = client.execute(httpRequest);

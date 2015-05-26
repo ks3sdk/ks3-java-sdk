@@ -53,6 +53,8 @@ import com.ksyun.ks3.http.HttpHeaders;
 import com.ksyun.ks3.http.Ks3CoreController;
 import com.ksyun.ks3.service.Ks3;
 import com.ksyun.ks3.service.Ks3Client;
+import com.ksyun.ks3.service.Ks3ClientConfig;
+import com.ksyun.ks3.service.Ks3ClientConfig.PROTOCOL;
 import com.ksyun.ks3.service.request.CompleteMultipartUploadRequest;
 import com.ksyun.ks3.service.request.CreateBucketRequest;
 import com.ksyun.ks3.service.request.GetObjectRequest;
@@ -82,7 +84,11 @@ public class Ks3ClientTest extends com.ksyun.ks3.service.Ks3ClientTest{
 
 	 @Test
 	public void ListBuckets() {
-		 client.listBuckets();
+		 Ks3ClientConfig config = new Ks3ClientConfig();
+		 config.setProtocol(PROTOCOL.https);
+		 config.setPathStyleAccess(false);
+		 client.setKs3config(config);
+		 client.listObjects("ksc-scm");
 	}
 
 	// @Test

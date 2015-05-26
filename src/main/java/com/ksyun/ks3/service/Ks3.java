@@ -51,6 +51,11 @@ public interface Ks3 {
 	 */
 	public void setEndpoint(String endpoint);
 	/**
+	 * 设置配置信息
+	 * @param ks3config
+	 */
+	public void setKs3config(Ks3ClientConfig ks3config);
+	/**
 	 * GET SERVICE
 	 * 
 	 * @return {@link Bucket}

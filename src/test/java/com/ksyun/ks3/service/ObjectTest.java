@@ -210,7 +210,7 @@ public class ObjectTest extends ObjectBeforeTest{
 		ResponseHeaderOverrides overrides = new ResponseHeaderOverrides();
 		overrides.setCacheControl("no-cache");
 		overrides.setContentDisposition("D:/");
-		overrides.setContentEncoding("gb2312");
+		//overrides.setContentEncoding("gb2312");
 		/*overrides.setContentLanguage("En");*/
 		overrides.setContentType("txt");
 		overrides.setExpires(new Date());
@@ -348,7 +348,7 @@ public class ObjectTest extends ObjectBeforeTest{
 		
 		HeadObjectResult object = client.headObject(request);
 		
-		assertTrue(object.isIfModified());
+		assertFalse(object.isIfModified());
 		assertTrue(object.isIfPreconditionSuccess());
 	}
 	
