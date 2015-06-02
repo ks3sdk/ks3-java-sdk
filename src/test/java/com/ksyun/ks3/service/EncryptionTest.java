@@ -1,4 +1,4 @@
-/*package com.ksyun.ks3.service;
+package com.ksyun.ks3.service;
 
 import static org.junit.Assert.assertEquals;
 
@@ -49,13 +49,13 @@ import com.ksyun.ks3.service.request.UploadPartRequest;
 import com.ksyun.ks3.utils.Base64;
 import com.ksyun.ks3.utils.Md5Utils;
 
-*//**
+/**
  * @author lijunwei[lijunwei@kingsoft.com]  
  * 
  * @date 2015年4月28日 上午11:43:09
  * 
  * @description 
- **//*
+ **/
 public class EncryptionTest extends Ks3ClientTest{
 	private SecretKey symKey;
 	private SecretKey symKey1;
@@ -529,7 +529,7 @@ public class EncryptionTest extends Ks3ClientTest{
 		this.rangeGetToFileWithThreads(bucket, key,sse,this.destFile);
 		this.checkFileMd5(file, new File(this.destFile));
 	}
-	@Test
+	/*@Test
 	public void putObjectWithSSEKMS() throws IOException{
 		PutObjectRequest req = new PutObjectRequest(bucket,"test",file);
 		ObjectMetadata meta = new ObjectMetadata();
@@ -565,7 +565,7 @@ public class EncryptionTest extends Ks3ClientTest{
 		assertEquals("kss:kms",gret.getObject().getObjectMetadata().getSseAlgorithm());
 		this.rangeGetToFileWithThreads(bucket, key,this.destFile);
 		this.checkFileMd5(file, new File(this.destFile));
-	}
+	}*/
 	private void checkFileMd5(File fie,File file1) throws FileNotFoundException, IOException{
 		assertEquals(Md5Utils.md5AsBase64(file),
 				Md5Utils.md5AsBase64(file1));
@@ -728,4 +728,4 @@ public class EncryptionTest extends Ks3ClientTest{
 		// Generate secret key.
 		return new SecretKeySpec(encodedPrivateKey, "AES");
 	}
-}*/
+}
