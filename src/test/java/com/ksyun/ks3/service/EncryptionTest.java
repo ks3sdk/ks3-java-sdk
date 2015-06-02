@@ -62,7 +62,7 @@ public class EncryptionTest extends Ks3ClientTest{
 	private String bucket = "test-encryption-server";
 	private String key = "test";
 	private String destFile = "D://serverEncryption";
-	final File file = new File(this.getClass().getClassLoader().getResource("git.exe").toString().substring(6));
+	final File file = new File("D://report.log_2015-05-14.log");
 	@Before
 	public void initKey() throws InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, IOException{
 		symKey = this.loadSymmetricAESKey();

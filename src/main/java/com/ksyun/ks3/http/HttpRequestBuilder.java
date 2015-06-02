@@ -62,6 +62,11 @@ public class HttpRequestBuilder {
 		} catch (Exception e) {
 			throw new Ks3ClientException(e);
 		}
+		//用户自己指定的签名
+		String userAuth = ks3Request.getRequestConfig().getExtendHeaders().get(HttpHeaders.Authorization.toString());
+		if(!StringUtils.isBlank(userAuth)){
+			request.addHeader(HttpHeaders.Authorization, userAuth);
+		}
 		//build http request
 		HttpMethod method = request.getMethod();
 		HttpRequestBase httpRequest = null;
