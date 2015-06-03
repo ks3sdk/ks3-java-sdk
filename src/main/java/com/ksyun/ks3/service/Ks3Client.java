@@ -127,7 +127,7 @@ public class Ks3Client implements Ks3 {
 	}
 
 	public Ks3Client(Authorization auth) {
-		this(auth.getAccessKeyId(),auth.getAccessKeySecret(),null);
+		this.auth = auth;
 	}
 
 	public Ks3Client(String accesskeyid, String accesskeysecret) {
