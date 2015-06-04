@@ -170,7 +170,7 @@ public class AuthUtils {
         StringBuffer buffer = new StringBuffer();
         for (int i = 0; i < headList.size(); i++) {
             String _key = headList.get(i);
-            buffer.append(headList.get(i).toLowerCase() + ":" + headers.get(_key));
+            buffer.append(headList.get(i)/*.toLowerCase()*/ + ":" + headers.get(_key));
             if (i < (headList.size() - 1))
                 buffer.append("\n");
         }
