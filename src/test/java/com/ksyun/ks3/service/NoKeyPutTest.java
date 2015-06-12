@@ -6,11 +6,13 @@ import org.junit.Test;
 
 public class NoKeyPutTest extends Ks3ClientTest{
 	String bucket = "eflakee";
+	String bucketsha1 = "whm";
 	@Test
 	public void testPut(){
 		client1.putObject(bucket,"123",new ByteArrayInputStream("123.jpg".getBytes()),null);
 	}
-	public void testPut1(){
-		
+	@Test
+	public void testPutSHA1(){
+		client1.putObject(bucketsha1,"123",new ByteArrayInputStream("123.jpg".getBytes()),null);
 	}
 }
