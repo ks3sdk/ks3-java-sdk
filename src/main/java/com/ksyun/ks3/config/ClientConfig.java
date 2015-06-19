@@ -110,10 +110,6 @@ public class ClientConfig {
 	 */
 	public static final String END_POINT = "ks3client.endpoint";
 	/**
-	 * KS3 cdn服务地址
-	 */
-	public static final String 	CDN_END_POINT = "ks3client.cdn.endpoint";
-	/**
 	 * ks3 client auth加载器
 	 */
 	public static final String CLIENT_SIGNER = "ks3client.signer";

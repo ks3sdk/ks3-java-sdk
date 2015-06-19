@@ -18,7 +18,13 @@ import com.ksyun.ks3.utils.AuthUtils;
 public class DefaultSigner implements Signer {
 	public void sign(Authorization auth, Request request) {
 		try {
-			request.addHeader(HttpHeaders.AUTHORIZATION.toString(),AuthUtils.calcAuthorization(auth, request));
+			if(!request.isPresign())
+				request.addHeader(HttpHeaders.AUTHORIZATION.toString(),AuthUtils.calcAuthorization(auth, request));
+			else{
+				request.getQueryParams().put("AccessKeyId",auth.getAccessKeyId());
+				request.getQueryParams().put("Signature",AuthUtils.calcSignature(auth.getAccessKeySecret(), request));
+				request.getQueryParams().put("Expires", String.valueOf(request.getExpires().getTime()/1000));
+			}
 		} catch (Exception e) {
 			throw new Ks3ClientException(
 					"计算用户签名时出错("

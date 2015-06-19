@@ -98,9 +98,13 @@ public class AuthUtils {
         String requestMethod = request.getMethod().toString();
         String contentMd5 = request.getHeaders().containsKey(HttpHeaders.ContentMD5.toString())?request.getHeaders().get(HttpHeaders.ContentMD5.toString()):"";
         String contentType = request.getHeaders().containsKey(HttpHeaders.ContentType.toString())?request.getHeaders().get(HttpHeaders.ContentType.toString()):"";
-        request.addHeaderIfNotContains(HttpHeaders.Date.toString(), DateUtils.convertDate2Str(new Date(), DATETIME_PROTOCOL.RFC1123));
-        
-        String _signDate = request.getHeaders().get(HttpHeaders.Date.toString());
+        String _signDate;
+        if(request.isPresign()){
+        	_signDate =String.valueOf(request.getExpires().getTime()/1000);
+        }else{
+            request.addHeaderIfNotContains(HttpHeaders.Date.toString(), DateUtils.convertDate2Str(new Date(), DATETIME_PROTOCOL.RFC1123));
+            _signDate = request.getHeaders().get(HttpHeaders.Date.toString());	
+        }
 
         List<String> signList = new ArrayList<String>();
         signList.addAll(Arrays.asList(new String[] {

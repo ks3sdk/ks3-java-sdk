@@ -20,6 +20,8 @@ import java.util.Map.Entry;
 
 
 
+
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -37,6 +39,8 @@ import com.ksyun.ks3.exception.client.ClientIllegalArgumentExceptionGenerator;
 import com.ksyun.ks3.exception.serviceside.NotFoundException;
 import com.ksyun.ks3.http.HttpMethod;
 import com.ksyun.ks3.http.Ks3CoreController;
+import com.ksyun.ks3.http.Request;
+import com.ksyun.ks3.http.RequestBuilder;
 import com.ksyun.ks3.service.request.AbortMultipartUploadRequest;
 import com.ksyun.ks3.service.request.CompleteMultipartUploadRequest;
 import com.ksyun.ks3.service.request.CopyObjectRequest;
@@ -46,6 +50,7 @@ import com.ksyun.ks3.service.request.DeleteBucketCorsRequest;
 import com.ksyun.ks3.service.request.DeleteBucketRequest;
 import com.ksyun.ks3.service.request.DeleteMultipleObjectsRequest;
 import com.ksyun.ks3.service.request.DeleteObjectRequest;
+import com.ksyun.ks3.service.request.GeneratePresignedUrlRequest;
 import com.ksyun.ks3.service.request.GetBucketACLRequest;
 import com.ksyun.ks3.service.request.GetBucketCorsRequest;
 import com.ksyun.ks3.service.request.GetBucketLocationRequest;
@@ -95,8 +100,6 @@ import com.ksyun.ks3.utils.StringUtils;
  * @description ks3客户端，用户使用时需要先配置{@link ClientConfig},然后初始化一个Ks3Client进行操作
  **/
 public class Ks3Client implements Ks3 {
-	private static final Log log = LogFactory.getLog(Ks3Client.class);
-	private ClientConfig config = ClientConfig.getConfig();
 	private Ks3ClientConfig ks3config = null;
 	
 	private Authorization auth;
@@ -376,60 +379,26 @@ public class Ks3Client implements Ks3 {
 		return generatePresignedUrl(bucket, key, expiration, null);
 	}
 
-	@SuppressWarnings("deprecation")
 	public String generatePresignedUrl(String bucket, String key,
 			int expiration, ResponseHeaderOverrides overrides)
 			throws Ks3ClientException {
-		if (overrides == null)
-			overrides = new ResponseHeaderOverrides();
-		boolean isPrivate = false;
-		AccessControlList acl = this.getObjectACL(bucket, key)
-				.getAccessControlList();
-		final Collection<Permission> allUsersPermissions = new LinkedHashSet<Permission>();
-		for (final Grant grant : acl.getGrants()) {
-			if (GranteeUri.AllUsers.equals(grant.getGrantee())) {
-				allUsersPermissions.add(grant.getPermission());
-			}
-		}
-		final boolean read = allUsersPermissions.contains(Permission.Read);
-		final boolean write = allUsersPermissions.contains(Permission.Write);
-		if (read && write) {
-			isPrivate = false;
-		} else if (read) {
-			isPrivate = false;
-		} else {
-			isPrivate = true;
-		}
-		key = HttpUtils.urlEncode(key, true);
-		if (isPrivate) {
-			String signature = "";
-			long expires = ((System.currentTimeMillis() / 1000) + expiration);
-			try {
-				signature = AuthUtils.calcSignature(auth.getAccessKeySecret(),
-						bucket, key, overrides.getOverrides(),
-						HttpMethod.GET.toString(), expires);
-			} catch (SignatureException e) {
-				e.printStackTrace();
-				throw new Ks3ClientException("计算用户签名时出错", e);
-			}
-			if (overrides.getOverrides().size() > 0)
-				return "http://" + bucket + "." + config.getStr(ClientConfig.CDN_END_POINT)
-						+ "/" + key + "?AccessKeyId="
-						+ URLEncoder.encode(auth.getAccessKeyId())
-						+ "&Expires=" + expires + "&Signature="
-						+ URLEncoder.encode(signature) + "&"
-						+ HttpUtils.encodeParams(overrides.getOverrides());
-			else
-				return "http://" + bucket + "." + config.getStr(ClientConfig.CDN_END_POINT)
-						+ "/" + key + "?AccessKeyId="
-						+ URLEncoder.encode(auth.getAccessKeyId())
-						+ "&Expires=" + expires + "&Signature="
-						+ URLEncoder.encode(signature);
-		} else {
-			return "http://" + bucket + "." + config.getStr(ClientConfig.CDN_END_POINT) + "/"
-					+ key + "?"
-					+ HttpUtils.encodeParams(overrides.getOverrides());
-		}
+		GeneratePresignedUrlRequest request = new GeneratePresignedUrlRequest();
+		request.setBucket(bucket);
+		request.setKey(key);
+		request.setExpiration(new Date(System.currentTimeMillis()+expiration*1000));
+		request.setResponseHeaders(overrides);
+		return generatePresignedUrl(request);
+	}
+	public String generatePresignedUrl(GeneratePresignedUrlRequest request) throws Ks3ClientException{
+		if (auth == null || StringUtils.isBlank(auth.getAccessKeyId())
+				|| StringUtils.isBlank(auth.getAccessKeySecret()))
+			throw new Ks3ClientException(
+					"AccessKeyId or AccessKeySecret can't be null");
+		if(ks3config == null)
+			ks3config = new Ks3ClientConfig();
+		Request req = new Request();
+		RequestBuilder.buildRequest(request,req, auth,ks3config);
+		return req.toUrl(ks3config);
 	}
 
 	public HeadBucketResult headBucket(String bucketname)

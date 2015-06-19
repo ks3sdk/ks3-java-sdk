@@ -11,7 +11,6 @@ public class AWSConfigLoader implements ConfigLoader{
 		config.set(ClientConfig.END_POINT,"s3.amazonaws.com");
 		config.set(ClientConfig.CLIENT_SIGNER,"com.ksyun.ks3.signer.DefaultSigner");
 		config.set(ClientConfig.CLIENT_URLFORMAT, "0");
-		config.set(ClientConfig.CDN_END_POINT, "s3.amazonaws.com");
 		config.set(ClientConfig.HEADER_PREFIX, "x-amz-");
 		config.set(ClientConfig.USER_META_PREFIX,"x-amz-meta-");
 		config.set(ClientConfig.GRANTEE_ALLUSER,"http://acs.amazonaws.com/groups/global/AllUsers");

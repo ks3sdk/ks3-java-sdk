@@ -19,6 +19,7 @@ import com.ksyun.ks3.service.request.CompleteMultipartUploadRequest;
 import com.ksyun.ks3.service.request.CreateBucketRequest;
 import com.ksyun.ks3.service.request.DeleteBucketRequest;
 import com.ksyun.ks3.service.request.DeleteObjectRequest;
+import com.ksyun.ks3.service.request.GeneratePresignedUrlRequest;
 import com.ksyun.ks3.service.request.GetObjectRequest;
 import com.ksyun.ks3.service.request.HeadBucketRequest;
 import com.ksyun.ks3.service.request.HeadObjectRequest;
@@ -750,6 +751,14 @@ public interface Ks3 {
 	 */
 	public String generatePresignedUrl(String bucket, String key, int expiration,ResponseHeaderOverrides overrides)
 			throws Ks3ClientException;
+	/**
+	 * 生成外链
+	 * 
+	 * @param request {@link GeneratePresignedUrlRequest}
+	 * @return
+	 * @throws Ks3ClientException
+	 */
+	public String generatePresignedUrl(GeneratePresignedUrlRequest request) throws Ks3ClientException;
 	/**
 	 * PUT OBJECT
 	 * 

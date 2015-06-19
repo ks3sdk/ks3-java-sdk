@@ -96,10 +96,10 @@ public class Ks3ClientTest extends com.ksyun.ks3.service.Ks3ClientTest{
 		System.out.println(client.getBucketLoaction("ksc-scm"));
 	}
 
-	// @Test
+	 @Test
 	public void testGenerateUrl() {
-		System.out.println(client.generatePresignedUrl("lijunwei.test",
-				"IMG_16721.jpg", 60));
+		System.out.println(client.generatePresignedUrl("abtest",
+				"中文文件1.txt", 60));
 	}
 
 	// @Test

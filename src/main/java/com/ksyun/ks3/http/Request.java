@@ -1,9 +1,14 @@
 package com.ksyun.ks3.http;
 
 import java.io.InputStream;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.ksyun.ks3.config.ClientConfig;
+import com.ksyun.ks3.service.Ks3ClientConfig;
+import com.ksyun.ks3.service.Ks3ClientConfig.PROTOCOL;
+import com.ksyun.ks3.utils.HttpUtils;
 import com.ksyun.ks3.utils.StringUtils;
 
 /**
@@ -15,12 +20,52 @@ import com.ksyun.ks3.utils.StringUtils;
  **/
 public class Request {
 	private HttpMethod method;
+	private Date expires;
 	private String endpoint;
 	private String bucket;
 	private String key;
 	private Map<String,String> queryParams = new HashMap<String,String>();
 	private Map<String,String> headers = new HashMap<String,String>();
 	private InputStream content;
+	
+	public String toUrl(Ks3ClientConfig ks3config){
+		String url = "";
+		String bucket = this.getBucket();
+		String key = this.getKey();
+		String endpoint = this.getEndpoint();
+		String encodedParams = HttpUtils.encodeParams(this.getQueryParams());
+		key = HttpUtils.urlEncode(key, true);
+		int format = ClientConfig.getConfig().getInt(
+				ClientConfig.CLIENT_URLFORMAT);
+		Boolean format0 = ks3config.getPathStyleAccess();
+		if(format0 !=null){
+			format = format0?1:0;
+		}
+		
+		String protocol = ClientConfig.getConfig().getStr(ClientConfig.HTTP_PROTOCOL);
+		PROTOCOL spePro = ks3config.getProtocol();
+		if(spePro!=null)
+			protocol = spePro.toString();
+		if(StringUtils.isBlank(protocol))
+			protocol ="http";
+		if (format == 0) {
+			url = new StringBuffer(protocol+"://")
+					.append(StringUtils.isBlank(bucket) ? "" : bucket
+							+ ".").append(endpoint)
+					.append(StringUtils.isBlank(key) ? "" :"/"+ key)
+					.toString();
+		} else {
+			url = new StringBuffer(protocol+"://")
+					.append(endpoint)
+					.append(StringUtils.isBlank(bucket) ? "" :"/" +bucket)
+					.append(StringUtils.isBlank(key) ? "" : "/"+key)
+					.toString();
+		}
+		if (!StringUtils.isBlank(encodedParams))
+			url += "?" + encodedParams;
+		return url;
+	}
+	
 	public String getEndpoint() {
 		return endpoint;
 	}
@@ -79,6 +124,15 @@ public class Request {
 	}
 	public void setMethod(HttpMethod method) {
 		this.method = method;
+	}
+	public Date getExpires() {
+		return expires;
+	}
+	public void setExpires(Date expires) {
+		this.expires = expires;
+	}
+	public boolean isPresign(){
+		return this.expires != null;
 	}
 	
 }

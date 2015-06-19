@@ -3,13 +3,11 @@
 ## 注意
 文档中的示例代码仅供参考之用，具体使用的时候请参考KS3 API文档，根据自己的实际情况调节参数。  
 lib目录下为该项目所依赖的所有jar包，以及将sdk打好的jar包  
-如果您在使用中有任何疑问，请联系lijunwei@kingsoft.com或添加QQ:1448039011
 
 [TOC]
 
 ## 1 概述
-此SDK适用于Java 5及以上版本。基于KS3 API 构建。使用此 SDK 构建您的网络应用程序，能让您以非常便捷地方式将数据安全地存储到金山云存储上。无论您的网络应用是一个网站程序，还是包括从云端（服务端程序）到终端（手持设备应用）的架构的服务或应用，通过KS3存储及其 SDK，都能让您应用程序的终端用户高速上传和下载，同时也让您的服务端更加轻盈。  
-
+此SDK适用于Java 5及以上版本。基于KS3 API 构建。
 
 ## 2 环境准备
 配置Java 5 以上开发环境  
@@ -27,7 +25,7 @@ lib目录下为该项目所依赖的所有jar包，以及将sdk打好的jar包
 ## 3 初始化
 ### 3.1 配置参数
 用户可以跳过参数配置，一般情况下默认配置可以满足大部分的需求。
-#### 3.1.1 配置方法一
+#### 3.1.1 全局配置
 
 	ClientConfig config = ClientConfig.getConfig();
 	config.set(ClientConfig.CONNECTION_TIMEOUT, "50000");//连接超时时间
@@ -47,39 +45,7 @@ lib目录下为该项目所依赖的所有jar包，以及将sdk打好的jar包
 	config.set(ClientConfig.END_POINT,"kss.ksyun.com");//KS3服务器域名
 	config.set(ClientConfig.CLIENT_SIGNER,"com.ksyun.ks3.signer.DefaultSigner");//配置签名算法生成器，一般情况下请勿修改。
 	config.set(ClientConfig.CLIENT_URLFORMAT, "0"); //设置 url格式.0 {bucket}.kss.ksyun.com/{key}.1 kss.ksyun.com/{bucket}/{key}
-#### 3.1.2配置方法二
-新建配置文件config.properties
-
-	httpclient.connectionTimeout=50000//连接超时时间
-	httpclient.socketTimeout=50000//socket超时时间
-	httpclient.socketSendBufferSizeHint=8192//socket发送数据时buffer大小
-	httpclient.socketReceiveBufferSzieHint=8192//socket接受数据时buffer大小
-	httpclient.maxRetry=5//请求超时或发送错误时重试次数
-	httpclient.connnetionTTL=-1//连接池中请求的过期时间。当请求需要重试时，使用这个参数检测是否可用。
-	httpclient.maxConnections=50//连接池最大连接数
-	httpclient.proxyHost=null//代理host
-	httpclient.proxyPort=-1//代理端口
-	httpclient.ProxyUserName=null//代理用户名
-	httpclient.ProxyPassword=null//代理密码
-	httpclient.ProxyDomain=null//Windows domain name for configuration an NTLM proxy
-	httpclient.ProxyWorkStation=null//Windows workstation name for configuring NTLM proxy
-	httpclient.isPreemptiveBasicProxyAuth=false//Whether to authenticate preemptively against proxy server. 
-	ks3client.endpoint=kss.ksyun.com//KS3服务器域名
-	ks3client.signer=com.ksyun.ks3.signer.DefaultSigner//配置签名算法生成器，一般情况下请勿修改。
-	ks3client.urlformat=0//设置 url格式.0 {bucket}.kss.ksyun.com/{key}.1 kss.ksyun.com/{bucket}/{key}
-
-新建类
 	
-	public class DemoConfigLoader implements ConfigLoader{
-		public ClientConfig load(ClientConfig config) {
-			依次循环调用config.set(String key, String value)方法将配置文件中的键值对设置进去
-			return config;
-		}
-	}
-
-在代码初始化时
-
-	ClientConfig.addConfigLoader(new DemoConfigLoader());
 ### 3.2 配置日志
 该SDK使用commons-logging
 

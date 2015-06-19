@@ -105,7 +105,8 @@ public class Ks3CoreController {
 		this.client = this.factory.createHttpClient();
 		HttpResponse response = null;
 		Request req = new Request();
-		HttpRequestBase httpRequest = HttpRequestBuilder.build(request,req, auth,ks3config);
+		RequestBuilder.buildRequest(request,req, auth,ks3config);
+		HttpRequestBase httpRequest = RequestBuilder.buildHttpRequest(request, req, auth, ks3config);
 		try {
 			log.info(httpRequest.getRequestLine());
 			for(Header header : httpRequest.getAllHeaders()){

@@ -38,14 +38,18 @@ import com.ksyun.ks3.utils.StringUtils;
  * 
  * @description 
  **/
-public class HttpRequestBuilder {
-	public static HttpRequestBase build(Ks3WebServiceRequest ks3Request,Request request,Authorization auth,Ks3ClientConfig ks3config){	
+public class RequestBuilder {
+	public static void buildRequest(Ks3WebServiceRequest ks3Request,Request request,Authorization auth,Ks3ClientConfig ks3config){
 		ks3Request.validateParams();
-		request.getHeaders().putAll(ks3Request.getRequestConfig().getExtendHeaders());
+		if(ks3Request.getRequestConfig() != null){
+			Map<String,String> headers = ks3Request.getRequestConfig().getExtendHeaders();
+			if(headers != null)
+				request.getHeaders().putAll(headers);
+		}
 		ks3Request.buildRequest(request);
 		request.addHeaderIfNotContains(HttpHeaders.UserAgent.toString(),ks3Request.getRequestConfig().getUserAgent());
-		request.addHeaderIfNotContains(HttpHeaders.ContentType.toString(),"application/xml");
-		
+		if(!request.isPresign())
+			request.addHeaderIfNotContains(HttpHeaders.ContentType.toString(),"application/xml");
 		String endpoint0 = ks3Request.getRequestConfig().getEndpoint();
 		if(StringUtils.isBlank(endpoint0)){
 			endpoint0 = ks3config.getEndpoint();
@@ -63,10 +67,14 @@ public class HttpRequestBuilder {
 			throw new Ks3ClientException(e);
 		}
 		//用户自己指定的签名
-		String userAuth = ks3Request.getRequestConfig().getExtendHeaders().get(HttpHeaders.Authorization.toString());
-		if(!StringUtils.isBlank(userAuth)){
-			request.addHeader(HttpHeaders.Authorization, userAuth);
+		if(!request.isPresign()){
+			String userAuth = ks3Request.getRequestConfig().getExtendHeaders().get(HttpHeaders.Authorization.toString());
+			if(!StringUtils.isBlank(userAuth)){
+				request.addHeader(HttpHeaders.Authorization, userAuth);
+			}
 		}
+	}
+	public static HttpRequestBase buildHttpRequest(Ks3WebServiceRequest ks3Request,Request request,Authorization auth,Ks3ClientConfig ks3config){	
 		//build http request
 		HttpMethod method = request.getMethod();
 		HttpRequestBase httpRequest = null;
@@ -78,40 +86,7 @@ public class HttpRequestBuilder {
 			if (!(request.getContent() instanceof MD5DigestCalculatingInputStream))
 				request.setContent(new MD5DigestCalculatingInputStream(request.getContent()));
 		//get request url
-		String url = "";
-		String bucket = request.getBucket();
-		String key = request.getKey();
-		String endpoint = request.getEndpoint();
-		String encodedParams = HttpUtils.encodeParams(request.getQueryParams());
-		key = HttpUtils.urlEncode(key, true);
-		int format = ClientConfig.getConfig().getInt(
-				ClientConfig.CLIENT_URLFORMAT);
-		Boolean format0 = ks3config.getPathStyleAccess();
-		if(format0 !=null){
-			format = format0?1:0;
-		}
-		
-		String protocol = ClientConfig.getConfig().getStr(ClientConfig.HTTP_PROTOCOL);
-		PROTOCOL spePro = ks3config.getProtocol();
-		if(spePro!=null)
-			protocol = spePro.toString();
-		if(StringUtils.isBlank(protocol))
-			protocol ="http";
-		if (format == 0) {
-			url = new StringBuffer(protocol+"://")
-					.append(StringUtils.isBlank(bucket) ? "" : bucket
-							+ ".").append(endpoint)
-					.append(StringUtils.isBlank(key) ? "" :"/"+ key)
-					.toString();
-		} else {
-			url = new StringBuffer(protocol+"://")
-					.append(endpoint)
-					.append(StringUtils.isBlank(bucket) ? "" :"/" +bucket)
-					.append(StringUtils.isBlank(key) ? "" : "/"+key)
-					.toString();
-		}
-		if (!StringUtils.isBlank(encodedParams))
-			url += "?" + encodedParams;
+		String url = request.toUrl(ks3config);
 		//init http request
 		InputStream requestBody = request.getContent();
 		if (method == HttpMethod.POST) {
