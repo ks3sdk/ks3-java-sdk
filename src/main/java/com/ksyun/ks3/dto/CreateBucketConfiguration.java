@@ -21,7 +21,8 @@ public class CreateBucketConfiguration {
 	 *
 	 */
 	public static enum REGION {
-		BEIJING, HANGZHOU, JIYANG;
+		BEIJING, HANGZHOU, JIYANG,AMERICA,
+		HONGKONG;
 		public static REGION load(String s){
 			for(REGION region :REGION.values()){
 				if(region.toString().equals(s))
