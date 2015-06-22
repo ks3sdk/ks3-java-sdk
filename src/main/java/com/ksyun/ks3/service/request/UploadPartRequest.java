@@ -163,6 +163,9 @@ public class UploadPartRequest extends Ks3WebServiceRequest implements SSECustom
 				if (this.fileoffset < 0||this.fileoffset>file.length())
 					throw between("fileoffset",String.valueOf(this.fileoffset),"0",
 							String.valueOf(file.length()));
+			}else{
+				if(this.partSize <= 0l)
+					throw notNullInCondition("partSize","upload part by inputstream");
 			}
 		}
 		if (this.partSize > Constants.maxPartSize||this.partSize==0) {
@@ -270,7 +273,7 @@ public class UploadPartRequest extends Ks3WebServiceRequest implements SSECustom
 		request.setMethod(HttpMethod.PUT);
 		request.setBucket(bucket);
 		request.setKey(key);
-		request.addHeader(HttpHeaders.ContentType, "binary/octet-stream");
+		request.addHeader(HttpHeaders.ContentType, "application/octet-stream");
 		request.addQueryParam("uploadId", this.uploadId);
 		request.addQueryParam("partNumber", String.valueOf(this.partNumber));
 		if (this.file != null) {

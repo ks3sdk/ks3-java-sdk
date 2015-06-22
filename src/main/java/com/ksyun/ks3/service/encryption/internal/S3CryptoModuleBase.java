@@ -33,6 +33,7 @@ import com.ksyun.ks3.service.encryption.model.MaterialsDescriptionProvider;
 import com.ksyun.ks3.service.request.AbortMultipartUploadRequest;
 import com.ksyun.ks3.service.request.Ks3WebServiceRequest;
 import com.ksyun.ks3.service.request.PutObjectRequest;
+import com.ksyun.ks3.utils.Base64;
 
 /**
  * Common implementation for different S3 cryptographic modules.
@@ -325,7 +326,7 @@ public abstract class S3CryptoModuleBase<T extends MultipartUploadContext>
         //不能使用之前request的content-md5
         metadata.setContentMD5(null);
         // Set the crypto instruction file header
-        metadata.setUserMeta(HttpHeaders.CRYPTO_INSTRUCTION_FILE.toString(), request.getKey() + EncryptionUtils.INSTRUCTION_SUFFIX);
+        metadata.setUserMeta(HttpHeaders.CRYPTO_INSTRUCTION_FILE.toString(), Base64.encodeAsString((request.getKey() + EncryptionUtils.INSTRUCTION_SUFFIX).getBytes()));
         // Update the instruction request
         request.setKey(request.getKey() + EncryptionUtils.INSTRUCTION_SUFFIX);
         request.setObjectMeta(metadata);
@@ -341,7 +342,7 @@ public abstract class S3CryptoModuleBase<T extends MultipartUploadContext>
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(bytes.length);
         //亚马逊是空的，但是由于签名问题，加了个值
-        metadata.setUserMeta(HttpHeaders.CRYPTO_INSTRUCTION_FILE.toString(),key + EncryptionUtils.INSTRUCTION_SUFFIX);
+        metadata.setUserMeta(HttpHeaders.CRYPTO_INSTRUCTION_FILE.toString(),Base64.encodeAsString((key + EncryptionUtils.INSTRUCTION_SUFFIX).getBytes()));
         return new PutObjectRequest(bucketName, key + EncryptionUtils.INSTRUCTION_SUFFIX,
                 is, metadata);
     }

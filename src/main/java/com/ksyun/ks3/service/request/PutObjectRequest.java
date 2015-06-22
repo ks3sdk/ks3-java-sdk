@@ -285,7 +285,7 @@ public class PutObjectRequest extends Ks3WebServiceRequest implements SSECustome
 		request.setMethod(HttpMethod.PUT);
 		request.setBucket(bucket);
 		request.setKey(key);
-		request.addHeader(HttpHeaders.ContentType,"binary/octet-stream");
+		request.addHeader(HttpHeaders.ContentType,"application/octet-stream");
 		if (this.objectMeta == null)
 			this.objectMeta = new ObjectMetadata();
 		

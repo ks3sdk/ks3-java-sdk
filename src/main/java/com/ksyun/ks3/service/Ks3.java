@@ -803,6 +803,20 @@ public interface Ks3 {
 	public PutObjectResult putObject(String bucketname, String objectkey,
 			InputStream inputstream, ObjectMetadata objectmeta)
 			throws Ks3ClientException, Ks3ServiceException;
+	/**
+	 * PUT Object
+	 * @param bucketname bucket名称
+	 * @param objectkey
+	 * @param content 要上传的内容
+	 * @return
+	 * @throws Ks3ClientException
+	 * @throws Ks3ServiceException
+	 * <p>
+	 * 将一个字符串作为内容上传
+	 * </p>
+	 */
+	public PutObjectResult putObject(String bucketname,String objectkey,String content)
+	throws Ks3ClientException, Ks3ServiceException;
 
 	/**
 	 * PUT OBJECT

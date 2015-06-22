@@ -54,7 +54,7 @@ public abstract class Ks3WebServiceXmlResponse<T> extends DefaultHandler impleme
 	{
 		return this.getTag(0);
 	}
-	private void setResponse(HttpResponse response)
+	protected void setResponse(HttpResponse response)
 	{
 		this.response = response;
 	}

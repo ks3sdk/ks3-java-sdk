@@ -377,7 +377,7 @@ public class EncryptionUtils {
         metadata.setContentMD5(null);
 
         // Set the crypto instruction file header
-        metadata.setUserMeta(HttpHeaders.CRYPTO_INSTRUCTION_FILE.toString(), request.getKey() + INSTRUCTION_SUFFIX);
+        metadata.setUserMeta(HttpHeaders.CRYPTO_INSTRUCTION_FILE.toString(),Base64.encodeAsString((request.getKey() + INSTRUCTION_SUFFIX).getBytes()));
 
         // Update the instruction request
         request.setKey(request.getKey() + INSTRUCTION_SUFFIX);
@@ -393,7 +393,7 @@ public class EncryptionUtils {
 
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(instructionBytes.length);
-        metadata.setUserMeta(HttpHeaders.CRYPTO_INSTRUCTION_FILE.toString(), key + INSTRUCTION_SUFFIX);
+        metadata.setUserMeta(HttpHeaders.CRYPTO_INSTRUCTION_FILE.toString(),Base64.encodeAsString(( key + INSTRUCTION_SUFFIX).getBytes()));
 
         return new PutObjectRequest(bucketName, key + INSTRUCTION_SUFFIX, instructionInputStream, metadata);
     }

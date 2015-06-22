@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.security.SignatureException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
  
+
+
 
 
 
@@ -437,7 +440,13 @@ public class Ks3Client implements Ks3 {
 		return putObject(new PutObjectRequest(bucketname, objectkey,
 				inputstream, objectmeta));
 	}
-
+	public PutObjectResult putObject(String bucketname, String objectkey,
+			String content) throws Ks3ClientException, Ks3ServiceException {
+		InputStream inputstream = new ByteArrayInputStream(content.getBytes());
+		ObjectMetadata objectmeta = new ObjectMetadata();
+		return putObject(new PutObjectRequest(bucketname, objectkey,
+				inputstream, objectmeta));
+	}
 	public PutObjectResult putObject(PutObjectRequest request)
 			throws Ks3ClientException, Ks3ServiceException {
 		PutObjectResult obj = client.execute(ks3config,auth, request,
