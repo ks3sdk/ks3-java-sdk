@@ -164,8 +164,6 @@ public class HttpUtils {
 
 			matcher.appendTail(buffer);
 			encoded = buffer.toString();
-			if(encoded.startsWith("/"))
-				encoded = "%2F"+encoded.substring(1);
 			return encoded;
 
 		} catch (UnsupportedEncodingException ex) {

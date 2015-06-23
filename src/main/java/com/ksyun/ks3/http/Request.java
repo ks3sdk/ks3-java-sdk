@@ -49,18 +49,20 @@ public class Request {
 		if(StringUtils.isBlank(protocol))
 			protocol ="http";
 		if (format == 0) {
-			url = new StringBuffer(protocol+"://")
+			url = new StringBuffer()
 					.append(StringUtils.isBlank(bucket) ? "" : bucket
 							+ ".").append(endpoint)
 					.append(StringUtils.isBlank(key) ? "" :"/"+ key)
 					.toString();
 		} else {
-			url = new StringBuffer(protocol+"://")
+			url = new StringBuffer()
 					.append(endpoint)
 					.append(StringUtils.isBlank(bucket) ? "" :"/" +bucket)
 					.append(StringUtils.isBlank(key) ? "" : "/"+key)
 					.toString();
 		}
+		url = url.replace("//", "/%2F");
+		url = protocol+"://"+url;
 		if (!StringUtils.isBlank(encodedParams))
 			url += "?" + encodedParams;
 		return url;
