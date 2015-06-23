@@ -382,7 +382,7 @@ public class ObjectTest extends ObjectBeforeTest{
 	 */
 	@Test(expected=Ks3ServiceException.class)
 	public void headObjectTest2008(){
-		String noBucket = "notExist";
+		String noBucket = "notexist";
 		HeadObjectResult object = client.headObject(noBucket, "hosts.txt");
 		System.out.println(object);
 	}
@@ -506,7 +506,7 @@ public class ObjectTest extends ObjectBeforeTest{
 	 */
 	@Test(expected=NoSuchBucketException.class)
 	public void deleteObjectTest4003(){
-		String noBucket = "notExist";
+		String noBucket = "notexist";
 		client.deleteObject(noBucket, "deleteTest.txt");
 		
 	}
@@ -564,7 +564,7 @@ public class ObjectTest extends ObjectBeforeTest{
 	 */
 	@Test(expected=Ks3ClientException.class)
 	public void putObjectTest5002(){
-		PutObjectResult result = client.putObject(bucket, "/putObjectTest.txt",new File(filePath + "/notExist.txt"));
+		PutObjectResult result = client.putObject(bucket, "/putObjectTest.txt",new File(filePath + "/notexist.txt"));
 		System.out.println(result);
 		
 	}
@@ -576,7 +576,7 @@ public class ObjectTest extends ObjectBeforeTest{
 	 */
 	@Test(expected=NoSuchBucketException.class)
 	public void putObjectTest5003(){
-		String noBucket = "notExist";
+		String noBucket = "notexist";
 		PutObjectResult result = client.putObject(noBucket, "/putObjectTest.txt",new File(filePath + "/putObjectTest.txt"));
 		System.out.println(result);
 		
@@ -590,11 +590,11 @@ public class ObjectTest extends ObjectBeforeTest{
 	@Test()
 	public void putObjectTest5004(){
 		List<String> resultList = new ArrayList<String>();
-		PutObjectRequest request = new PutObjectRequest(bucket, "/putObjectTest.txt", new File(filePath + "/putObjectTest.txt"));
+		PutObjectRequest request = new PutObjectRequest(bucket, "//putObjectTest.txt", new File(filePath + "/putObjectTest.txt"));
 		request.setCannedAcl(CannedAccessControlList.Private);
 		resultList.add(request.getCannedAcl() + ":" + client.putObject(request));
 		
-		request = new PutObjectRequest(bucket, "/putObjectTestP.txt", new File(filePath + "/putObjectTestP.txt"));
+		request = new PutObjectRequest(bucket, "//putObjectTestP.txt", new File(filePath + "/putObjectTestP.txt"));
 		request.setCannedAcl(CannedAccessControlList.PublicRead);
 		resultList.add(request.getCannedAcl() + ":" + client.putObject(request));
 		
@@ -654,17 +654,6 @@ public class ObjectTest extends ObjectBeforeTest{
 		
 	}
 	
-	/**
-	 * @tag 功能测试	 PUT Object
-	 * @Test 正确的bucket，文件名为"/../putObjectTest.txt"  上传文件
-	 * @Then {@value Ks3ServiceException 异常}
-	 */
-	@Test()
-	public void putObjectTest5010(){
-		PutObjectResult result = client.putObject(bucket, "/../putObjectTest.txt",new File(filePath + "/putObjectTest.txt"));
-		System.out.println(result);
-		
-	}
 	
 	/**
 	 * @tag 功能测试	 PUT Object
@@ -774,7 +763,7 @@ public class ObjectTest extends ObjectBeforeTest{
 	 */
 	@Test(expected=NoSuchKeyException.class)
 	public void putObjectACLTest6002(){
-		PutObjectACLRequest request = new PutObjectACLRequest(bucket, "notExist");
+		PutObjectACLRequest request = new PutObjectACLRequest(bucket, "notexist");
 		AccessControlList acl = client.getObjectACL(bucket, "putObjectTestP.txt").getAccessControlList();
 		request.setAccessControlList(acl);
 		client.putObjectACL(request);
@@ -787,7 +776,7 @@ public class ObjectTest extends ObjectBeforeTest{
 	 */
 	@Test(expected=NoSuchBucketException.class)
 	public void putObjectACLTest6003(){
-		String tempBucket = "notExist";
+		String tempBucket = "notexist";
 		PutObjectACLRequest request = new PutObjectACLRequest(tempBucket, "putObjectTest.txt");
 		AccessControlList acl = client.getObjectACL(bucket, "putObjectTestP.txt").getAccessControlList();
 		request.setAccessControlList(acl);
@@ -950,7 +939,7 @@ public class ObjectTest extends ObjectBeforeTest{
 			}
 		} catch (Exception e) {// 屏蔽异常，方便测试
 		}
-		String tempBucket = "notExist";
+		String tempBucket = "notexist";
 		CopyObjectRequest request = new CopyObjectRequest(desBucket, desObject, tempBucket, "hosts.txt");
 		client.copyObject(request);
 	}
@@ -973,7 +962,7 @@ public class ObjectTest extends ObjectBeforeTest{
 		} catch (Exception e) {// 屏蔽异常，方便测试
 		}
 		
-		CopyObjectRequest request = new CopyObjectRequest(desBucket, desObject, bucket, "notExist1");
+		CopyObjectRequest request = new CopyObjectRequest(desBucket, desObject, bucket, "notexist1");
 		client.copyObject(request);
 	}
 	

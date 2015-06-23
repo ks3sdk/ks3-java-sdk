@@ -31,7 +31,8 @@ public class ObjectBeforeTest {
 	 */
 	@BeforeClass
 	public static void beforeClass() throws IOException{
-		ClientConfig.getConfig().set(ClientConfig.CLIENT_URLFORMAT, "1");
+	//	ClientConfig.getConfig().set(ClientConfig.CLIENT_URLFORMAT, "1");
+		ClientConfig.getConfig().set(ClientConfig.END_POINT, "kssws.ks-cdn.com");
 		
 		Properties credential = new Properties();
 		String accesskeyId1 = null;

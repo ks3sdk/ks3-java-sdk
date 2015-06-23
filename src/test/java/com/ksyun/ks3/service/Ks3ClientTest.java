@@ -37,7 +37,8 @@ public class Ks3ClientTest {
 	@Before
 	public void init() throws IOException {
 
-		ClientConfig.getConfig().set(ClientConfig.CLIENT_URLFORMAT, "1");
+	//	ClientConfig.getConfig().set(ClientConfig.CLIENT_URLFORMAT, "1");
+		ClientConfig.getConfig().set(ClientConfig.END_POINT, "kssws.ks-cdn.com");
 		//nginx把数据刷到服务端需要时间较长
 		ClientConfig.getConfig().set(ClientConfig.SOCKET_TIMEOUT,"300000");
 		
