@@ -1,7 +1,9 @@
 package com.ksyun.ks3.service.response;
 
+import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
@@ -17,45 +19,20 @@ import com.ksyun.ks3.http.HttpHeaders;
  * 
  * @description 和{@link Ks3WebServiceDefaultResponse}区别 http request不立即释放
  **/
-public abstract class Ks3WebServiceStreamResponse<T> implements Ks3WebServiceResponse<T>{
+public abstract class Ks3WebServiceStreamResponse<T> extends Ks3WebServiceResponse<T>{
 
 	protected T result = null;
-	protected HttpResponse response;
-	protected HttpRequest request;
-	public T handleResponse(HttpRequest request,HttpResponse response) {
-		this.response = response;
-		this.request = request;
+
+	protected T abstractHandleResponse() {
 		preHandle();
 		return result;
 	}
 	public abstract void preHandle();
-	public HttpResponse getResponse() {
-		return this.response;
-	}
-	protected Header[] getHeaders(String key)
-	{
-		return response.getHeaders(key);
-	}
-	protected String getHeader(String key)
-	{
-		Header[] headers = getHeaders(key);
-		if(headers.length>0)
-		{
-			return headers[0].getValue();
-		}
-		return "";
-	}
-	protected InputStream getContent()
-	{
+	public void onFinally(){
 		try {
-			return response.getEntity().getContent();
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new Ks3ClientException("无法读取http response的body("+e+")",e);
+			closeRequestInputStream();
+		} catch (IOException e) {
+			LogFactory.getLog(this.getClass()).error("handle response on finally close request inputstream error ,"+e.getMessage());
 		}
-	}
-	public String getRequestId()
-	{
-		return this.getHeader(HttpHeaders.RequestId.toString());
 	}
 }

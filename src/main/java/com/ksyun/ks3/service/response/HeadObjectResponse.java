@@ -32,10 +32,10 @@ public class HeadObjectResponse extends
 	@Override
 	public void preHandle() {
 		result = new HeadObjectResult();
-		int statusCode = this.getResponse().getStatusLine().getStatusCode();
+		int statusCode = this.getHttpResponse().getStatusLine().getStatusCode();
 		if (statusCode == 200 || statusCode == 206) {
 			ObjectMetadata metaData = new ObjectMetadata();
-			Header[] headers = this.getResponse().getAllHeaders();
+			Header[] headers = this.getHttpResponse().getAllHeaders();
 			for (int i = 0; i < headers.length; i++) {
 				if (headers[i].getName().startsWith(
 						ClientConfig.getConfig().getStr(ClientConfig.USER_META_PREFIX))) {

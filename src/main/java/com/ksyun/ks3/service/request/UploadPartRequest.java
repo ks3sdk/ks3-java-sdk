@@ -53,6 +53,7 @@ import com.ksyun.ks3.utils.StringUtils;
  * 
  **/
 public class UploadPartRequest extends Ks3WebServiceRequest implements SSECustomerKeyRequest{
+	private static final Log log = LogFactory.getLog(UploadPartRequest.class);
 	private String bucket;
 	private String key;
 
@@ -305,5 +306,15 @@ public class UploadPartRequest extends Ks3WebServiceRequest implements SSECustom
 
 	public void setContentMD5(String contentMD5) {
 		ContentMD5 = contentMD5;
+	}
+	@Override
+	public void onFinally(){
+		if(this.inputStream != null){
+			try{
+				inputStream.close();
+			}catch(Exception e){
+				log.error("put object on finally close input stream err,"+e.getMessage());
+			}
+		}
 	}
 }

@@ -300,7 +300,9 @@ public class TestPresignedUrl extends BaseTest{
 			throw new Ks3ClientException("to instantiate " + clazz
 					+ " has occured an exception:(" + e + ")", e);
 		}
-		Y ret =ksResponse.handleResponse(req, response);
+		ksResponse.setHttpRequest(req);
+		ksResponse.setHttpResponse(response);
+		Y ret =ksResponse.handleResponse();
 		return ret;
 	}
 	public  <X extends Ks3WebServiceResponse<Y>, Y> Y handle(HttpUriRequest req,Class<X> clazz) throws ClientProtocolException, IOException{

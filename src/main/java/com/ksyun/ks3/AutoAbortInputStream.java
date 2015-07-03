@@ -42,6 +42,11 @@ public class AutoAbortInputStream extends FilterInputStream{
 			((HttpRequestBase) request).abort();
 		}
 	}
+	@Override
+	public void close() throws IOException{
+		super.close();
+		this.abort();
+	}
 	public HttpRequest getRequest() {
 		return request;
 	}

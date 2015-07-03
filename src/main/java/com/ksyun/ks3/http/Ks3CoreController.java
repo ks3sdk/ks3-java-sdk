@@ -54,7 +54,7 @@ import com.ksyun.ks3.utils.Timer;
 public class Ks3CoreController {
 	private static final Log log = LogFactory.getLog(Ks3CoreController.class);
 	private HttpClientFactory factory = new HttpClientFactory();
-	private HttpClient client;
+	private HttpClient client = factory.createHttpClient();
 	public <X extends Ks3WebServiceResponse<Y>, Y> Y execute(
 			Authorization auth, Ks3WebServiceRequest request, Class<X> clazz) {
 		return execute(new Ks3ClientConfig(),auth,request,clazz);
@@ -76,6 +76,7 @@ public class Ks3CoreController {
 			if (request == null || clazz == null)
 				throw new IllegalArgumentException();
 			result = doExecute(ks3config,auth, request, clazz);
+			request.onSuccess();
 			return result;
 		} catch (RuntimeException e) {
 			if (e instanceof Ks3ClientException) {
@@ -90,11 +91,14 @@ public class Ks3CoreController {
 					e = new Ks3ClientException(e);
 			}
 			log.error(e);
+			request.onError();
 			throw e;
 		} catch (IOException e) {
 			log.error(e);
+			request.onError();
 			throw new Ks3ClientException(e);
 		} finally {
+			request.onFinally();
 		}
 	}
 
@@ -102,11 +106,23 @@ public class Ks3CoreController {
 			Authorization auth, Ks3WebServiceRequest request, Class<X> clazz)
 			throws IllegalStateException, IOException {
 		Timer.start();
-		this.client = this.factory.createHttpClient();
 		HttpResponse response = null;
 		Request req = new Request();
 		RequestBuilder.buildRequest(request,req, auth,ks3config);
 		HttpRequestBase httpRequest = RequestBuilder.buildHttpRequest(request, req, auth, ks3config);
+		
+		Ks3WebServiceResponse<Y> ksResponse = null;
+		try {
+			ksResponse = clazz.newInstance();
+		} catch (InstantiationException e) {
+			// 正常情况不会抛出
+			throw new Ks3ClientException("to instantiate " + clazz
+					+ " has occured an exception:(" + e + ")", e);
+		} catch (IllegalAccessException e) {
+			// 正常情况不会抛出
+			throw new Ks3ClientException("to instantiate " + clazz
+					+ " has occured an exception:(" + e + ")", e);
+		}
 		try {
 			log.info(httpRequest.getRequestLine());
 			for(Header header : httpRequest.getAllHeaders()){
@@ -132,56 +148,37 @@ public class Ks3CoreController {
 					}
 				}
 			}
-			closeInputStream(httpRequest);
 			log.debug("finished send request to ks3 service and recive response from the service : "
 					+ Timer.end());
+			ksResponse.setHttpRequest(httpRequest);
+			ksResponse.setHttpResponse(response);
+			if (!success(ksResponse)) {
+				throw new Ks3ServiceException(response, StringUtils.join(
+						ksResponse.expectedStatus(), ","))
+						.convert(ksResponse.getRequestId());
+			}
+			Y result = ksResponse.handleResponse();
+			Map<String, String> ret = skipMD5Check(response, req);
+			if (ret.size() == 2) {
+				log.debug("returned etag is:" + ret.get("ETag"));
+				if (!ret.get("ETag").equals(Converter.MD52ETag(ret.get("MD5")))) {
+					throw new ClientInvalidDigestException(
+							"Unable to verify integrity of data upload.  "
+									+ "Client calculated content hash didn't match hash calculated by KS3.  "
+									+ "You may need to delete the data stored in KS3.");
+				}
+			} else {
+				log.debug("client MD5 check skipped");
+			}
+			log.debug("finished handle response : " + Timer.end());
+			return result;
 		} catch (Exception e) {
 			if(e instanceof Ks3ClientException)
 				throw (Ks3ClientException)e;
 			throw new ClientHttpException(e);
+		}finally{
+			ksResponse.onFinally();
 		}
-		Ks3WebServiceResponse<Y> ksResponse = null;
-		try {
-			ksResponse = clazz.newInstance();
-		} catch (InstantiationException e) {
-			// 正常情况不会抛出
-			throw new Ks3ClientException("to instantiate " + clazz
-					+ " has occured an exception:(" + e + ")", e);
-		} catch (IllegalAccessException e) {
-			// 正常情况不会抛出
-			throw new Ks3ClientException("to instantiate " + clazz
-					+ " has occured an exception:(" + e + ")", e);
-		}
-		String requestId = response.getFirstHeader(HttpHeaders.RequestId
-				.toString()) == null ? "" : response
-				.getFirstHeader(HttpHeaders.RequestId.toString())
-				.getValue();
-		if (!success(response, ksResponse)) {
-			throw new Ks3ServiceException(response, StringUtils.join(
-					ksResponse.expectedStatus(), ",")
-					+ "("
-					+ Ks3WebServiceResponse.allStatueCode
-					+ " is all statue codes)")
-					.convert(requestId);
-		}
-		Y result = ksResponse.handleResponse(httpRequest, response);
-		Map<String, String> ret = skipMD5Check(response, req);
-		if (ret.size() == 2) {
-			log.debug("returned etag is:" + ret.get("ETag"));
-			if (!ret.get("ETag").equals(Converter.MD52ETag(ret.get("MD5")))) {
-				throw new ClientInvalidDigestException(
-						"Unable to verify integrity of data upload.  "
-								+ "Client calculated content hash didn't match hash calculated by KS3.  "
-								+ "You may need to delete the data stored in KS3.");
-			}
-		} else {
-			log.debug("client MD5 check skipped");
-		}
-		if(result instanceof Ks3Result){
-			((Ks3Result)result).setRequestId(requestId);
-		}
-		log.debug("finished handle response : " + Timer.end());
-		return result;
 	}
 
 	/**
@@ -193,13 +190,10 @@ public class Ks3CoreController {
 	 *            {@link Ks3WebServiceResponse}
 	 * @return 是 ： true 否：false
 	 */
-	private boolean success(HttpResponse response,
-			Ks3WebServiceResponse<?> kscResponse) {
+	private boolean success(Ks3WebServiceResponse<?> kscResponse) {
 		int num = kscResponse.expectedStatus().length;
-		int code = response.getStatusLine().getStatusCode();
+		int code = kscResponse.getHttpResponse().getStatusLine().getStatusCode();
 		for (int i = 0; i < num; i++) {
-			if (kscResponse.expectedStatus()[i] == Ks3WebServiceResponse.allStatueCode)
-				return true;
 			if (code == kscResponse.expectedStatus()[i])
 				return true;
 		}
@@ -224,19 +218,6 @@ public class Ks3CoreController {
 		map.put("ETag", etag);
 		map.put("MD5", clientmd5);
 		return map;
-	}
-	private void closeInputStream(HttpRequest req) throws IllegalStateException, IOException{
-		HttpEntity entity = null;
-		if(req instanceof HttpPut){
-			entity = ((HttpPut)req).getEntity();
-		}else if(req instanceof HttpPost){
-			entity = ((HttpPost)req).getEntity();
-		}
-		if(entity != null){
-			InputStream input = entity.getContent();
-			if(input!=null)
-				input.close();
-		}
 	}
 	private void restRequest(HttpRequest req) throws IllegalStateException, IOException{
 		HttpEntity entity = null;
