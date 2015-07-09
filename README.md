@@ -24,7 +24,7 @@ lib目录下为该项目所依赖的所有jar包，以及将sdk打好的jar包
     
 ## 3 初始化
 ### 3.1 配置参数
-用户可以跳过参数配置，一般情况下默认配置可以满足大部分的需求。
+用户可以跳过参数配置，一般情况下默认配置可以满足大部分的需求.    
 #### 3.1.1 全局配置
 
 	ClientConfig config = ClientConfig.getConfig();
@@ -76,6 +76,16 @@ lib目录下为该项目所依赖的所有jar包，以及将sdk打好的jar包
 当以上全部完成之后用户便可初始化客户端进行操作了  
 
 	Ks3 client = new Ks3Client("<您的AccessKeyID>","<您的AccessKeySecret>");
+
+使用其他节点
+	
+	client.setEndpoint(<endpoint>);
+	
+ks3节点列表  
+中国标准域名:kss.ksyun.com  
+中国标准CDN域名:kssws.ks-cdn.com  
+美国（圣克拉拉）域名:ks3-us-west-1.ksyun.com  
+
 ## 4 公共异常说明
 ### 4.1 Ks3ServiceException
 当抛出Ks3ServiceException时表示KS3服务端返回异常信息。Ks3ServiceException继承自RuntimeException
