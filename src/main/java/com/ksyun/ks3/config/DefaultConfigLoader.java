@@ -28,7 +28,7 @@ public class DefaultConfigLoader implements ConfigLoader{
 		config.set(ClientConfig.PROXY_USER_NAME,null);
 		config.set(ClientConfig.PROXY_WORKSTATION,null);
 		config.set(ClientConfig.IS_PREEMPTIVE_BASIC_PROXY_AUTH,"false");
-		config.set(ClientConfig.END_POINT,"kss.ksyun.com");
+		config.set(ClientConfig.END_POINT,"kssws.ks-cdn.com");
 		config.set(ClientConfig.CLIENT_SIGNER,"com.ksyun.ks3.signer.DefaultSigner");
 		config.set(ClientConfig.CLIENT_URLFORMAT, "0");
 		config.set(ClientConfig.HEADER_PREFIX, "x-kss-");

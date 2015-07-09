@@ -45,7 +45,7 @@ public class BaseTest {
 	protected static String filedown = "file_down";
 	@BeforeClass
 	public static void init() throws IOException, InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException{
-		ClientConfig.getConfig().set(ClientConfig.CLIENT_URLFORMAT, "1");	
+		//ClientConfig.getConfig().set(ClientConfig.CLIENT_URLFORMAT, "1");	
 		//ClientConfig.getConfig().set(ClientConfig.END_POINT, "kssws.ks-cdn.com");	
 		
 		final Properties credential = new Properties();

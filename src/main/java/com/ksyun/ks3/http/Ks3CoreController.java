@@ -76,7 +76,6 @@ public class Ks3CoreController {
 			if (request == null || clazz == null)
 				throw new IllegalArgumentException();
 			result = doExecute(ks3config,auth, request, clazz);
-			request.onSuccess();
 			return result;
 		} catch (RuntimeException e) {
 			if (e instanceof Ks3ClientException) {
@@ -91,11 +90,9 @@ public class Ks3CoreController {
 					e = new Ks3ClientException(e);
 			}
 			log.error(e);
-			request.onError();
 			throw e;
 		} catch (IOException e) {
 			log.error(e);
-			request.onError();
 			throw new Ks3ClientException(e);
 		} finally {
 			request.onFinally();

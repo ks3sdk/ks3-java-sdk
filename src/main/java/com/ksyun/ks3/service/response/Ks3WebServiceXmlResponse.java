@@ -30,7 +30,6 @@ import com.ksyun.ks3.utils.StringUtils;
  * @description 封装了SAX
  **/
 public abstract class Ks3WebServiceXmlResponse<T> extends Ks3WebServiceResponse<T>{
-	private HttpResponse response;
 	protected T result;
 	/**
 	 * 防止解析string时断裂 比如 将 <aa>fff>ddd</aa>解析为 fff、>、ddd
@@ -58,7 +57,7 @@ public abstract class Ks3WebServiceXmlResponse<T> extends Ks3WebServiceResponse<
 		preHandle();
 		InputStream in = null;
 		try {
-			in = response.getEntity().getContent();
+			in = super.getHttpResponse().getEntity().getContent();
 			SAXParserFactory factory = SAXParserFactory.newInstance();
 			SAXParser parser = factory.newSAXParser();
 			parser.parse(in, this);
