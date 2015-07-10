@@ -29,8 +29,7 @@ import com.ksyun.ks3.utils.StringUtils;
  * 
  * @description 封装了SAX
  **/
-public abstract class Ks3WebServiceXmlResponse<T> extends DefaultHandler implements Ks3WebServiceResponse<T>{
-	private HttpResponse response;
+public abstract class Ks3WebServiceXmlResponse<T> extends Ks3WebServiceResponse<T>{
 	protected T result;
 	/**
 	 * 防止解析string时断裂 比如 将 <aa>fff>ddd</aa>解析为 fff、>、ddd
@@ -54,55 +53,17 @@ public abstract class Ks3WebServiceXmlResponse<T> extends DefaultHandler impleme
 	{
 		return this.getTag(0);
 	}
-	protected void setResponse(HttpResponse response)
-	{
-		this.response = response;
-	}
-	public HttpResponse getResponse()
-	{
-		return this.response;
-	}
-	protected Header[] getHeaders(String key)
-	{
-		return response.getHeaders(key);
-	}
-	protected String getHeader(String key)
-	{
-		Header[] headers = getHeaders(key);
-		if(headers.length>0)
-		{
-			return headers[0].getValue();
-		}
-		return "";
-	}
-	public String getRequestId()
-	{
-		return this.getHeader(HttpHeaders.RequestId.toString());
-	}
-	public T handleResponse(HttpRequest request,HttpResponse response) {
-		this.setResponse(response);
+	protected T abstractHandleResponse() {
 		preHandle();
 		InputStream in = null;
 		try {
-			in = response.getEntity().getContent();
+			in = super.getHttpResponse().getEntity().getContent();
 			SAXParserFactory factory = SAXParserFactory.newInstance();
 			SAXParser parser = factory.newSAXParser();
 			parser.parse(in, this);
 			return result;
 		} catch (Exception e) {
 			throw new Ks3ClientException("处理http response时出错", e);
-		} finally{
-			try {
-				if(in!=null)
-				    in.close();
-			} catch (IllegalStateException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			//Xml的不需要考虑keep-alive，所以可以直接关闭
-			if(request instanceof HttpRequestBase)
-			    ((HttpRequestBase) request).abort();
 		}
 	}
 	public abstract void preHandle();

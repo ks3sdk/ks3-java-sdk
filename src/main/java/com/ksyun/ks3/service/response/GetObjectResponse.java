@@ -37,14 +37,14 @@ public class GetObjectResponse extends
 	public void preHandle() {
 		ObjectMetadata metaData = new ObjectMetadata();
 		result = new GetObjectResult();
-		int statusCode = this.getResponse().getStatusLine().getStatusCode();
+		int statusCode = this.getHttpResponse().getStatusLine().getStatusCode();
 		if (statusCode == 200 || statusCode == 206) {
 			//自动释放http链接
-			result.getObject().setObjectContent(new AutoAbortInputStream(getContent(),request));
+			result.getObject().setObjectContent(new AutoAbortInputStream(getContent(),this.getHttpRequest()));
 			result.getObject().setRedirectLocation(
 					getHeader(HttpHeaders.XKssWebsiteRedirectLocation
 							.toString()));
-			Header[] headers = this.getResponse().getAllHeaders();
+			Header[] headers = this.getHttpResponse().getAllHeaders();
 			for (int i = 0; i < headers.length; i++) {
 				if (headers[i].getName().startsWith(
 						ClientConfig.getConfig().getStr(ClientConfig.USER_META_PREFIX))) {

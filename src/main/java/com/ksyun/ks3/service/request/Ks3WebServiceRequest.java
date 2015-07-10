@@ -17,6 +17,7 @@ public abstract class Ks3WebServiceRequest {
 	private WebServiceRequestConfig config = new WebServiceRequestConfig();
 	public abstract void buildRequest(Request request);
 	public abstract void validateParams();
+	public void onFinally(){};
 	public WebServiceRequestConfig getRequestConfig() {
 		return config;
 	}

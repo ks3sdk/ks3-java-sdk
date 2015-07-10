@@ -24,12 +24,12 @@ public class HeadBucketResponse extends Ks3WebServiceDefaultResponse<HeadBucketR
 	@Override
 	public void preHandle() {
 		this.result = new HeadBucketResult();
-		Header[]  headers = this.getResponse().getAllHeaders();
+		Header[]  headers = this.getHttpResponse().getAllHeaders();
 		for(int i = 0;i< headers.length;i++)
 		{
 			this.result.getHeaders().put(headers[i].getName(),headers[i].getValue());
 		}
-		this.result.setStatueCode(this.response.getStatusLine().getStatusCode());
+		this.result.setStatueCode(this.getHttpResponse().getStatusLine().getStatusCode());
 	}
 
 }

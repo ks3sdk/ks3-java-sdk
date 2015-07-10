@@ -18,6 +18,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.ksyun.ks3.LengthCheckInputStream;
 import com.ksyun.ks3.MD5DigestCalculatingInputStream;
 import com.ksyun.ks3.RepeatableFileInputStream;
@@ -64,6 +67,7 @@ import com.ksyun.ks3.utils.DateUtils.DATETIME_PROTOCOL;
  *              </p>
  **/
 public class PutObjectRequest extends Ks3WebServiceRequest implements SSECustomerKeyRequest{
+	private static final Log log = LogFactory.getLog(PutObjectRequest.class);
 	/**
 	 * 目标bucket
 	 */
@@ -380,6 +384,16 @@ public class PutObjectRequest extends Ks3WebServiceRequest implements SSECustome
 					URLEncoder.encode(HttpUtils.convertAdps2String(adps)));
 			if (!StringUtils.isBlank(notifyURL))
 				request.addHeader(HttpHeaders.NotifyURL, HttpUtils.urlEncode(notifyURL,false));
+		}
+	}
+	@Override
+	public void onFinally(){
+		if(this.inputStream != null){
+			try{
+				inputStream.close();
+			}catch(Exception e){
+				log.error("put object on finally close input stream err,"+e.getMessage());
+			}
 		}
 	}
 }

@@ -111,8 +111,8 @@ public class HttpClientFactory {
 
 		PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager(r
 				,null,null,null,config.getLong(ClientConfig.CONNECTION_TTL), TimeUnit.MILLISECONDS);
-		connectionManager.setDefaultMaxPerRoute(config.getInt(ClientConfig.MAX_CONNECTIONS));
 		connectionManager.setMaxTotal(config.getInt(ClientConfig.MAX_CONNECTIONS));
+		connectionManager.setDefaultMaxPerRoute(connectionManager.getMaxTotal());
 		connectionManager.setDefaultConnectionConfig(coConfig);
 		connectionManager.setDefaultSocketConfig(soConfig);
 		
