@@ -110,6 +110,18 @@ ks3节点列表
 |ClientIllegalArgumentException|客户端参数校验失败,这个异常会代替许多继承自Ks3ServiceException且抛出原因是服务端参数校验失败的异常抛出|
 |ClientHttpException|客户端连接到KS3服务器出现异常，请检查网络连接或稍后再试|
 ## 5 使用示例
+快速导航：
+
+删除文件：5.3.1 5.3.2
+
+下载文件：5.3.3
+
+判断文件是否存在：5.3.5
+
+上传文件：5.3.7
+
+分块上传：5.3.12
+
 ### 5.1 Service接口
 
 #### 5.1.1 GET Service(List Buckets)
@@ -1223,6 +1235,31 @@ Complete Multipart Upload
 |CallbackFailException|KS3服务端回调用户提供的callbackurl时出错|
 |CallbackTimeoutException|KS3服务端回调用户提供的callbackurl超时|
 
+#### 5.3.13 使用外链操作
+
+##### 5.3.13.1 文件下载外链
+
+	GeneratePresignedUrlRequest req = new GeneratePresignedUrlRequest();
+	req.setMethod(HttpMethod.GET);
+	req.setBucket("<bucket名称>");
+	req.setKey("key");
+	req.setExpiration(<生成的外链的过期时间>);//不指定的话则默认为15分钟后过期
+	ResponseHeaderOverrides overrides = new ResponseHeaderOverrides();
+	//overrides.setContentType("application/xml");//设置返回的Content-Type
+	req.setResponseHeaders(overrides);
+	String url = client.generatePresignedUrl(req);
+	
+##### 5.3.13.2 文件上传外链
+
+	GeneratePresignedUrlRequest req = new GeneratePresignedUrlRequest();
+	req.setMethod(HttpMethod.PUT);
+	req.setBucket(bucket);//文件上传的
+	req.setKey(key);//文件名
+	req.setExpiration(<生成的外链的过期时间>);//不指定的话则默认为15分钟后过期
+	req.getRequestConfig().getExtendHeaders().put("x-kss-acl", "public-read");//设置acl为公开读，不加该header则默认为私有，生成外链时设置了header，则在使用外链的时候也需要添加相应的header
+	req.setContentType("application/ocet-stream");//设置文件的Content-Type,具体值请根据时间情况设定。在使用外链的时候需要把Content-Type设置成指定的值
+	//req.setSseAlgorithm("AES256");//设置服务端加密
+	String url = client.generatePresignedUrl(req);
 
 ### 5.4 客户端数据加密
 用户可以使用sdk将数据加密后再上传到ks3

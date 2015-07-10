@@ -29,6 +29,7 @@ import com.ksyun.ks3.service.encryption.model.EncryptionMaterials;
 
 public class BaseTest {
 	protected static Ks3Client client;
+	protected static Ks3Client usClient;
 	protected static SecretKey symKey;
 	protected static Ks3EncryptionClient eo_file;
 	protected static Ks3EncryptionClient eo_meta;
@@ -59,6 +60,8 @@ public class BaseTest {
 		final String accesskeyId = credential.getProperty("accesskeyid");
 		final String accesskeySecret = credential.getProperty("accesskeysecret");
 		client = new Ks3Client(accesskeyId,accesskeySecret);
+		usClient = new Ks3Client(accesskeyId,accesskeySecret);
+		usClient.setEndpoint("ks3-us-west-1.ksyun.com");
 		
 		symKey = loadSymmetricAESKey();
 		EncryptionMaterials keyMaterials = new EncryptionMaterials(symKey);
