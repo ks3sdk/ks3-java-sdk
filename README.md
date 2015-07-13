@@ -17,7 +17,7 @@ lib目录下为该项目所依赖的所有jar包，以及将sdk打好的jar包
     <dependency>
         <groupId>com.ksyun</groupId>
         <artifactId>ks3-kss-java-sdk</artifactId>
-        <version>0.4.0</version>
+        <version>0.5.0</version>
     </dependency>
     
 或者直接引用lib目录下的所有jar包
