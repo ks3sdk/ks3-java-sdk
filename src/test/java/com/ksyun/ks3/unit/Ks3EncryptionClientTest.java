@@ -129,6 +129,7 @@ public class Ks3EncryptionClientTest extends BaseTest{
 		PutObjectRequest req = new PutObjectRequest(bucket,key,new File(dir+filename));
 		client.putObject(req);	
 		TestUtils.rangeGetToFileWithThreads(client, bucket, key, dir+filedown);
+		assertEquals(new File(dir+filename).length(),new File(dir+filedown).length());
 		assertEquals(Md5Utils.md5AsBase64(new File(dir+filename)),
 				Md5Utils.md5AsBase64(new File(dir+filedown)));
 	}

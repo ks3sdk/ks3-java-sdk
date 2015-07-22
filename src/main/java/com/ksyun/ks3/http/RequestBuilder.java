@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpDelete;
@@ -23,6 +24,7 @@ import com.ksyun.ks3.config.ClientConfig;
 import com.ksyun.ks3.config.Constants;
 import com.ksyun.ks3.dto.Authorization;
 import com.ksyun.ks3.exception.Ks3ClientException;
+import com.ksyun.ks3.exception.client.ClientIllegalArgumentExceptionGenerator;
 import com.ksyun.ks3.service.Ks3ClientConfig;
 import com.ksyun.ks3.service.Ks3ClientConfig.PROTOCOL;
 import com.ksyun.ks3.service.request.Ks3WebServiceRequest;
@@ -73,6 +75,17 @@ public class RequestBuilder {
 				request.addHeader(HttpHeaders.Authorization, userAuth);
 			}
 		}
+		
+		for(String headerName : request.getHeaders().keySet()){
+
+			if(!Pattern.matches(Constants.headerReg, headerName)){
+
+			throw ClientIllegalArgumentExceptionGenerator.notCorrect("header", headerName, Constants.headerReg); 
+
+			}
+
+		}
+		
 	}
 	public static HttpRequestBase buildHttpRequest(Ks3WebServiceRequest ks3Request,Request request,Authorization auth,Ks3ClientConfig ks3config){	
 		//build http request
