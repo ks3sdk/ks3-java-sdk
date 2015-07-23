@@ -175,6 +175,7 @@ public class Ks3CoreController {
 			throw new ClientHttpException(e);
 		}finally{
 			ksResponse.onFinally();
+			log.debug("finished execute : " + Timer.end());
 		}
 	}
 
