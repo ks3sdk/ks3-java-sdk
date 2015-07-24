@@ -39,7 +39,7 @@ public class Constants {
 	
 	public static final int corsMaxRules = 100;
 	
-	public static final String headerReg = "^[\\-0-9A-Za-z]+$";
+	public static final String headerReg = "^[\\-0-9A-Z_a-z]+$";
 	/**
 	 * object meta 要忽略的headers
 	 */

@@ -2,6 +2,7 @@ package com.ksyun.ks3.unit;
 
 import static org.junit.Assert.*;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,9 +19,11 @@ import java.util.concurrent.Executors;
 import org.junit.Test;
 
 import com.ksyun.ks3.config.ClientConfig;
+import com.ksyun.ks3.dto.ObjectMetadata;
 import com.ksyun.ks3.dto.PutObjectResult;
 import com.ksyun.ks3.exception.Ks3ClientException;
 import com.ksyun.ks3.exception.Ks3ServiceException;
+import com.ksyun.ks3.service.request.PutObjectRequest;
 import com.ksyun.ks3.service.transfer.Ks3UploadClient;
 
 
@@ -42,5 +45,13 @@ public class PressureTest extends BaseTest {
 		for (int i = 0; i < 4 * maxConnections; i++) {
 			client.getObject(bucket, key).getObject().getObjectContent().close();;
 		}
+	}
+	@Test
+	public void testUnderscores(){
+		PutObjectRequest req = new PutObjectRequest(bucket,key,new ByteArrayInputStream("123".getBytes()),null);
+		ObjectMetadata meta = new ObjectMetadata();
+		meta.setUserMeta("test_w","test_w");
+		req.setObjectMeta(meta);
+		client.putObject(req);
 	}
 }
