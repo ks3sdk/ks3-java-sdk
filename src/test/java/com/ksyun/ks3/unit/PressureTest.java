@@ -19,6 +19,7 @@ import java.util.concurrent.Executors;
 import org.junit.Test;
 
 import com.ksyun.ks3.config.ClientConfig;
+import com.ksyun.ks3.dto.CannedAccessControlList;
 import com.ksyun.ks3.dto.ObjectMetadata;
 import com.ksyun.ks3.dto.PutObjectResult;
 import com.ksyun.ks3.exception.Ks3ClientException;
@@ -49,6 +50,7 @@ public class PressureTest extends BaseTest {
 	@Test
 	public void testUnderscores(){
 		PutObjectRequest req = new PutObjectRequest(bucket,key,new ByteArrayInputStream("123".getBytes()),null);
+		req.setCannedAcl(CannedAccessControlList.PublicRead);
 		ObjectMetadata meta = new ObjectMetadata();
 		meta.setUserMeta("test_w","test_w");
 		req.setObjectMeta(meta);
