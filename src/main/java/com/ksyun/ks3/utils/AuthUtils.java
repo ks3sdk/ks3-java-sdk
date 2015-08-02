@@ -181,7 +181,7 @@ public class AuthUtils {
         return buffer.toString();
     }
 	private static final String HMAC_SHA1_ALGORITHM = "HmacSHA1";
-	private static String calculateRFC2104HMAC(String data, String key)
+	public static String calculateRFC2104HMAC(String data, String key)
 			throws java.security.SignatureException {
 		String result;
 		try {

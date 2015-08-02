@@ -37,7 +37,7 @@ public class BaseTest {
 	protected static Ks3EncryptionClient ae_meta;
 	protected static Ks3EncryptionClient sae_file;
 	protected static Ks3EncryptionClient sae_meta;
-	protected static String bucket = "ks3kssjavasdk1";
+	protected static String bucket = "ks3kssjavasdk2";
 	protected static String key = "/test.中//\\文?？.key";
 	protected static String key_copy = key+".copy";
 	protected static String key_instruction = key+".instruction";
@@ -46,7 +46,7 @@ public class BaseTest {
 	protected static String filedown = "file_down";
 	@BeforeClass
 	public static void init() throws IOException, InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException{
-		//ClientConfig.getConfig().set(ClientConfig.CLIENT_URLFORMAT, "1");	
+		ClientConfig.getConfig().set(ClientConfig.CLIENT_URLFORMAT, "1");	
 		//ClientConfig.getConfig().set(ClientConfig.END_POINT, "kssws.ks-cdn.com");	
 		
 		final Properties credential = new Properties();
