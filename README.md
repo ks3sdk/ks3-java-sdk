@@ -25,26 +25,26 @@ lib目录下为该项目所依赖的所有jar包，以及将sdk打好的jar包
 ## 3 初始化
 ### 3.1 配置参数
 用户可以跳过参数配置，一般情况下默认配置可以满足大部分的需求.    
-#### 3.1.1 全局配置
 
-	ClientConfig config = ClientConfig.getConfig();
-	config.set(ClientConfig.CONNECTION_TIMEOUT, "50000");//连接超时时间
-	config.set(ClientConfig.SOCKET_TIMEOUT,"50000");//socket超时时间
-	config.set(ClientConfig.SOCKET_SEND_BUFFER_SIZE_HINT,"8192");//socket发送数据时buffer大小
-	config.set(ClientConfig.SOCKET_RECEIVE_BUFFER_SIZE_HINT,"8192");//socket接受数据时buffer大小
-	config.set(ClientConfig.MAX_RETRY,"5");//请求超时或发送错误时重试次数
-	config.set(ClientConfig.CONNECTION_TTL,"-1");//连接池中请求的过期时间。当请求需要重试时，使用这个参数检测是否可用。
-	config.set(ClientConfig.MAX_CONNECTIONS,"50");//连接池最大连接数
-	config.set(ClientConfig.PROXY_HOST,null);//代理host
-	config.set(ClientConfig.PROXY_PORT,"-1");//代理端口
-	config.set(ClientConfig.PROXY_DAMAIN,null);//Windows domain name for configuration an NTLM proxy
-	config.set(ClientConfig.PROXY_PASSWORD,null);//代理用户名
-	config.set(ClientConfig.PROXY_USER_NAME,null);//代理密码
-	config.set(ClientConfig.PROXY_WORKSTATION,null);//Windows workstation name for configuring NTLM proxy
-	config.set(ClientConfig.IS_PREEMPTIVE_BASIC_PROXY_AUTH,"false");//Whether to authenticate preemptively against proxy server.
-	config.set(ClientConfig.END_POINT,"kss.ksyun.com");//KS3服务器域名
-	config.set(ClientConfig.CLIENT_SIGNER,"com.ksyun.ks3.signer.DefaultSigner");//配置签名算法生成器，一般情况下请勿修改。
-	config.set(ClientConfig.CLIENT_URLFORMAT, "0"); //设置 url格式.0 {bucket}.kss.ksyun.com/{key}.1 kss.ksyun.com/{bucket}/{key}
+	Ks3ClientConfig config = new Ks3ClientConfig();
+	/**
+	 * 设置服务地址</br>
+	 * 中国标准:kss.ksyun.com</br>
+	 * 中国cdn:kssws.ks-cdn.com</br>
+	 * 美国（圣克拉拉）:ks3-us-west-1.ksyun.com</br>
+	*/
+	config.setEndpoint("kssws.ks-cdn.com");
+	config.setProtocol(PROTOCOL.http);
+	/**
+	*true表示以   endpoint/{bucket}/{key}的方式访问</br>
+	*false表示以  {bucket}.endpoint/{key}的方式访问
+	*/
+	config.setPathStyleAccess(false);
+	
+	HttpClientConfig hconfig = new HttpClientConfig();
+	//在HttpClientConfig中可以设置httpclient的相关属性，比如代理，超时，重试等。
+	
+	config.setHttpClientConfig(hconfig);
 	
 ### 3.2 配置日志
 该SDK使用commons-logging

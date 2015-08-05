@@ -25,7 +25,6 @@ import com.ksyun.ks3.LengthCheckInputStream;
 import com.ksyun.ks3.MD5DigestCalculatingInputStream;
 import com.ksyun.ks3.RepeatableFileInputStream;
 import com.ksyun.ks3.RepeatableInputStream;
-import com.ksyun.ks3.config.ClientConfig;
 import com.ksyun.ks3.config.Constants;
 import com.ksyun.ks3.dto.AccessControlList;
 import com.ksyun.ks3.dto.CallBackConfiguration;

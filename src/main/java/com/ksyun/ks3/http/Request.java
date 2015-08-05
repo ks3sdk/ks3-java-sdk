@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.ksyun.ks3.config.ClientConfig;
 import com.ksyun.ks3.service.Ks3ClientConfig;
 import com.ksyun.ks3.service.Ks3ClientConfig.PROTOCOL;
 import com.ksyun.ks3.utils.HttpUtils;
@@ -35,20 +34,15 @@ public class Request {
 		String endpoint = this.getEndpoint();
 		String encodedParams = HttpUtils.encodeParams(this.getQueryParams());
 		key = HttpUtils.urlEncode(key, true);
-		int format = ClientConfig.getConfig().getInt(
-				ClientConfig.CLIENT_URLFORMAT);
-		Boolean format0 = ks3config.getPathStyleAccess();
-		if(format0 !=null){
-			format = format0?1:0;
-		}
+
+		boolean pathStyle = ks3config.isPathStyleAccess();
+
 		
-		String protocol = ClientConfig.getConfig().getStr(ClientConfig.HTTP_PROTOCOL);
 		PROTOCOL spePro = ks3config.getProtocol();
-		if(spePro!=null)
-			protocol = spePro.toString();
-		if(StringUtils.isBlank(protocol))
-			protocol ="http";
-		if (format == 0) {
+		if(spePro==null)
+			spePro = PROTOCOL.http;
+
+		if (!pathStyle) {
 			url = new StringBuffer()
 					.append(StringUtils.isBlank(bucket) ? "" : bucket
 							+ ".").append(endpoint)
@@ -62,7 +56,7 @@ public class Request {
 					.toString();
 		}
 		url = url.replace("//", "/%2F");
-		url = protocol+"://"+url;
+		url = spePro.toString()+"://"+url;
 		if (!StringUtils.isBlank(encodedParams))
 			url += "?" + encodedParams;
 		return url;

@@ -7,7 +7,6 @@ import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 
 import com.ksyun.ks3.AutoAbortInputStream;
-import com.ksyun.ks3.config.ClientConfig;
 import com.ksyun.ks3.config.Constants;
 import com.ksyun.ks3.dto.GetObjectResult;
 import com.ksyun.ks3.dto.ObjectMetadata;
@@ -46,8 +45,7 @@ public class GetObjectResponse extends
 							.toString()));
 			Header[] headers = this.getHttpResponse().getAllHeaders();
 			for (int i = 0; i < headers.length; i++) {
-				if (headers[i].getName().startsWith(
-						ClientConfig.getConfig().getStr(ClientConfig.USER_META_PREFIX))) {
+				if (headers[i].getName().startsWith(Constants.userMetaPrefix)) {
 					metaData.setUserMeta(headers[i].getName(),
 							headers[i].getValue());
 				} else {

@@ -3,7 +3,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
 
-import com.ksyun.ks3.config.ClientConfig;
 import com.ksyun.ks3.config.Constants;
 import com.ksyun.ks3.dto.HeadObjectResult;
 import com.ksyun.ks3.dto.ObjectMetadata;
@@ -37,8 +36,7 @@ public class HeadObjectResponse extends
 			ObjectMetadata metaData = new ObjectMetadata();
 			Header[] headers = this.getHttpResponse().getAllHeaders();
 			for (int i = 0; i < headers.length; i++) {
-				if (headers[i].getName().startsWith(
-						ClientConfig.getConfig().getStr(ClientConfig.USER_META_PREFIX))) {
+				if (headers[i].getName().startsWith(Constants.userMetaPrefix)) {
 					metaData.setUserMeta(headers[i].getName(),
 							headers[i].getValue());
 				} else {

@@ -19,7 +19,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.ksyun.ks3.config.ClientConfig;
+import com.ksyun.ks3.config.Constants;
 import com.ksyun.ks3.dto.Authorization;
 import com.ksyun.ks3.http.HttpHeaders;
 import com.ksyun.ks3.http.Request;
@@ -38,7 +38,7 @@ public class AuthUtils {
 	public static String calcAuthorization (Authorization auth,Request request) throws SignatureException
 	{
 		String signature = calcSignature(auth.getAccessKeySecret(),request);
-		String value = ClientConfig.getConfig().getStr(ClientConfig.AUTH_HEADER_PREFIX)+" "+auth.getAccessKeyId()+":"+signature;
+		String value = Constants.authHeaderPrefix+" "+auth.getAccessKeyId()+":"+signature;
 		return value;
 	}
 	//post表单时的签名
@@ -153,7 +153,7 @@ public class AuthUtils {
         return resource;
     }
     private static String CanonicalizedKSSHeaders(Request request) {
-    	String prefix = ClientConfig.getConfig().getStr(ClientConfig.HEADER_PREFIX);
+    	String prefix = Constants.specHeaderPrefix;
         Map<String, String> headers = request.getHeaders();
 
         List<String> headList = new ArrayList<String>();

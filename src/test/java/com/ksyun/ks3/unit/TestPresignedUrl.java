@@ -54,7 +54,7 @@ import com.ksyun.ks3.utils.StringUtils;
 import com.ksyun.ks3.utils.XmlWriter;
 
 public class TestPresignedUrl extends BaseTest{
-	HttpClient hclient = new HttpClientFactory().createHttpClient();
+	
 	@Test
 	public void testListBuckets() throws ClientProtocolException, IOException{
 		GeneratePresignedUrlRequest req = new GeneratePresignedUrlRequest();

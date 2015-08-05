@@ -20,7 +20,6 @@ import org.apache.http.params.CoreProtocolPNames;
 import com.ksyun.ks3.MD5DigestCalculatingInputStream;
 import com.ksyun.ks3.RepeatableFileInputStream;
 import com.ksyun.ks3.RepeatableInputStream;
-import com.ksyun.ks3.config.ClientConfig;
 import com.ksyun.ks3.config.Constants;
 import com.ksyun.ks3.dto.Authorization;
 import com.ksyun.ks3.exception.Ks3ClientException;
@@ -55,14 +54,11 @@ public class RequestBuilder {
 		String endpoint0 = ks3Request.getRequestConfig().getEndpoint();
 		if(StringUtils.isBlank(endpoint0)){
 			endpoint0 = ks3config.getEndpoint();
-			if(StringUtils.isBlank(endpoint0))
-				endpoint0 = ClientConfig.getConfig().getStr(ClientConfig.END_POINT);
 		}
 		request.setEndpoint(endpoint0);
 		//sign request
 		try {
-			String signerString = ClientConfig.getConfig().getStr(
-					ClientConfig.CLIENT_SIGNER);
+			String signerString = ks3config.getSignerClass();
 			Signer signer = (Signer) Class.forName(signerString).newInstance();
 			signer.sign(auth, request);
 		} catch (Exception e) {

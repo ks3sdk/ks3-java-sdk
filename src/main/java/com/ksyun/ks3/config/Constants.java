@@ -40,6 +40,10 @@ public class Constants {
 	public static final int corsMaxRules = 100;
 	
 	public static final String headerReg = "^[\\-0-9A-Z_a-z]+$";
+	public static String specHeaderPrefix = "x-kss-";
+	public static String userMetaPrefix = "x-kss-meta-";
+	public static String authHeaderPrefix = "KSS";
+	public static boolean aws = false;
 	/**
 	 * object meta 要忽略的headers
 	 */

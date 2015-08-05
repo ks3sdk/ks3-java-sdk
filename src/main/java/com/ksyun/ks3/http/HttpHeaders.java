@@ -6,8 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import com.ksyun.ks3.config.AWSConfigLoader;
-import com.ksyun.ks3.config.ClientConfig;
+
+import com.ksyun.ks3.config.Constants;
 
 /**
  * * @author lijunwei[lijunwei@kingsoft.com]   * * @date 2014年10月15日 下午1:49:51 *
@@ -120,10 +120,9 @@ public enum HttpHeaders {
 	public String toString() {
 		String prefix = "";
 		if (isSpecHeader)
-			prefix = ClientConfig.getConfig()
-					.getStr(ClientConfig.HEADER_PREFIX);
+			prefix = Constants.specHeaderPrefix;
 		String value = this.value;
-		if (ClientConfig.isAws())
+		if (Constants.aws)
 			value = this.value2;
 		return prefix + value;
 	}

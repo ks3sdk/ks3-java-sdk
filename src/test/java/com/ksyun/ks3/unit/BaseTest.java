@@ -13,14 +13,16 @@ import java.util.Properties;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.apache.http.client.HttpClient;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
-import com.ksyun.ks3.config.ClientConfig;
 import com.ksyun.ks3.dto.Authorization;
 import com.ksyun.ks3.dto.CannedAccessControlList;
+import com.ksyun.ks3.http.HttpClientFactory;
 import com.ksyun.ks3.service.Ks3Client;
+import com.ksyun.ks3.service.Ks3ClientConfig;
 import com.ksyun.ks3.service.encryption.Ks3EncryptionClient;
 import com.ksyun.ks3.service.encryption.model.CryptoConfiguration;
 import com.ksyun.ks3.service.encryption.model.CryptoMode;
@@ -37,6 +39,7 @@ public class BaseTest {
 	protected static Ks3EncryptionClient ae_meta;
 	protected static Ks3EncryptionClient sae_file;
 	protected static Ks3EncryptionClient sae_meta;
+	protected static HttpClient hclient;
 	protected static String bucket = "ks3kssjavasdk2";
 	protected static String key = "/test.中//\\文?？.key";
 	protected static String key_copy = key+".copy";
@@ -46,8 +49,6 @@ public class BaseTest {
 	protected static String filedown = "file_down";
 	@BeforeClass
 	public static void init() throws IOException, InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException{
-		ClientConfig.getConfig().set(ClientConfig.CLIENT_URLFORMAT, "1");	
-		//ClientConfig.getConfig().set(ClientConfig.END_POINT, "kssws.ks-cdn.com");	
 		
 		final Properties credential = new Properties();
 		credential.load(BaseTest.class.getClass()
@@ -95,6 +96,8 @@ public class BaseTest {
 		sae_meta_config.setCryptoMode(CryptoMode.StrictAuthenticatedEncryption);
 		sae_meta_config.setStorageMode(CryptoStorageMode.ObjectMetadata);
 		sae_meta = new Ks3EncryptionClient(accesskeyId,accesskeySecret,keyMaterials,sae_meta_config);
+		
+		hclient = new HttpClientFactory().createHttpClient(new Ks3ClientConfig().getHttpClientConfig());
 	}
 	@Before
 	public void before(){

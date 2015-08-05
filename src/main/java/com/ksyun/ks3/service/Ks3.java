@@ -47,15 +47,52 @@ public interface Ks3 {
 	 */
 	public void setAuth(Authorization auth);
 	/**
-	 * 设置服务地址
+	 * 设置accesskeyid accesskeysecret
+	 * 
+	 * @param auth
+	 */
+	public Ks3 withAuth(Authorization auth);
+	/**
+	 * 设置服务地址</br>
+	 * 中国标准:kss.ksyun.com</br>
+	 * 中国cdn:kssws.ks-cdn.com</br>
+	 * 美国（圣克拉拉）:ks3-us-west-1.ksyun.com</br>
 	 * @param endpoint
 	 */
 	public void setEndpoint(String endpoint);
+	/**
+	 * 设置服务地址
+	 * 中国标准:kss.ksyun.com</br>
+	 * 中国cdn:kssws.ks-cdn.com</br>
+	 * 美国（圣克拉拉）:ks3-us-west-1.ksyun.com</br>
+	 * @param endpoint
+	 */
+	public Ks3 withEndpoint(String endpoint);
+	/**
+	 * 设置是否使用pathStyle
+	 * @param pathStyle
+	 */
+	public void setPathAccessStyle(boolean pathStyle);
+	/**
+	 * 设置是否使用pathStyle
+	 * @param pathStyle
+	 */
+	public Ks3 withPathStyleAccess(boolean pathStyle);
+	/**
+	 * 获取配置信息
+	 * @return {@link Ks3ClientConfig}
+	 */
+	public Ks3ClientConfig getKs3config();
 	/**
 	 * 设置配置信息
 	 * @param ks3config
 	 */
 	public void setKs3config(Ks3ClientConfig ks3config);
+	/**
+	 * 设置配置信息
+	 * @param ks3config
+	 */
+	public Ks3 withKs3config(Ks3ClientConfig ks3config);
 	/**
 	 * GET SERVICE
 	 * 

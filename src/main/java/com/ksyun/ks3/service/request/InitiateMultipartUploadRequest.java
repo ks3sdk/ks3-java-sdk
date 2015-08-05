@@ -8,7 +8,6 @@ import static com.ksyun.ks3.exception.client.ClientIllegalArgumentExceptionGener
 import java.util.List;
 import java.util.Map.Entry;
 
-import com.ksyun.ks3.config.ClientConfig;
 import com.ksyun.ks3.config.Constants;
 import com.ksyun.ks3.dto.AccessControlList;
 import com.ksyun.ks3.dto.CannedAccessControlList;

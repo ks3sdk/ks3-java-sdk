@@ -19,6 +19,7 @@ import com.ksyun.ks3.exception.Ks3ServiceException;
 import com.ksyun.ks3.exception.serviceside.NoSuchKeyException;
 import com.ksyun.ks3.http.HttpHeaders;
 import com.ksyun.ks3.service.Ks3Client;
+import com.ksyun.ks3.service.Ks3ClientConfig;
 import com.ksyun.ks3.service.encryption.internal.CryptoModuleDispatcher;
 import com.ksyun.ks3.service.encryption.internal.EncryptionUtils;
 import com.ksyun.ks3.service.encryption.internal.S3CryptoModule;
@@ -60,7 +61,7 @@ public class Ks3EncryptionClient extends Ks3Client{
             String accesskeysecret,
             EncryptionMaterialsProvider encryptionMaterialsProvider) {
         this(accesskeyid,accesskeysecret, encryptionMaterialsProvider,
-                 new CryptoConfiguration());
+                 new CryptoConfiguration(),new Ks3ClientConfig());
     }
 
 
@@ -68,17 +69,28 @@ public class Ks3EncryptionClient extends Ks3Client{
     		String accesskeyid,
             String accesskeysecret,
             EncryptionMaterials encryptionMaterials,
-            CryptoConfiguration cryptoConfig) {
+            CryptoConfiguration cryptoConfig,
+            Ks3ClientConfig ks3config) {
         this(accesskeyid,accesskeysecret, new StaticEncryptionMaterialsProvider(
-                encryptionMaterials), cryptoConfig);
+                encryptionMaterials), cryptoConfig,ks3config);
     }
 
 
     public Ks3EncryptionClient(
             String accesskeyid,
             String accesskeysecret,
-            EncryptionMaterialsProvider kekMaterialsProvider,
+            EncryptionMaterials encryptionMaterials,
             CryptoConfiguration cryptoConfig) {
+        this(accesskeyid,accesskeysecret, new StaticEncryptionMaterialsProvider(
+                encryptionMaterials),
+        		cryptoConfig,new Ks3ClientConfig());
+    }
+    public Ks3EncryptionClient(
+            String accesskeyid,
+            String accesskeysecret,
+            EncryptionMaterialsProvider kekMaterialsProvider,
+            CryptoConfiguration cryptoConfig,
+            Ks3ClientConfig ks3config) {
         super(accesskeyid, accesskeysecret);
         assertParameterNotNull(kekMaterialsProvider,
                 "EncryptionMaterialsProvider parameter must not be null.");
@@ -87,6 +99,7 @@ public class Ks3EncryptionClient extends Ks3Client{
         this.crypto = new CryptoModuleDispatcher(new S3DirectImpl(),
                  kekMaterialsProvider
                  ,cryptoConfig);
+        this.setKs3config(ks3config);
     }
 
     private void assertParameterNotNull(Object parameterValue,

@@ -5,20 +5,10 @@ import static org.junit.Assert.*;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import org.junit.Test;
 
-import com.ksyun.ks3.config.ClientConfig;
+import com.ksyun.ks3.dto.Authorization;
 import com.ksyun.ks3.dto.CannedAccessControlList;
 import com.ksyun.ks3.dto.ObjectMetadata;
 import com.ksyun.ks3.dto.PutObjectResult;
@@ -29,8 +19,7 @@ import com.ksyun.ks3.service.transfer.Ks3UploadClient;
 
 
 public class PressureTest extends BaseTest {
-	int maxConnections = ClientConfig.getConfig().getInt(
-			"httpclient.maxConnections");
+	int maxConnections = 50;
 
 	@Test
 	public void testPutObject() {
@@ -53,7 +42,17 @@ public class PressureTest extends BaseTest {
 		req.setCannedAcl(CannedAccessControlList.PublicRead);
 		ObjectMetadata meta = new ObjectMetadata();
 		meta.setUserMeta("test_w","test_w");
+		client.setPathAccessStyle(true);
 		req.setObjectMeta(meta);
 		client.putObject(req);
+	}
+	@Test
+	public void testUpload(){
+		client.setAuth(new Authorization("lMQTr0hNlMpB0iOk/i+x","D4CsYLs75JcWEjbiI22zR3P7kJ/+5B1qdEje7A7I"));
+		
+		client.getKs3config().getHttpClientConfig().setMaxConnections(1);
+		
+		Ks3UploadClient up = new Ks3UploadClient(client);
+		up.uploadFile("test2-zzy-jr","test",new File("/Users/lijunwei/Pictures/photo.rar"));
 	}
 }

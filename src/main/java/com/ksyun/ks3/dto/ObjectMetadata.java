@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.ksyun.ks3.config.ClientConfig;
 import com.ksyun.ks3.config.Constants;
 import com.ksyun.ks3.http.HttpHeaders;
 import com.ksyun.ks3.utils.StringUtils;
@@ -18,7 +17,7 @@ import com.ksyun.ks3.utils.StringUtils;
  * @description object元数据
  **/
 public class ObjectMetadata implements ServerSideEncryptionResult{
-	private String usermeta_prefix =  ClientConfig.getConfig().getStr(ClientConfig.USER_META_PREFIX);
+	private String usermeta_prefix =  Constants.userMetaPrefix;
 	/**
 	 * 用户自定义的元数据
 	 */

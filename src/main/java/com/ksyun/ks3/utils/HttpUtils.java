@@ -18,7 +18,7 @@ import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpRequestBase;
 
-import com.ksyun.ks3.config.ClientConfig;
+import com.ksyun.ks3.config.Constants;
 import com.ksyun.ks3.dto.AccessControlList;
 import com.ksyun.ks3.dto.AccessControlPolicy;
 import com.ksyun.ks3.dto.Adp;
@@ -208,7 +208,7 @@ public class HttpUtils {
 		// 添加user meta
 		for (Entry<String, String> entry : meta.getAllUserMeta()
 				.entrySet()) {
-			if (entry.getKey().startsWith(ClientConfig.getConfig().getStr(ClientConfig.HEADER_PREFIX)))
+			if (entry.getKey().startsWith(Constants.userMetaPrefix))
 				map.put(entry.getKey(), entry.getValue());
 		}
 		if (meta.getHttpExpiresDate() != null)
@@ -239,7 +239,7 @@ public class HttpUtils {
 		Map<String,String> map = new HashMap<String,String>();
 		if(params == null)
 			return map;
-		map.put(HttpHeaders.XKssServerSideEncryption.toString(),ClientConfig.isAws()?"awz:kms":"kss:kms");
+		map.put(HttpHeaders.XKssServerSideEncryption.toString(),Constants.aws?"awz:kms":"kss:kms");
 		if(!StringUtils.isBlank(params.getKeyId()))
 			map.put(HttpHeaders.XKssServerSideEncryptionKMSKeyId.toString(),params.getKeyId());
 		return map;

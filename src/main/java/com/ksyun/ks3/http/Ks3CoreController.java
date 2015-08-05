@@ -21,7 +21,6 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpParams;
 
 import com.ksyun.ks3.MD5DigestCalculatingInputStream;
-import com.ksyun.ks3.config.ClientConfig;
 import com.ksyun.ks3.config.Constants;
 import com.ksyun.ks3.dto.Authorization;
 import com.ksyun.ks3.dto.GetObjectResult;
@@ -54,7 +53,8 @@ import com.ksyun.ks3.utils.Timer;
 public class Ks3CoreController {
 	private static final Log log = LogFactory.getLog(Ks3CoreController.class);
 	private HttpClientFactory factory = new HttpClientFactory();
-	private HttpClient client = factory.createHttpClient();
+	private HttpClient client = null;
+
 	public <X extends Ks3WebServiceResponse<Y>, Y> Y execute(
 			Authorization auth, Ks3WebServiceRequest request, Class<X> clazz) {
 		return execute(new Ks3ClientConfig(),auth,request,clazz);
@@ -67,6 +67,9 @@ public class Ks3CoreController {
 				+ ";Ks3WebServiceResponse:" + clazz);
 		if(ks3config == null)
 			ks3config = new Ks3ClientConfig();
+		if(client == null)
+			client = factory.createHttpClient(ks3config.getHttpClientConfig());
+		
 		Y result = null;
 		try {
 			if (auth == null || StringUtils.isBlank(auth.getAccessKeyId())

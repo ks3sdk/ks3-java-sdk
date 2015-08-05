@@ -25,12 +25,13 @@ import java.util.Map.Entry;
 
 
 
+
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
 
-import com.ksyun.ks3.config.ClientConfig;
 import com.ksyun.ks3.config.Constants;
 import com.ksyun.ks3.dto.*;
 import com.ksyun.ks3.dto.CreateBucketConfiguration.REGION;
@@ -92,7 +93,6 @@ import com.ksyun.ks3.service.response.*;
 import com.ksyun.ks3.utils.AuthUtils;
 import com.ksyun.ks3.utils.DateUtils;
 import com.ksyun.ks3.utils.DateUtils.DATETIME_PROTOCOL;
-import com.ksyun.ks3.utils.HttpUtils;
 import com.ksyun.ks3.utils.StringUtils;
 
 /**
@@ -100,32 +100,56 @@ import com.ksyun.ks3.utils.StringUtils;
  * 
  * @date 2014年10月14日 下午5:30:30
  * 
- * @description ks3客户端，用户使用时需要先配置{@link ClientConfig},然后初始化一个Ks3Client进行操作
+ * @description ks3客户端，用户使用时需要先初始化一个Ks3Client进行操作
  **/
 public class Ks3Client implements Ks3 {
-	private Ks3ClientConfig ks3config = null;
-	
+	private Ks3ClientConfig ks3config = new Ks3ClientConfig();
 	private Authorization auth;
-
-	public Authorization getAuth() {
-		return auth;
-	}
 
 	public void setAuth(Authorization auth) {
 		this.auth = auth;
 	}
+
+	public Ks3 withAuth(Authorization auth) {
+		this.auth = auth;
+		return this;
+	}
+	
 	public void setEndpoint(String endpoint) {
-		if(this.ks3config == null)
-			this.ks3config = new Ks3ClientConfig();
-		ks3config.setEndpoint(endpoint);
+		if(this.ks3config == null){
+			ks3config = new Ks3ClientConfig();
+		}
+		this.ks3config.setEndpoint(endpoint);
+	}
+
+	public Ks3 withEndpoint(String endpoint) {
+		this.setEndpoint(endpoint);
+		return this;
+	}
+
+	public void setPathAccessStyle(boolean pathStyle) {
+		if(this.ks3config == null){
+			ks3config = new Ks3ClientConfig();
+		}
+		this.ks3config.setPathStyleAccess(pathStyle);
+	}
+
+	public Ks3 withPathStyleAccess(boolean pathStyle) {
+		this.setPathAccessStyle(pathStyle);
+		return this;
 	}
 	
 	public Ks3ClientConfig getKs3config() {
-		return ks3config;
+		return this.ks3config;
 	}
 
 	public void setKs3config(Ks3ClientConfig ks3config) {
 		this.ks3config = ks3config;
+	}
+
+	public Ks3 withKs3config(Ks3ClientConfig ks3config) {
+		this.setKs3config(ks3config);
+		return this;
 	}
 
 	public Ks3Client() {
@@ -800,4 +824,6 @@ public class Ks3Client implements Ks3 {
 			throws Ks3ClientException, Ks3ServiceException {
 		return client.execute(ks3config,auth, request, GetAdpResponse.class);
 	}
+
+
 }

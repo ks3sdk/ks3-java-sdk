@@ -47,9 +47,8 @@ import org.apache.http.protocol.HttpContext;
 import org.apache.http.config.SocketConfig;
 import org.apache.http.config.ConnectionConfig;
 import org.apache.http.client.config.RequestConfig;
-
-import com.ksyun.ks3.config.ClientConfig;
 import com.ksyun.ks3.exception.Ks3ClientException;
+import com.ksyun.ks3.utils.StringUtils;
 
 /**
  * @author lijunwei[lijunwei@kingsoft.com]  
@@ -61,17 +60,15 @@ import com.ksyun.ks3.exception.Ks3ClientException;
 public class HttpClientFactory {
 
 	private final Log log = LogFactory.getLog(this.getClass());
-	public HttpClient createHttpClient() {
-
-		ClientConfig config = ClientConfig.getConfig();
+	public HttpClient createHttpClient(HttpClientConfig config) {
 		
 		/*初始化配置*/
 		SocketConfig soConfig = SocketConfig.custom()
 				//.setSoTimeout(config.getInt(ClientConfig.SOCKET_TIMEOUT))
 				.setTcpNoDelay(true)
 				.build();
-		int socketSendBufferSizeHint = config.getInt(ClientConfig.SOCKET_SEND_BUFFER_SIZE_HINT);
-		int socketReceiveBufferSizeHint = config.getInt(ClientConfig.SOCKET_RECEIVE_BUFFER_SIZE_HINT);
+		int socketSendBufferSizeHint = config.getSocketSendBufferSizeHint();
+		int socketReceiveBufferSizeHint = config.getSocketReceiveBufferSizeHint();
 		int buffersize = 0;
 		if (socketSendBufferSizeHint > 0 || socketReceiveBufferSizeHint > 0) {
 			buffersize = Math.max(socketSendBufferSizeHint, socketReceiveBufferSizeHint);
@@ -80,8 +77,8 @@ public class HttpClientFactory {
 				.setBufferSize(buffersize)
 				.build();
 		RequestConfig reConfig = RequestConfig.custom()
-				.setConnectTimeout(config.getInt(ClientConfig.CONNECTION_TIMEOUT))
-				.setSocketTimeout(config.getInt(ClientConfig.SOCKET_TIMEOUT))
+				.setConnectTimeout(config.getConnectionTimeOut())
+				.setSocketTimeout(config.getSocketTimeOut())
 				.setStaleConnectionCheckEnabled(true)
 				.build();		
 
@@ -110,23 +107,25 @@ public class HttpClientFactory {
 		Registry<ConnectionSocketFactory> r = RegistryBuilder.<ConnectionSocketFactory> create().register("http", sf).register("https", sslsf).build();
 
 		PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager(r
-				,null,null,null,config.getLong(ClientConfig.CONNECTION_TTL), TimeUnit.MILLISECONDS);
-		connectionManager.setMaxTotal(config.getInt(ClientConfig.MAX_CONNECTIONS));
+				,null,null,null,config.getConnectionTTL(), TimeUnit.MILLISECONDS);
+		connectionManager.setMaxTotal(config.getMaxConnections());
 		connectionManager.setDefaultMaxPerRoute(connectionManager.getMaxTotal());
 		connectionManager.setDefaultConnectionConfig(coConfig);
 		connectionManager.setDefaultSocketConfig(soConfig);
 		
 		/* Set proxy if configured */
-		String proxyHost = config.getStr(ClientConfig.PROXY_HOST);
-		int proxyPort = config.getInt(ClientConfig.PROXY_PORT);
+		String proxyHost = config.getProxyHost();
+		int proxyPort = config.getProxyPort();
+		
+		
 		CloseableHttpClient httpClient = null;
 		if (proxyHost != null && proxyPort > 0) {
 
 			HttpHost proxyHttpHost = new HttpHost(proxyHost, proxyPort);
-			String proxyUsername = config.getStr(ClientConfig.PROXY_USER_NAME);
-			String proxyPassword = config.getStr(ClientConfig.PROXY_PASSWORD);
-			String proxyDomain = config.getStr(ClientConfig.PROXY_DAMAIN);
-			String proxyWorkstation = config.getStr(ClientConfig.PROXY_WORKSTATION);
+			String proxyUsername = config.getProxyUserName();
+			String proxyPassword = config.getProxyPassWord();
+			String proxyDomain = config.getProxyDomain();
+			String proxyWorkstation = config.getProxyWorkStation();
 			
 			BasicCredentialsProvider creprovide = null;
 			if (proxyUsername != null && proxyPassword != null) {
@@ -134,13 +133,13 @@ public class HttpClientFactory {
 				creprovide.setCredentials(new AuthScope(proxyHost, proxyPort),new NTCredentials(proxyUsername, proxyPassword, proxyWorkstation, proxyDomain));
 			}
 			HttpRequestInterceptor interceptor = null;
-			if (config.getBoolean(ClientConfig.IS_PREEMPTIVE_BASIC_PROXY_AUTH)){
+			if (config.isPreemptiveBasicProxyAuth()){
 				interceptor = new PreemptiveProxyAuth(proxyHttpHost);
 			}
 			DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxyHttpHost);
 			
 			httpClient = HttpClients.custom().setConnectionManager(connectionManager).setRedirectStrategy(new NeverFollowRedirectStrategy())
-					.setRetryHandler(new DefaultHttpRequestRetryHandler(config.getInt(ClientConfig.MAX_RETRY), false))
+					.setRetryHandler(new DefaultHttpRequestRetryHandler(config.getMaxRetry(), false))
 					.setDefaultRequestConfig(reConfig)
 					.setRoutePlanner(routePlanner)
 					.setDefaultCredentialsProvider(creprovide)
@@ -150,7 +149,7 @@ public class HttpClientFactory {
 
 		} else {
 			httpClient = HttpClients.custom().setConnectionManager(connectionManager).setRedirectStrategy(new NeverFollowRedirectStrategy())
-					.setRetryHandler(new DefaultHttpRequestRetryHandler(config.getInt(ClientConfig.MAX_RETRY), false))
+					.setRetryHandler(new DefaultHttpRequestRetryHandler(config.getMaxRetry(), false))
 					.setDefaultRequestConfig(reConfig)
 					.build();
 		}
