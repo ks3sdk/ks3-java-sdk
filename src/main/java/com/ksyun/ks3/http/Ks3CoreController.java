@@ -92,10 +92,10 @@ public class Ks3CoreController {
 				} else
 					e = new Ks3ClientException(e);
 			}
-			log.error(e);
+			log.warn(e);
 			throw e;
 		} catch (IOException e) {
-			log.error(e);
+			log.warn(e);
 			throw new Ks3ClientException(e);
 		} finally {
 			request.onFinally();
