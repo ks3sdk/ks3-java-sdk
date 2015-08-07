@@ -17,7 +17,7 @@ lib目录下为该项目所依赖的所有jar包，以及将sdk打好的jar包
     <dependency>
         <groupId>com.ksyun</groupId>
         <artifactId>ks3-kss-java-sdk</artifactId>
-        <version>0.5.0</version>
+        <version>0.6.0</version>
     </dependency>
     
 或者直接引用lib目录下的所有jar包
@@ -49,7 +49,7 @@ lib目录下为该项目所依赖的所有jar包，以及将sdk打好的jar包
 ### 3.2 配置日志
 该SDK使用commons-logging
 
-使用log4j的示例：
+使用log4j的示例：  
 1、引用log4j相关jar包
 	
 		<dependency>
@@ -69,6 +69,29 @@ lib目录下为该项目所依赖的所有jar包，以及将sdk打好的jar包
 		log4j.appender.stdout.Target=System.out
 		log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
 		log4j.appender.stdout.layout.ConversionPattern=%d{yyyy-MM-dd HH:mm:ss SSS} %-5p [%t]%C{1}.%M(%L) - %m%n
+		
+使用logback示例  
+1、引用SDK的时候排除commons-logging，引用logback相关包（包括jcl-over-slf4j）
+
+		<dependency>
+			<groupId>com.ksyun</groupId>
+			<artifactId>ks3-kss-java-sdk</artifactId>
+			<version>0.6.0</version>
+			<exclusions>
+       	 		<exclusion>
+          			<artifactId>commons-logging</artifactId>
+         			 <groupId>commons-logging</groupId>
+        		</exclusion>
+      		</exclusions>
+		</dependency>
+		<dependency>
+      		<groupId>org.slf4j</groupId>
+     		<artifactId>jcl-over-slf4j</artifactId>
+     		<version>1.7.7</version>
+   		</dependency>
+   		
+2、配置logback  
+	
 ### 3.3 获取秘钥
 1、开通KS3服务，[http://www.ksyun.com/user/register](http://www.ksyun.com/user/register) 注册账号  
 2、进入控制台, [http://ks3.ksyun.com/console.html#/setting](http://ks3.ksyun.com/console.html#/setting) 获取AccessKeyID 、AccessKeySecret
@@ -85,6 +108,11 @@ ks3节点列表
 中国标准域名:kss.ksyun.com  
 中国标准CDN域名:kssws.ks-cdn.com  
 美国（圣克拉拉）域名:ks3-us-west-1.ksyun.com  
+
+使用自定义的配置（3.1）
+	
+	Ks3 client = new Ks3Client("<您的AccessKeyID>","<您的AccessKeySecret>",config);
+	或者：client.setKs3config(config);
 
 ## 4 公共异常说明
 ### 4.1 Ks3ServiceException
