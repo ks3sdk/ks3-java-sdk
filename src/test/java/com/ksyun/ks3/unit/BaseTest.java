@@ -41,7 +41,7 @@ public class BaseTest {
 	protected static Ks3EncryptionClient sae_meta;
 	protected static HttpClient hclient;
 	protected static String bucket = "ks3kssjavasdk2";
-	protected static String key = "/test.中//\\文?？.key";
+	protected static String key = "/test.中//\\文?？.key//";
 	protected static String key_copy = key+".copy";
 	protected static String key_instruction = key+".instruction";
 	protected static String dir;
