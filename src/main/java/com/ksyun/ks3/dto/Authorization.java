@@ -11,6 +11,10 @@ package com.ksyun.ks3.dto;
 public class Authorization {
 	private String accessKeyId;
 	private String accessKeySecret;
+	public Authorization()
+	{
+		
+	}
 	public Authorization(String id,String secret)
 	{
 		this.accessKeyId = id;

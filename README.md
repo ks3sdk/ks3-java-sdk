@@ -11,7 +11,7 @@ lib目录下为该项目所依赖的所有jar包，以及将sdk打好的jar包
 
 ## 2 环境准备
 配置Java 5 以上开发环境  
-下载KS3 SDK For Java  
+下载KS3 SDK For Java [https://github.com/ks3sdk/ks3-java-sdk](https://github.com/ks3sdk/ks3-java-sdk)  
 添加Maven依赖
 
     <dependency>
@@ -71,7 +71,7 @@ lib目录下为该项目所依赖的所有jar包，以及将sdk打好的jar包
 		log4j.appender.stdout.layout.ConversionPattern=%d{yyyy-MM-dd HH:mm:ss SSS} %-5p [%t]%C{1}.%M(%L) - %m%n
 		
 使用logback示例  
-1、引用SDK的时候排除commons-logging，引用logback相关包（包括jcl-over-slf4j）
+1、引用SDK的时候排除commons-logging，引用logback相关包（包括但不止jcl-over-slf4j）
 
 		<dependency>
 			<groupId>com.ksyun</groupId>
@@ -243,6 +243,7 @@ ks3节点列表
 			//isTruncated为true时表示之后还有object，所以应该继续循环
 			if(list!=null&&list.isTruncated())
 				//在ObjectListing中将返回下次请求的marker
+				//如果请求的时候没有设置delimiter，则不会返回nextMarker,需要使用上一次list的最后一个key做为nextMarker
 		    	request.setMarker(list.getNextMarker());
 			list = client.listObjects(request);
 		}while(list.isTruncated());

@@ -36,23 +36,4 @@ public class PressureTest extends BaseTest {
 			client.getObject(bucket, key).getObject().getObjectContent().close();;
 		}
 	}
-	@Test
-	public void testUnderscores(){
-		PutObjectRequest req = new PutObjectRequest(bucket,key,new ByteArrayInputStream("123".getBytes()),null);
-		req.setCannedAcl(CannedAccessControlList.PublicRead);
-		ObjectMetadata meta = new ObjectMetadata();
-		meta.setUserMeta("test_w","test_w");
-		client.setPathAccessStyle(true);
-		req.setObjectMeta(meta);
-		client.putObject(req);
-	}
-	@Test
-	public void testUpload(){
-		client.setAuth(new Authorization("lMQTr0hNlMpB0iOk/i+x","D4CsYLs75JcWEjbiI22zR3P7kJ/+5B1qdEje7A7I"));
-		
-		client.getKs3config().getHttpClientConfig().setMaxConnections(1);
-		
-		Ks3UploadClient up = new Ks3UploadClient(client);
-		up.uploadFile("test2-zzy-jr","test",new File("/Users/lijunwei/Pictures/photo.rar"));
-	}
 }

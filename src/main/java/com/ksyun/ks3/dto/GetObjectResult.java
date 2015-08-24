@@ -9,7 +9,7 @@ import com.ksyun.ks3.utils.StringUtils;
  * 
  * @description GetObject请求的返回结果
  **/
-public class GetObjectResult {
+public class GetObjectResult extends Ks3Result{
 	private Ks3Object object = new Ks3Object();
 	/**
 	 * 当为false时 

@@ -256,10 +256,14 @@ public class StringUtils {
 			}
 			buffer.append("]");
 		} else {
-			if (escape)
-				buffer.append("\"" + escape(obj.toString(), true) + "\"");
-			else
-				buffer.append("\"" + escape(obj.toString(), false) + "\"");
+			if(obj instanceof Number||obj instanceof Boolean){
+				buffer.append(obj.toString());
+			}else{
+				if (escape)
+					buffer.append("\"" + escape(obj.toString(), true) + "\"");
+				else
+					buffer.append("\"" + escape(obj.toString(), false) + "\"");
+			}
 		}
 		return buffer.toString();
 	}

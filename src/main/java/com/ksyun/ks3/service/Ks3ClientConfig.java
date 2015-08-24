@@ -62,5 +62,8 @@ public class Ks3ClientConfig {
 	public void setHttpClientConfig(HttpClientConfig httpClientConfig) {
 		this.httpClientConfig = httpClientConfig;
 	}
-	
+	public Ks3ClientConfig withHttpClientConfig(HttpClientConfig httpClientConfig) {
+		this.httpClientConfig = httpClientConfig;
+		return this;
+	}
 }

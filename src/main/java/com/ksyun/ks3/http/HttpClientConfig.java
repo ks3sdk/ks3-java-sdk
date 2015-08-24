@@ -38,11 +38,19 @@ public class HttpClientConfig {
 	public void setSocketSendBufferSizeHint(int socketSendBufferSizeHint) {
 		this.socketSendBufferSizeHint = socketSendBufferSizeHint;
 	}
+	public HttpClientConfig withSocketSendBufferSizeHint(int socketSendBufferSizeHint) {
+		this.socketSendBufferSizeHint = socketSendBufferSizeHint;
+		return this;
+	}
 	public int getSocketReceiveBufferSizeHint() {
 		return socketReceiveBufferSizeHint;
 	}
 	public void setSocketReceiveBufferSizeHint(int socketReceiveBufferSizeHint) {
 		this.socketReceiveBufferSizeHint = socketReceiveBufferSizeHint;
+	}
+	public HttpClientConfig withSocketReceiveBufferSizeHint(int socketReceiveBufferSizeHint){
+		this.socketReceiveBufferSizeHint = socketReceiveBufferSizeHint;
+		return this;
 	}
 	public int getSocketTimeOut() {
 		return socketTimeOut;
@@ -50,11 +58,19 @@ public class HttpClientConfig {
 	public void setSocketTimeOut(int socketTimeOut) {
 		this.socketTimeOut = socketTimeOut;
 	}
+	public HttpClientConfig withSocketTimeOut(int socketTimeOut) {
+		this.socketTimeOut = socketTimeOut;
+		return this;
+	}
 	public int getConnectionTimeOut() {
 		return connectionTimeOut;
 	}
 	public void setConnectionTimeOut(int connectionTimeOut) {
 		this.connectionTimeOut = connectionTimeOut;
+	}
+	public HttpClientConfig withConnectionTimeOut(int connectionTimeOut) {
+		this.connectionTimeOut = connectionTimeOut;
+		return this;
 	}
 	public int getConnectionTTL() {
 		return connectionTTL;
@@ -62,11 +78,19 @@ public class HttpClientConfig {
 	public void setConnectionTTL(int connectionTTL) {
 		this.connectionTTL = connectionTTL;
 	}
+	public HttpClientConfig withConnectionTTL(int connectionTTL) {
+		this.connectionTTL = connectionTTL;
+		return this;
+	}
 	public int getMaxConnections() {
 		return maxConnections;
 	}
 	public void setMaxConnections(int maxConnections) {
 		this.maxConnections = maxConnections;
+	}
+	public HttpClientConfig withMaxConnections(int maxConnections) {
+		this.maxConnections = maxConnections;
+		return this;
 	}
 	public String getProxyHost() {
 		return proxyHost;
@@ -74,11 +98,19 @@ public class HttpClientConfig {
 	public void setProxyHost(String proxyHost) {
 		this.proxyHost = proxyHost;
 	}
+	public HttpClientConfig withProxyHost(String proxyHost) {
+		this.proxyHost = proxyHost;
+		return this;
+	}
 	public int getProxyPort() {
 		return proxyPort;
 	}
 	public void setProxyPort(int proxyPort) {
 		this.proxyPort = proxyPort;
+	}
+	public HttpClientConfig withProxyPort(int proxyPort) {
+		this.proxyPort = proxyPort;
+		return this;
 	}
 	public String getProxyUserName() {
 		return proxyUserName;
@@ -86,11 +118,19 @@ public class HttpClientConfig {
 	public void setProxyUserName(String proxyUserName) {
 		this.proxyUserName = proxyUserName;
 	}
+	public HttpClientConfig withProxyUserName(String proxyUserName) {
+		this.proxyUserName = proxyUserName;
+		return this;
+	}
 	public String getProxyPassWord() {
 		return proxyPassWord;
 	}
 	public void setProxyPassWord(String proxyPassWord) {
 		this.proxyPassWord = proxyPassWord;
+	}
+	public HttpClientConfig withProxyPassWord(String proxyPassWord) {
+		this.proxyPassWord = proxyPassWord;
+		return this;
 	}
 	public String getProxyDomain() {
 		return proxyDomain;
@@ -98,11 +138,19 @@ public class HttpClientConfig {
 	public void setProxyDomain(String proxyDomain) {
 		this.proxyDomain = proxyDomain;
 	}
+	public HttpClientConfig withProxyDomain(String proxyDomain) {
+		this.proxyDomain = proxyDomain;
+		return this;
+	}
 	public String getProxyWorkStation() {
 		return proxyWorkStation;
 	}
 	public void setProxyWorkStation(String proxyWorkStation) {
 		this.proxyWorkStation = proxyWorkStation;
+	}
+	public HttpClientConfig withProxyWorkStation(String proxyWorkStation) {
+		this.proxyWorkStation = proxyWorkStation;
+		return this;
 	}
 	public boolean isPreemptiveBasicProxyAuth() {
 		return isPreemptiveBasicProxyAuth;
@@ -110,11 +158,18 @@ public class HttpClientConfig {
 	public void setPreemptiveBasicProxyAuth(boolean isPreemptiveBasicProxyAuth) {
 		this.isPreemptiveBasicProxyAuth = isPreemptiveBasicProxyAuth;
 	}
+	public HttpClientConfig withPreemptiveBasicProxyAuth(boolean isPreemptiveBasicProxyAuth) {
+		this.isPreemptiveBasicProxyAuth = isPreemptiveBasicProxyAuth;
+		return this;
+	}
 	public int getMaxRetry() {
 		return maxRetry;
 	}
 	public void setMaxRetry(int maxRetry) {
 		this.maxRetry = maxRetry;
 	}
-	
+	public HttpClientConfig withMaxRetry(int maxRetry) {
+		this.maxRetry = maxRetry;
+		return this;
+	}
 }
