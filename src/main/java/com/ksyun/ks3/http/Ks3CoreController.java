@@ -56,29 +56,38 @@ public class Ks3CoreController {
 	private HttpClient client = null;
 
 	public <X extends Ks3WebServiceResponse<Y>, Y> Y execute(
-			Authorization auth, Ks3WebServiceRequest request, Class<X> clazz) {
-		return execute(new Ks3ClientConfig(),auth,request,clazz);
+			Ks3WebServiceRequest request, Class<X> clazz) {
+		return execute(new Ks3ClientConfig(), null, request, clazz);
 	}
-	public <X extends Ks3WebServiceResponse<Y>, Y> Y execute(Ks3ClientConfig ks3config,
+
+	public <X extends Ks3WebServiceResponse<Y>, Y> Y execute(
 			Authorization auth, Ks3WebServiceRequest request, Class<X> clazz) {
+		return execute(new Ks3ClientConfig(), auth, request, clazz);
+	}
+
+	public <X extends Ks3WebServiceResponse<Y>, Y> Y execute(
+			Ks3ClientConfig ks3config, Authorization auth,
+			Ks3WebServiceRequest request, Class<X> clazz) {
 		if (request == null)
 			throw new Ks3ClientException("request can not be null");
 		log.debug("Ks3WebServiceRequest:" + request.getClass()
 				+ ";Ks3WebServiceResponse:" + clazz);
-		if(ks3config == null)
+		if (ks3config == null)
 			ks3config = new Ks3ClientConfig();
-		if(client == null)
+		if (client == null)
 			client = factory.createHttpClient(ks3config.getHttpClientConfig());
-		
+
 		Y result = null;
 		try {
-			if (auth == null || StringUtils.isBlank(auth.getAccessKeyId())
-					|| StringUtils.isBlank(auth.getAccessKeySecret()))
-				throw new Ks3ClientException(
-						"AccessKeyId or AccessKeySecret can't be null");
+			if (!ks3config.isAllowAnonymous()) {
+				if (auth == null || StringUtils.isBlank(auth.getAccessKeyId())
+						|| StringUtils.isBlank(auth.getAccessKeySecret()))
+					throw new Ks3ClientException(
+							"AccessKeyId or AccessKeySecret can't be null");
+			}
 			if (request == null || clazz == null)
 				throw new IllegalArgumentException();
-			result = doExecute(ks3config,auth, request, clazz);
+			result = doExecute(ks3config, auth, request, clazz);
 			return result;
 		} catch (RuntimeException e) {
 			if (e instanceof Ks3ClientException) {
@@ -102,15 +111,17 @@ public class Ks3CoreController {
 		}
 	}
 
-	private <X extends Ks3WebServiceResponse<Y>, Y> Y doExecute(Ks3ClientConfig ks3config,
-			Authorization auth, Ks3WebServiceRequest request, Class<X> clazz)
+	private <X extends Ks3WebServiceResponse<Y>, Y> Y doExecute(
+			Ks3ClientConfig ks3config, Authorization auth,
+			Ks3WebServiceRequest request, Class<X> clazz)
 			throws IllegalStateException, IOException {
 		Timer.start();
 		HttpResponse response = null;
 		Request req = new Request();
-		RequestBuilder.buildRequest(request,req, auth,ks3config);
-		HttpRequestBase httpRequest = RequestBuilder.buildHttpRequest(request, req, auth, ks3config);
-		
+		RequestBuilder.buildRequest(request, req, auth, ks3config);
+		HttpRequestBase httpRequest = RequestBuilder.buildHttpRequest(request,
+				req, auth, ks3config);
+
 		Ks3WebServiceResponse<Y> ksResponse = null;
 		try {
 			ksResponse = clazz.newInstance();
@@ -125,26 +136,32 @@ public class Ks3CoreController {
 		}
 		try {
 			log.info(httpRequest.getRequestLine());
-			for(Header header : httpRequest.getAllHeaders()){
-				log.info("Request Header->"+header.getName()+":"+header.getValue());
+			for (Header header : httpRequest.getAllHeaders()) {
+				log.info("Request Header->" + header.getName() + ":"
+						+ header.getValue());
 			}
 			response = client.execute(httpRequest);
 			log.info(response.getStatusLine());
-			for(Header header : response.getAllHeaders()){
-				log.info("Response Header->"+header.getName()+":"+header.getValue());
+			for (Header header : response.getAllHeaders()) {
+				log.info("Response Header->" + header.getName() + ":"
+						+ header.getValue());
 			}
-			if (response.getStatusLine().getStatusCode() >=300&&response.getStatusLine().getStatusCode() <400
+			if (response.getStatusLine().getStatusCode() >= 300
+					&& response.getStatusLine().getStatusCode() < 400
 					&& response.containsHeader("Location")) {
 				String location = response.getHeaders("Location")[0].getValue();
 				// TODO 这个只是为了兼容当前api
 				if (location.startsWith("http")) {
-					log.debug("returned "+response.getStatusLine().getStatusCode()+",retry request to " + location);
+					log.debug("returned "
+							+ response.getStatusLine().getStatusCode()
+							+ ",retry request to " + location);
 					restRequest(httpRequest);
 					httpRequest.setURI(new URI(location));
 					response = client.execute(httpRequest);
 					log.info(response.getStatusLine());
-					for(Header header : response.getAllHeaders()){
-						log.info("Response Header->"+header.getName()+":"+header.getValue());
+					for (Header header : response.getAllHeaders()) {
+						log.info("Response Header->" + header.getName() + ":"
+								+ header.getValue());
 					}
 				}
 			}
@@ -154,8 +171,8 @@ public class Ks3CoreController {
 			ksResponse.setHttpResponse(response);
 			if (!success(ksResponse)) {
 				throw new Ks3ServiceException(response, StringUtils.join(
-						ksResponse.expectedStatus(), ","))
-						.convert(ksResponse.getRequestId());
+						ksResponse.expectedStatus(), ",")).convert(ksResponse
+						.getRequestId());
 			}
 			Y result = ksResponse.handleResponse();
 			Map<String, String> ret = skipMD5Check(response, req);
@@ -173,10 +190,10 @@ public class Ks3CoreController {
 			log.debug("finished handle response : " + Timer.end());
 			return result;
 		} catch (Exception e) {
-			if(e instanceof Ks3ClientException)
-				throw (Ks3ClientException)e;
+			if (e instanceof Ks3ClientException)
+				throw (Ks3ClientException) e;
 			throw new ClientHttpException(e);
-		}finally{
+		} finally {
 			ksResponse.onFinally();
 			log.debug("finished execute : " + Timer.end());
 		}
@@ -193,7 +210,8 @@ public class Ks3CoreController {
 	 */
 	private boolean success(Ks3WebServiceResponse<?> kscResponse) {
 		int num = kscResponse.expectedStatus().length;
-		int code = kscResponse.getHttpResponse().getStatusLine().getStatusCode();
+		int code = kscResponse.getHttpResponse().getStatusLine()
+				.getStatusCode();
 		for (int i = 0; i < num; i++) {
 			if (code == kscResponse.expectedStatus()[i])
 				return true;
@@ -220,17 +238,19 @@ public class Ks3CoreController {
 		map.put("MD5", clientmd5);
 		return map;
 	}
-	private void restRequest(HttpRequest req) throws IllegalStateException, IOException{
+
+	private void restRequest(HttpRequest req) throws IllegalStateException,
+			IOException {
 		HttpEntity entity = null;
-		if(req instanceof HttpPut){
-			entity = ((HttpPut)req).getEntity();
-		}else if(req instanceof HttpPost){
-			entity = ((HttpPost)req).getEntity();
+		if (req instanceof HttpPut) {
+			entity = ((HttpPut) req).getEntity();
+		} else if (req instanceof HttpPost) {
+			entity = ((HttpPost) req).getEntity();
 		}
-		if(entity != null){
+		if (entity != null) {
 			InputStream input = entity.getContent();
-			if(input!=null){
-				if(input.markSupported()){
+			if (input != null) {
+				if (input.markSupported()) {
 					input.reset();
 					input.mark(-1);
 				}

@@ -30,6 +30,10 @@ public class Ks3ClientConfig {
 	 * 是否使用path style access方式访问
 	 */
 	private boolean pathStyleAccess = false;
+	/**
+	 * 允许客户端发送匿名请求
+	 */
+	private boolean allowAnonymous = true;
 	private String signerClass = "com.ksyun.ks3.signer.DefaultSigner";
 	private HttpClientConfig httpClientConfig =  new HttpClientConfig();
 	public String getEndpoint() {
@@ -64,6 +68,16 @@ public class Ks3ClientConfig {
 	}
 	public Ks3ClientConfig withHttpClientConfig(HttpClientConfig httpClientConfig) {
 		this.httpClientConfig = httpClientConfig;
+		return this;
+	}
+	public boolean isAllowAnonymous() {
+		return allowAnonymous;
+	}
+	public void setAllowAnonymous(boolean allowAnonymous) {
+		this.allowAnonymous = allowAnonymous;
+	}
+	public Ks3ClientConfig withAllowAnonymous(boolean allowAnonymous) {
+		this.allowAnonymous = allowAnonymous;
 		return this;
 	}
 }

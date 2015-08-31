@@ -58,9 +58,13 @@ public class RequestBuilder {
 		request.setEndpoint(endpoint0);
 		//sign request
 		try {
-			String signerString = ks3config.getSignerClass();
-			Signer signer = (Signer) Class.forName(signerString).newInstance();
-			signer.sign(auth, request);
+			if(auth != null){
+				String signerString = ks3config.getSignerClass();
+				Signer signer = (Signer) Class.forName(signerString).newInstance();
+				signer.sign(auth, request);
+			}else if(!ks3config.isAllowAnonymous()){
+				throw new Ks3ClientException("sdk is not allowed to send anonymous request");
+			}
 		} catch (Exception e) {
 			throw new Ks3ClientException(e);
 		}
