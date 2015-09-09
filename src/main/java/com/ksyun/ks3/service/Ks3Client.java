@@ -27,6 +27,7 @@ import java.util.Map.Entry;
 
 
 
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -45,6 +46,7 @@ import com.ksyun.ks3.http.HttpMethod;
 import com.ksyun.ks3.http.Ks3CoreController;
 import com.ksyun.ks3.http.Request;
 import com.ksyun.ks3.http.RequestBuilder;
+import com.ksyun.ks3.service.Ks3ClientConfig.PROTOCOL;
 import com.ksyun.ks3.service.request.AbortMultipartUploadRequest;
 import com.ksyun.ks3.service.request.CompleteMultipartUploadRequest;
 import com.ksyun.ks3.service.request.CopyObjectRequest;
@@ -103,6 +105,20 @@ import com.ksyun.ks3.utils.StringUtils;
  * @description ks3客户端，用户使用时需要先初始化一个Ks3Client进行操作
  **/
 public class Ks3Client implements Ks3 {
+	/**
+	 * 该客户端用于杭州(中国标准)bucket的文件上传下载、分块上传
+	 */
+	public static final Ks3Client Ks3ClientForHZStream = new Ks3Client().withKs3config(new Ks3ClientConfig().withEndpoint("kssws.ks-cdn.com"));
+	/**
+	 * 该客户端用于杭州(中国标准)bucket的除文件上传下载、分块上传以外的其他操作
+	 */
+	public static final Ks3Client Ks3ClientForHZControl = new Ks3Client().withKs3config(new Ks3ClientConfig().withEndpoint("kss.ksyun.com"));
+	/**
+	 * 该客户端用于美国(圣克拉拉)bucket
+	 */
+	public static final Ks3Client Ks3ClientForUS = new Ks3Client().withKs3config(new Ks3ClientConfig().withEndpoint("ks3-us-west-1.ksyun.com"));
+
+	
 	private Ks3ClientConfig ks3config = new Ks3ClientConfig();
 	private Authorization auth;
 
@@ -110,7 +126,7 @@ public class Ks3Client implements Ks3 {
 		this.auth = auth;
 	}
 
-	public Ks3 withAuth(Authorization auth) {
+	public Ks3Client withAuth(Authorization auth) {
 		this.auth = auth;
 		return this;
 	}
@@ -122,7 +138,7 @@ public class Ks3Client implements Ks3 {
 		this.ks3config.setEndpoint(endpoint);
 	}
 
-	public Ks3 withEndpoint(String endpoint) {
+	public Ks3Client withEndpoint(String endpoint) {
 		this.setEndpoint(endpoint);
 		return this;
 	}
@@ -134,7 +150,7 @@ public class Ks3Client implements Ks3 {
 		this.ks3config.setPathStyleAccess(pathStyle);
 	}
 
-	public Ks3 withPathStyleAccess(boolean pathStyle) {
+	public Ks3Client withPathStyleAccess(boolean pathStyle) {
 		this.setPathAccessStyle(pathStyle);
 		return this;
 	}
@@ -147,7 +163,7 @@ public class Ks3Client implements Ks3 {
 		this.ks3config = ks3config;
 	}
 
-	public Ks3 withKs3config(Ks3ClientConfig ks3config) {
+	public Ks3Client withKs3config(Ks3ClientConfig ks3config) {
 		this.setKs3config(ks3config);
 		return this;
 	}

@@ -96,12 +96,16 @@ public class StringUtils {
 		if (bname == null) {
 			return null;
 		}
+		
 
 		if (bname.length() < MIN_BUCKET_NAME_LENGTH
 				|| bname.length() > MAX_BUCKET_NAME_LENGTH) {
 			return null;
 		}
-
+		char begin = bname.charAt(0);
+		if((begin < '0') || (begin > '9' && begin < 'a')|| (begin > 'z'))
+			return null;
+		
 		char previous = '\0';
 
 		for (int i = 0; i < bname.length(); ++i) {

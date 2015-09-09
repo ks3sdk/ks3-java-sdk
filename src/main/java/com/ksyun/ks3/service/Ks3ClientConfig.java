@@ -42,11 +42,19 @@ public class Ks3ClientConfig {
 	public void setEndpoint(String endpoint) {
 		this.endpoint = endpoint;
 	}
+	public Ks3ClientConfig withEndpoint(String endpoint) {
+		this.endpoint = endpoint;
+		return this;
+	}
 	public PROTOCOL getProtocol() {
 		return protocol;
 	}
 	public void setProtocol(PROTOCOL protocol) {
 		this.protocol = protocol;
+	}
+	public Ks3ClientConfig withProtocol(PROTOCOL protocol) {
+		this.protocol = protocol;
+		return this;
 	}
 	public boolean isPathStyleAccess() {
 		return pathStyleAccess;
