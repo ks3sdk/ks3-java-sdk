@@ -148,7 +148,8 @@ public class Ks3CoreController {
 			}
 			if (response.getStatusLine().getStatusCode() >= 300
 					&& response.getStatusLine().getStatusCode() < 400
-					&& response.containsHeader("Location")) {
+					&& response.containsHeader("Location")
+					&& ks3config.isFlowRedirect()) {
 				String location = response.getHeaders("Location")[0].getValue();
 				// TODO 这个只是为了兼容当前api
 				if (location.startsWith("http")) {

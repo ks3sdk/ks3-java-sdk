@@ -34,6 +34,11 @@ public class Ks3ClientConfig {
 	 * 允许客户端发送匿名请求
 	 */
 	private boolean allowAnonymous = true;
+	/**
+	 * 当服务端返回307时是否自动跳转，
+	 * 主要发生在用Region A的endpoint请求Region B的endpoint
+	 */
+	private boolean flowRedirect = true;
 	private String signerClass = "com.ksyun.ks3.signer.DefaultSigner";
 	private HttpClientConfig httpClientConfig =  new HttpClientConfig();
 	public String getEndpoint() {
@@ -86,6 +91,16 @@ public class Ks3ClientConfig {
 	}
 	public Ks3ClientConfig withAllowAnonymous(boolean allowAnonymous) {
 		this.allowAnonymous = allowAnonymous;
+		return this;
+	}
+	public boolean isFlowRedirect() {
+		return flowRedirect;
+	}
+	public void setFlowRedirect(boolean flowRedirect) {
+		this.flowRedirect = flowRedirect;
+	}
+	public Ks3ClientConfig withFlowRedirect(boolean flowRedirect) {
+		this.flowRedirect = flowRedirect;
 		return this;
 	}
 }
