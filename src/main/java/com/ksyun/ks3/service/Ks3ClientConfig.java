@@ -39,6 +39,10 @@ public class Ks3ClientConfig {
 	 * 主要发生在用Region A的endpoint请求Region B的endpoint
 	 */
 	private boolean flowRedirect = true;
+	/**
+	 * 是否使用绑定的域名作为endpoint
+	 */
+	private boolean domainMode = false;
 	private String signerClass = "com.ksyun.ks3.signer.DefaultSigner";
 	private HttpClientConfig httpClientConfig =  new HttpClientConfig();
 	public String getEndpoint() {
@@ -101,6 +105,16 @@ public class Ks3ClientConfig {
 	}
 	public Ks3ClientConfig withFlowRedirect(boolean flowRedirect) {
 		this.flowRedirect = flowRedirect;
+		return this;
+	}
+	public boolean isDomainMode() {
+		return domainMode;
+	}
+	public void setDomainMode(boolean domainMode) {
+		this.domainMode = domainMode;
+	}
+	public Ks3ClientConfig withDomainMode(boolean domainMode) {
+		this.domainMode = domainMode;
 		return this;
 	}
 }
