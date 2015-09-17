@@ -7,11 +7,11 @@ import com.ksyun.ks3.exception.Ks3ClientException;
  * 
  * @date 2014年12月3日 下午2:29:12
  * 
- * @description 客户端网络出现异常
+ * @description 客户端请求KS3时出现了异常
  **/
-public class ClientHttpException extends Ks3ClientException{
+public class CallRemoteFailException extends Ks3ClientException{
 
-	public ClientHttpException(Throwable t) {
+	public CallRemoteFailException(Throwable t) {
 		super(t);
 		// TODO Auto-generated constructor stub
 	}

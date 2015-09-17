@@ -3,6 +3,7 @@ package com.ksyun.ks3.http;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,7 +28,7 @@ import com.ksyun.ks3.dto.GetObjectResult;
 import com.ksyun.ks3.dto.Ks3Result;
 import com.ksyun.ks3.exception.Ks3ClientException;
 import com.ksyun.ks3.exception.Ks3ServiceException;
-import com.ksyun.ks3.exception.client.ClientHttpException;
+import com.ksyun.ks3.exception.client.CallRemoteFailException;
 import com.ksyun.ks3.exception.client.ClientIllegalArgumentException;
 import com.ksyun.ks3.exception.client.ClientInvalidDigestException;
 import com.ksyun.ks3.service.Ks3ClientConfig;
@@ -103,9 +104,6 @@ public class Ks3CoreController {
 			}
 			log.warn(e);
 			throw e;
-		} catch (IOException e) {
-			log.warn(e);
-			throw new Ks3ClientException(e);
 		} finally {
 			request.onFinally();
 		}
@@ -113,8 +111,7 @@ public class Ks3CoreController {
 
 	private <X extends Ks3WebServiceResponse<Y>, Y> Y doExecute(
 			Ks3ClientConfig ks3config, Authorization auth,
-			Ks3WebServiceRequest request, Class<X> clazz)
-			throws IllegalStateException, IOException {
+			Ks3WebServiceRequest request, Class<X> clazz) {
 		Timer.start();
 		HttpResponse response = null;
 		Request req = new Request();
@@ -135,39 +132,14 @@ public class Ks3CoreController {
 					+ " has occured an exception:(" + e + ")", e);
 		}
 		try {
-			log.info(httpRequest.getRequestLine());
-			for (Header header : httpRequest.getAllHeaders()) {
-				log.info("Request Header->" + header.getName() + ":"
-						+ header.getValue());
+			try{
+				response = this.requestKs3(httpRequest, ks3config);
+			}catch(Exception e){
+				throw new CallRemoteFailException(e);
+			}finally{
+				log.debug("finished send request to ks3 service and recive response from the service : "
+						+ Timer.end());
 			}
-			response = client.execute(httpRequest);
-			log.info(response.getStatusLine());
-			for (Header header : response.getAllHeaders()) {
-				log.info("Response Header->" + header.getName() + ":"
-						+ header.getValue());
-			}
-			if (response.getStatusLine().getStatusCode() >= 300
-					&& response.getStatusLine().getStatusCode() < 400
-					&& response.containsHeader("Location")
-					&& ks3config.isFlowRedirect()) {
-				String location = response.getHeaders("Location")[0].getValue();
-				// TODO 这个只是为了兼容当前api
-				if (location.startsWith("http")) {
-					log.debug("returned "
-							+ response.getStatusLine().getStatusCode()
-							+ ",retry request to " + location);
-					restRequest(httpRequest);
-					httpRequest.setURI(new URI(location));
-					response = client.execute(httpRequest);
-					log.info(response.getStatusLine());
-					for (Header header : response.getAllHeaders()) {
-						log.info("Response Header->" + header.getName() + ":"
-								+ header.getValue());
-					}
-				}
-			}
-			log.debug("finished send request to ks3 service and recive response from the service : "
-					+ Timer.end());
 			ksResponse.setHttpRequest(httpRequest);
 			ksResponse.setHttpResponse(response);
 			if (!success(ksResponse)) {
@@ -190,10 +162,8 @@ public class Ks3CoreController {
 			}
 			log.debug("finished handle response : " + Timer.end());
 			return result;
-		} catch (Exception e) {
-			if (e instanceof Ks3ClientException)
-				throw (Ks3ClientException) e;
-			throw new ClientHttpException(e);
+		} catch (RuntimeException e) {
+			throw e;
 		} finally {
 			ksResponse.onFinally();
 			log.debug("finished execute : " + Timer.end());
@@ -257,5 +227,41 @@ public class Ks3CoreController {
 				}
 			}
 		}
+	}
+	private HttpResponse requestKs3(HttpRequestBase httpRequest,Ks3ClientConfig ks3config) throws ClientProtocolException, IOException, URISyntaxException{
+		HttpResponse response = null;
+		
+		log.info(httpRequest.getRequestLine());
+		for (Header header : httpRequest.getAllHeaders()) {
+			log.info("Request Header->" + header.getName() + ":"
+					+ header.getValue());
+		}
+		response = client.execute(httpRequest);
+		log.info(response.getStatusLine());
+		for (Header header : response.getAllHeaders()) {
+			log.info("Response Header->" + header.getName() + ":"
+					+ header.getValue());
+		}
+		if (response.getStatusLine().getStatusCode() >= 300
+				&& response.getStatusLine().getStatusCode() < 400
+				&& response.containsHeader("Location")
+				&& ks3config.isFlowRedirect()) {
+			String location = response.getHeaders("Location")[0].getValue();
+			// TODO 这个只是为了兼容当前api
+			if (location.startsWith("http")) {
+				log.debug("returned "
+						+ response.getStatusLine().getStatusCode()
+						+ ",retry request to " + location);
+				restRequest(httpRequest);
+				httpRequest.setURI(new URI(location));
+				response = client.execute(httpRequest);
+				log.info(response.getStatusLine());
+				for (Header header : response.getAllHeaders()) {
+					log.info("Response Header->" + header.getName() + ":"
+							+ header.getValue());
+				}
+			}
+		}
+		return response;
 	}
 }
