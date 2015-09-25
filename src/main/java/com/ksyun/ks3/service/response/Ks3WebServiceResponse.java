@@ -33,6 +33,8 @@ public abstract class Ks3WebServiceResponse<T> extends DefaultHandler{
 		T ret = abstractHandleResponse();
 		if(ret instanceof Ks3Result){
 			((Ks3Result)ret).setRequestId(this.getRequestId());
+			((Ks3Result)ret).setOriginRequest(httpRequest);
+			((Ks3Result)ret).setOriginResponse(httpResponse);
 		}
 		return ret;
 	}
