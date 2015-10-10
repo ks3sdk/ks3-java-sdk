@@ -428,7 +428,7 @@ public class Ks3Client implements Ks3 {
 		GeneratePresignedUrlRequest request = new GeneratePresignedUrlRequest();
 		request.setBucket(bucket);
 		request.setKey(key);
-		request.setExpiration(new Date(System.currentTimeMillis()+expiration*1000));
+		request.setExpiration(new Date(System.currentTimeMillis()+expiration*1000L));
 		request.setResponseHeaders(overrides);
 		return generatePresignedUrl(request);
 	}
