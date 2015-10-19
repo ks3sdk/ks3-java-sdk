@@ -31,11 +31,13 @@ import com.ksyun.ks3.dto.ObjectMetadata;
 import com.ksyun.ks3.dto.Part;
 import com.ksyun.ks3.dto.PartETag;
 import com.ksyun.ks3.dto.PutObjectResult;
+import com.ksyun.ks3.dto.ResponseHeaderOverrides;
 import com.ksyun.ks3.dto.SSECustomerKey;
 import com.ksyun.ks3.dto.CorsRule.AllowedMethods;
 import com.ksyun.ks3.exception.serviceside.BucketAlreadyExistsException;
 import com.ksyun.ks3.exception.serviceside.BucketNotEmptyException;
 import com.ksyun.ks3.http.HttpHeaders;
+import com.ksyun.ks3.service.request.GetObjectRequest;
 import com.ksyun.ks3.service.request.HeadObjectRequest;
 import com.ksyun.ks3.service.request.InitiateMultipartUploadRequest;
 import com.ksyun.ks3.service.request.PutBucketCorsRequest;
@@ -129,6 +131,19 @@ public class Ks3ClientTest extends BaseTest{
 		
 		HeadObjectResult headObjRet = client.headObject(bucket, key);
 		assertEquals(9,headObjRet.getObjectMetadata().getContentLength());
+	}
+	@Test
+	public void testGetObjectHeaderOverrides(){
+		client.putObject(bucket, key, "123中文");
+		GetObjectRequest getReq = new GetObjectRequest(bucket,key);
+		ResponseHeaderOverrides overrides = new ResponseHeaderOverrides();
+		overrides.setContentType("application/json");
+		getReq.setOverrides(overrides);
+		
+		Ks3Object obj = client.getObject(getReq).getObject();
+		assertEquals("application/json",obj.getObjectMetadata().getContentType());
+		assertEquals("123中文",StringUtils.inputStream2String(obj.getObjectContent()));
+		
 	}
 	@Test
 	public void testPutGetHeadFileObject() throws FileNotFoundException, IOException{

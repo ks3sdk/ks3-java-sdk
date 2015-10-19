@@ -19,6 +19,5 @@ public class RequestUtils {
 	public static List<String> QueryParam = Arrays.asList(new String[]{"response-content-type",
 		"response-content-language",
         "response-expires", "response-cache-control",
-        "response-content-disposition", "response-content-encoding", 
-        "width", "height"});
+        "response-content-disposition", "response-content-encoding"});
 }
