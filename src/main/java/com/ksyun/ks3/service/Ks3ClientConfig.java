@@ -21,7 +21,7 @@ public class Ks3ClientConfig {
 	 * 中国cdn:kssws.ks-cdn.com</br>
 	 * 美国（圣克拉拉）:ks3-us-west-1.ksyun.com</br>
 	 */
-	private String endpoint = "kss.ksyun.com";
+	private String endpoint = "kssws.ks-cdn.com";
 	/**
 	 * http或者https
 	 */
