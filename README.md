@@ -1157,9 +1157,10 @@ KS3上传协议详见[http://ks3.ksyun.com/doc/api/object/put.html](http://ks3.k
 用户可以使用sdk将数据加密后再上传到ks3
 
 ### 11.1 环境配置(以JDK7示例)
+
 下载[UnlimitedJCEPolicyJDK7](http://www.oracle.com/technetwork/java/embedded/embedded-se/downloads/jce-7-download-432124.html )，将local_policy.jar和US_export_policy.jar放在{JAVA_HOME}\jre\lib\security目录下，覆盖原有的。
 
-下载[bcprov-jdk15on-152.jar](http://www.bouncycastle.org/latest_releases.html)，放在{JAVA_HOME}\jre\lib\ext目录下
+下载[bcprov-jdk15on-152.jar](http://www.bouncycastle.org/latest_releases.html)，放在{JAVA_HOME}\jre\lib\ext目录下  
 
 ### 11.2 初始化主秘钥
 使用对称主密钥
