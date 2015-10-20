@@ -1128,7 +1128,7 @@ http://{endpoint}/{taskId}?queryadp
 	req.setResponseHeaders(overrides);
 	String url = client.generatePresignedUrl(req);
 
-
+  
 ### 10.2 通过外链上传文件
 
 KS3上传协议详见[http://ks3.ksyun.com/doc/api/object/put.html](http://ks3.ksyun.com/doc/api/object/put.html)   
@@ -1315,6 +1315,7 @@ KS3上传协议详见[http://ks3.ksyun.com/doc/api/object/put.html](http://ks3.k
 	    }
 	}
 
+  
 ### 11.3 初始化客户端
 
 	SecretKey symKey = ??//主密钥
