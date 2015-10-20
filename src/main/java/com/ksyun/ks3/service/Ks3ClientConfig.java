@@ -29,7 +29,7 @@ public class Ks3ClientConfig {
 	/**
 	 * 是否使用path style access方式访问
 	 */
-	private boolean pathStyleAccess = false;
+	private boolean pathStyleAccess = true;
 	/**
 	 * 允许客户端发送匿名请求
 	 */

@@ -100,11 +100,12 @@ public class BaseTest {
 		hclient = new HttpClientFactory().createHttpClient(new Ks3ClientConfig().getHttpClientConfig());
 	}
 	@Before
-	public void before(){
+	public void before() throws InterruptedException{
 		if(client.bucketExists(bucket)){
 			client.clearBucket(bucket);
 			client.putBucketACL(bucket, CannedAccessControlList.Private);
 			client.putBucketLogging(bucket, false, null);
+			Thread.sleep(3000);
 		}else{
 			client.createBucket(bucket);
 		}

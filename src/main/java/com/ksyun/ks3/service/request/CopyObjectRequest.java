@@ -164,7 +164,7 @@ public class CopyObjectRequest extends Ks3WebServiceRequest{
 		request.setMethod(HttpMethod.PUT);
 		request.setBucket(this.destinationBucket);
 		request.setKey(this.destinationKey);
-		request.addHeader(HttpHeaders.XKssCopySource,"/"+this.getSourceBucket()+"/"+HttpUtils.urlEncode(this.getSourceKey(),true));
+		request.addHeader(HttpHeaders.XKssCopySource,("/"+this.getSourceBucket()+"/"+HttpUtils.urlEncode(this.getSourceKey(),true)).replace("//", "/%2F"));
         if(getCannedAcl()!=null){
         	request.addHeader(HttpHeaders.CannedAcl,getCannedAcl().toString());
         }
