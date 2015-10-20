@@ -1115,6 +1115,7 @@ http://{endpoint}/{taskId}?queryadp
 比如:http://kss.ksyun.com/{taskId}?queryadp
 
 ## 10 通过外链操作
+
 ### 10.1 通过外链访问文件
 
 	GeneratePresignedUrlRequest req = new GeneratePresignedUrlRequest();
@@ -1128,6 +1129,7 @@ http://{endpoint}/{taskId}?queryadp
 	String url = client.generatePresignedUrl(req);
 
 ### 10.2 通过外链上传文件
+
 KS3上传协议详见[http://ks3.ksyun.com/doc/api/object/put.html](http://ks3.ksyun.com/doc/api/object/put.html)   
 
 	GeneratePresignedUrlRequest req = new GeneratePresignedUrlRequest();
