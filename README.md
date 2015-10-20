@@ -453,7 +453,7 @@ HEAD Bucket可以用来判断一个bucket是否存在
 		AccessControlList acl = new AccessControlList();
 		//设置用户id为12345678的用户对bucket的读权限
 		Grant grant1 = new Grant();
-		grant1.setGrantee(new GranteeId("12345678"));
+		grant1.setGrantee(new BGranteeId("12345678"));
 		grant1.setPermission(Permission.Read);
 		acl.addGrant(grant1);
 		//设置用户id为123456789的用户对bucket完全控制

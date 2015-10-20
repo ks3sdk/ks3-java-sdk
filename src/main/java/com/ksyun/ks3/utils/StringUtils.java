@@ -22,6 +22,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
 
 import com.ksyun.ks3.config.Constants;
 import com.ksyun.ks3.dto.Owner;
@@ -158,6 +159,8 @@ public class StringUtils {
 			return true;
 		}
 		if(obj.getClass().isEnum())
+			return true;
+		if(obj instanceof HttpRequest || obj instanceof HttpResponse)
 			return true;
 		return false;
 	}
