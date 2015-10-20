@@ -17,7 +17,7 @@ lib目录下为该项目所依赖的所有jar包，以及将sdk打好的jar包
     <dependency>
         <groupId>com.ksyun</groupId>
         <artifactId>ks3-kss-java-sdk</artifactId>
-        <version>0.6.0</version>
+        <version>0.6.1</version>
     </dependency>
     
 或者直接引用lib目录下的所有jar包
@@ -1114,9 +1114,9 @@ KS3支持用户在上传文件的时候，设置一个异步数据处理任务�
 http://{endpoint}/{taskId}?queryadp  
 比如:http://kss.ksyun.com/{taskId}?queryadp
 
-## 10 通过外链操作
+## 10 通过外链操作  
 
-### 10.1 通过外链访问文件
+### 10.1 通过外链访问文件  
 
 	GeneratePresignedUrlRequest req = new GeneratePresignedUrlRequest();
 	req.setMethod(HttpMethod.GET);
@@ -1129,7 +1129,7 @@ http://{endpoint}/{taskId}?queryadp
 	String url = client.generatePresignedUrl(req);
 
   
-### 10.2 通过外链上传文件
+### 10.2 通过外链上传文件  
 
 KS3上传协议详见[http://ks3.ksyun.com/doc/api/object/put.html](http://ks3.ksyun.com/doc/api/object/put.html)   
 
@@ -1162,8 +1162,9 @@ KS3上传协议详见[http://ks3.ksyun.com/doc/api/object/put.html](http://ks3.k
 
 下载[bcprov-jdk15on-152.jar](http://www.bouncycastle.org/latest_releases.html)，放在{JAVA_HOME}\jre\lib\ext目录下  
 
-### 11.2 初始化主秘钥
-使用对称主密钥
+### 11.2 初始化主秘钥  
+
+使用对称主密钥  
 
 	import java.io.File;
 	import java.io.FileInputStream;
@@ -1222,7 +1223,7 @@ KS3上传协议详见[http://ks3.ksyun.com/doc/api/object/put.html](http://ks3.k
 	        return new SecretKeySpec(encodedPrivateKey, "AES");
 	    }
 	}
-使用非对称主密钥
+使用非对称主密钥  
 
 	import static org.junit.Assert.assertTrue;
 	import java.io.File;
@@ -1315,7 +1316,6 @@ KS3上传协议详见[http://ks3.ksyun.com/doc/api/object/put.html](http://ks3.k
 	    }
 	}
 
-  
 ### 11.3 初始化客户端
 
 	SecretKey symKey = ??//主密钥
