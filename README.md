@@ -1128,6 +1128,7 @@ http://{endpoint}/{taskId}?queryadp
 	req.setResponseHeaders(overrides);
 	String url = client.generatePresignedUrl(req);
 
+
 ### 10.2 通过外链上传文件
 
 KS3上传协议详见[http://ks3.ksyun.com/doc/api/object/put.html](http://ks3.ksyun.com/doc/api/object/put.html)   
@@ -1323,4 +1324,4 @@ KS3上传协议详见[http://ks3.ksyun.com/doc/api/object/put.html](http://ks3.k
 1、上传上去的文件是经过加密的。  
 2、下载文件只能通过该客户端getObject方法下载，用其他方法下载下来的文件是经过加密的。    
 3、分块上传时必须依次上传每一块。当上传最后一块时必须通过request.setLastPart指定最后一块。上传顺序不能错乱，不能使用多线程分块上传。  
-4、请妥善保管自己的主密钥，如果主密钥丢失，将无法解密数据。  
+4、请妥善保管自己的主密钥，如果主密钥丢失，将无法解密数据。
