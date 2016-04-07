@@ -283,8 +283,9 @@ public class UploadPartRequest extends Ks3WebServiceRequest implements SSECustom
 				this.setLastPart(true);
 			}
 			try {
+				//文件流并没有复用，closeSourceStream需要置为true,否则文件句柄未释放
 				request.setContent(new LengthCheckInputStream(new InputSubStream(new RepeatableFileInputStream(
-						this.file), this.fileoffset, truesize, false),truesize,true));
+						this.file), this.fileoffset, truesize, true),truesize,true));
 
 			} catch (FileNotFoundException e) {
 				throw new ClientFileNotFoundException(e);

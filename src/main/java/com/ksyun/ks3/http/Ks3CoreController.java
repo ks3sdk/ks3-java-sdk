@@ -249,6 +249,8 @@ public class Ks3CoreController {
 			String location = response.getHeaders("Location")[0].getValue();
 			// TODO 这个只是为了兼容当前api
 			if (location.startsWith("http")) {
+				closeResponse(response);
+				
 				log.debug("returned "
 						+ response.getStatusLine().getStatusCode()
 						+ ",retry request to " + location);
@@ -264,4 +266,28 @@ public class Ks3CoreController {
 		}
 		return response;
 	}
+	
+	
+	private void closeResponse(HttpResponse httpResponse){
+		try{
+			if(httpResponse == null)
+				return;
+			HttpEntity entity = httpResponse.getEntity();
+			if(entity != null){
+				InputStream input = null;
+				try{
+					input = entity.getContent();
+				}catch(IllegalStateException e){
+					input = null;
+				}
+				if(input != null)
+					input.close();
+			}
+		}catch(Exception e){
+			log.error("close httpRequest error");
+		}
+	}
+	
+	
+	
 }

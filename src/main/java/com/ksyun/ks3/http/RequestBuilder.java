@@ -55,6 +55,9 @@ public class RequestBuilder {
 		if(StringUtils.isBlank(endpoint0)){
 			endpoint0 = ks3config.getEndpoint();
 		}
+        if(StringUtils.isBlank(endpoint0)){
+        	throw new Ks3ClientException("endpoint is blank");
+		}
 		request.setEndpoint(endpoint0);
 		//sign request
 		try {

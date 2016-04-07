@@ -106,14 +106,19 @@ import com.ksyun.ks3.utils.StringUtils;
  **/
 public class Ks3Client implements Ks3 {
 	/**
+	 * @deprecated
 	 * 该客户端用于杭州(中国标准)bucket的文件上传下载、分块上传
+	 * 
 	 */
 	public static final Ks3Client Ks3ClientForHZStream = new Ks3Client().withKs3config(new Ks3ClientConfig().withEndpoint("kssws.ks-cdn.com"));
 	/**
+	 * @deprecated
 	 * 该客户端用于杭州(中国标准)bucket的除文件上传下载、分块上传以外的其他操作
+	 * 
 	 */
 	public static final Ks3Client Ks3ClientForHZControl = new Ks3Client().withKs3config(new Ks3ClientConfig().withEndpoint("kss.ksyun.com"));
 	/**
+	 * @deprecated
 	 * 该客户端用于美国(圣克拉拉)bucket
 	 */
 	public static final Ks3Client Ks3ClientForUS = new Ks3Client().withKs3config(new Ks3ClientConfig().withEndpoint("ks3-us-west-1.ksyun.com"));
