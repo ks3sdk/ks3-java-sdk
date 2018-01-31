@@ -17,7 +17,7 @@ lib目录下为该项目所依赖的所有jar包，以及将sdk打好的jar包
     <dependency>
         <groupId>com.ksyun</groupId>
         <artifactId>ks3-kss-java-sdk</artifactId>
-        <version>0.6.1</version>
+        <version>0.7.0</version>
     </dependency>
     
 或者直接引用lib目录下的所有jar包
@@ -511,7 +511,13 @@ bucket的访问权限说明 [http://ks3.ksyun.com/doc/api/index.html](http://ks3
 		meta.setContentLength(4);
 		client.putObject(request);
 	}
+	
+上传文件时设置存储类型
 
+	request.setStorageClass(StorageClass.Standard);
+	或
+	request.setStorageClass(StorageClass.StandardInfrequentAccess);
+	
 上传文件时设置元数据
 
 	ObjectMetadata meta = new ObjectMetadata();
@@ -808,12 +814,7 @@ object的访问权限说明 [http://ks3.ksyun.com/doc/api/index.html](http://ks3
 		client.deleteObject("<bucket名称>","<object key>");
 	}
 
-### 6.12 批量删除文件
 
-	public DeleteMultipleObjectsResult deleteObjects(){
-		DeleteMultipleObjectsResult result = client.deleteObjects(new String[]{"objectKey1","objectKey2","objectKey2"},"<bucket名称>");
-		return result;
-	}
 
 
 ## 7 分块上传相关
