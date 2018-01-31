@@ -454,9 +454,9 @@ bucket的访问权限说明 [http://ks3.ksyun.com/doc/api/index.html](http://ks3
 		//设置参数
 		request.setMaxKeys("<max keys>");//指定返回条数最大值
 		request.setPrefix("<object key前缀>");//返回以指定前缀开头的object
-        request.setDelimiter("<delimiter>");//设置文件分隔符，系统将根据该分隔符组织文件夹结构，默认是"/"
+       request.setDelimiter("<delimiter>");//设置文件分隔符，系统将根据该分隔符组织文件夹结构，默认是"/"
 		//执行操作
-		client.listObjects(request);
+		list = client.listObjects(request);
 		return list;
 	}
 	/**
