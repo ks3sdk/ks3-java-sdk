@@ -1,10 +1,10 @@
 package com.ksyun.ks3.config;
 
+import com.ksyun.ks3.http.HttpHeaders;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import com.ksyun.ks3.http.HttpHeaders;
 
 /**
  * @author lijunwei[lijunwei@kingsoft.com]  
@@ -26,8 +26,9 @@ public class Constants {
 	
 	public final static String KS3_PACAKAGE = "com.ksyun.ks3";
 	
-	public final static String KS3_SDK_USER_AGENT = "ks3-kss-java-sdk/ks3client/v0.6.2";
-	public final static String KS3_ENCRYPTION_CLIENT_USER_AGENT = "ks3-kss-java-sdk/ks3encryptionclient/v0.6.2";
+	public final static String KS3_SDK_USER_AGENT = "ks3-kss-java-sdk/ks3client/v0.8.2";
+	public final static String KS3_ENCRYPTION_CLIENT_USER_AGENT = "ks3-kss-java-sdk/ks3encryptionclient/v0.8.2";
+
 	public static final int DEFAULT_STREAM_BUFFER_SIZE = 128 * 1024;
 	public static final int minPartNumber = 1;
 	public static final int maxPartNumber = 10000;

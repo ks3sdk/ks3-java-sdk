@@ -2,7 +2,6 @@ package com.ksyun.ks3.http;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
@@ -25,11 +24,11 @@ import com.ksyun.ks3.dto.Authorization;
 import com.ksyun.ks3.exception.Ks3ClientException;
 import com.ksyun.ks3.exception.client.ClientIllegalArgumentExceptionGenerator;
 import com.ksyun.ks3.service.Ks3ClientConfig;
-import com.ksyun.ks3.service.Ks3ClientConfig.PROTOCOL;
+import com.ksyun.ks3.service.request.GetObjectRequest;
+import com.ksyun.ks3.service.request.HeadObjectRequest;
 import com.ksyun.ks3.service.request.Ks3WebServiceRequest;
 import com.ksyun.ks3.service.request.SSECustomerKeyRequest;
 import com.ksyun.ks3.signer.Signer;
-import com.ksyun.ks3.utils.HttpUtils;
 import com.ksyun.ks3.utils.StringUtils;
 
 /**
@@ -49,6 +48,11 @@ public class RequestBuilder {
 		}
 		ks3Request.buildRequest(request);
 		request.addHeaderIfNotContains(HttpHeaders.UserAgent.toString(),ks3Request.getRequestConfig().getUserAgent());
+		//user gzip or not
+		if((ks3config != null && !ks3config.isUseGzip()) && 
+				(ks3Request instanceof GetObjectRequest || ks3Request instanceof HeadObjectRequest)){
+			request.addHeader("Accept-Encoding","none");
+		}
 		if(!request.isPresign())
 			request.addHeaderIfNotContains(HttpHeaders.ContentType.toString(),"application/xml");
 		String endpoint0 = ks3Request.getRequestConfig().getEndpoint();
@@ -59,6 +63,7 @@ public class RequestBuilder {
         	throw new Ks3ClientException("endpoint is blank");
 		}
 		request.setEndpoint(endpoint0);
+		
 		//sign request
 		try {
 			if(auth != null){

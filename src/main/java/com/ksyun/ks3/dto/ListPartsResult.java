@@ -1,9 +1,9 @@
 package com.ksyun.ks3.dto;
 
+import com.ksyun.ks3.utils.StringUtils;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import com.ksyun.ks3.utils.StringUtils;
 
 /**
  * @author lijunwei[lijunwei@kingsoft.com]  
@@ -13,7 +13,9 @@ import com.ksyun.ks3.utils.StringUtils;
  * @description 列出一个分块上传操作中，已上传的块
  **/
 public class ListPartsResult extends Ks3Result{
+
 	private String bucketname;
+
 	private String key;
 	/**
 	 * 由init multipart upload生成的uploadid
@@ -43,10 +45,15 @@ public class ListPartsResult extends Ks3Result{
 	 * init multipart upload的用户
 	 */
 	private Owner initiator = new Owner();
+
+	/** 存储类型 */
+	private String storageClass;
+
 	/**
 	 * 这个object的所有者
 	 */
 	private Owner owner = new Owner();
+
 	private List<Part> parts = new ArrayList<Part>();
 
 	@Override
@@ -141,5 +148,14 @@ public class ListPartsResult extends Ks3Result{
 	public void setEncodingType(String encodingType) {
 		this.encodingType = encodingType;
 	}
+
+	public String getStorageClass() {
+		return storageClass;
+	}
+
+	public void setStorageClass(String storageClass) {
+		this.storageClass = storageClass;
+	}
+
 
 }

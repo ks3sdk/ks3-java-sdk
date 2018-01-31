@@ -53,13 +53,11 @@ public interface Ks3 {
 	 */
 	public Ks3 withAuth(Authorization auth);
 	/**
-	 * 服务地址,参考{@linkplain http://ks3.ksyun.com/doc/api/index.html} </br>
-	 * 中国（杭州）:kss.ksyun.com</br>
-	 * 中国（杭州）cdn:kssws.ks-cdn.com</br>
+	 * 设置服务地址</br>
+	 * 中国标准:kss.ksyun.com</br>
+	 * 中国cdn:kssws.ks-cdn.com</br>
 	 * 美国（圣克拉拉）:ks3-us-west-1.ksyun.com</br>
-	 * 中国（北京）:ks3-cn-beijing.ksyun.com</br>
-	 * 中国（香港）:ks3-cn-hk-1.ksyun.com</br>
-	 * 中国（上海）:ks3-cn-shanghai.ksyun.com</br>
+	 * @param endpoint
 	 */
 	public void setEndpoint(String endpoint);
 	/**
@@ -546,16 +544,6 @@ public interface Ks3 {
 			throws Ks3ClientException, Ks3ServiceException;
 
 	/**
-	 * 清空bucket中的所有内容，请谨慎使用。
-	 * 
-	 * @param bucketName
-	 * @throws Ks3ClientException
-	 * @throws Ks3ServiceException
-	 */
-	public void clearBucket(String bucketName) throws Ks3ClientException,
-			Ks3ServiceException;
-
-	/**
 	 * 新建文件夹
 	 * 
 	 * @param bucketName
@@ -566,16 +554,6 @@ public interface Ks3 {
 	public void makeDir(String bucketName, String dir)
 			throws Ks3ClientException, Ks3ServiceException;
 
-	/**
-	 * 删除文件夹及下面的所有内容
-	 * 
-	 * @param bucketName
-	 * @param dir
-	 * @throws Ks3ClientException
-	 * @throws Ks3ServiceException
-	 */
-	public void removeDir(String bucketName, String dir)
-			throws Ks3ClientException, Ks3ServiceException;
 
 	/**
 	 * DELETE BUCKET
@@ -688,51 +666,6 @@ public interface Ks3 {
 	public void deleteObject(DeleteObjectRequest request)
 			throws Ks3ClientException, Ks3ServiceException;
 
-	/**
-	 * DELETE Multiple Objects
-	 * 
-	 * @param request
-	 *            {@link DeleteMultipleObjectsRequest}
-	 * @return {@link DeleteMultipleObjectsResult}
-	 * @throws Ks3ClientException
-	 * @throws Ks3ServiceException
-	 *             <p>
-	 *             删除若干的objects
-	 *             </p>
-	 */
-	public DeleteMultipleObjectsResult deleteObjects(
-			DeleteMultipleObjectsRequest request) throws Ks3ClientException,
-			Ks3ServiceException;
-
-	/**
-	 * DELETE Multiple Objects
-	 * 
-	 * @param keys
-	 *            要删除的keys
-	 * @return {@link DeleteMultipleObjectsResult}
-	 * @throws Ks3ClientException
-	 * @throws Ks3ServiceException
-	 *             <p>
-	 *             删除若干的objects
-	 *             </p>
-	 */
-	public DeleteMultipleObjectsResult deleteObjects(List<String> keys,
-			String bucketName) throws Ks3ClientException, Ks3ServiceException;
-
-	/**
-	 * DELETE Multiple Objects
-	 * 
-	 * @param keys
-	 *            要删除的keys
-	 * @return {@link DeleteMultipleObjectsResult}
-	 * @throws Ks3ClientException
-	 * @throws Ks3ServiceException
-	 *             <p>
-	 *             删除若干的objects
-	 *             </p>
-	 */
-	public DeleteMultipleObjectsResult deleteObjects(String[] keys,
-			String bucketName) throws Ks3ClientException, Ks3ServiceException;
 
 	/**
 	 * GET OBJECT

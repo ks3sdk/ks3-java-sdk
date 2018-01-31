@@ -1,13 +1,13 @@
 package com.ksyun.ks3.dto;
 
+import com.ksyun.ks3.config.Constants;
+import com.ksyun.ks3.http.HttpHeaders;
+import com.ksyun.ks3.utils.StringUtils;
+
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.ksyun.ks3.config.Constants;
-import com.ksyun.ks3.http.HttpHeaders;
-import com.ksyun.ks3.utils.StringUtils;
 
 /**
  * @author lijunwei[lijunwei@kingsoft.com]  
@@ -16,12 +16,14 @@ import com.ksyun.ks3.utils.StringUtils;
  * 
  * @description object元数据
  **/
-public class ObjectMetadata implements ServerSideEncryptionResult{
+public class ObjectMetadata implements ServerSideEncryptionResult {
+
 	private String usermeta_prefix =  Constants.userMetaPrefix;
 	/**
 	 * 用户自定义的元数据
 	 */
 	private Map<String, String> userMetadata = new HashMap<String,String>();
+
 	private Map<String, Object> metadata = new HashMap<String,Object>();
 	/**
 	 * Http Expires,metadat中预留了一个bucket lifecycle的Expires，所以把它放在了外面
@@ -42,7 +44,7 @@ public class ObjectMetadata implements ServerSideEncryptionResult{
 		return userMetadata.get(key.startsWith(usermeta_prefix)?key:(usermeta_prefix+key));
 	}
 	public boolean containsUserMeta(String key){
-		return userMetadata.containsKey(key.startsWith(usermeta_prefix)?key:(usermeta_prefix+key));
+		return userMetadata.containsKey(key.startsWith(usermeta_prefix) ? key : (usermeta_prefix + key));
 	}
 	public Map<String, String> getAllUserMeta()
 	{
@@ -167,5 +169,13 @@ public class ObjectMetadata implements ServerSideEncryptionResult{
     public Object getMeta(String key)
     {
     	return this.metadata.get(key);
+    }
+
+    public String getStorageClass() {
+        final Object storageClass = metadata.get(HttpHeaders.StorageClass.toString());
+        if (storageClass == null) {
+            return null;
+        }
+        return storageClass.toString();
     }
 }

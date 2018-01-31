@@ -1,13 +1,14 @@
 package com.ksyun.ks3.service.request;
 
-import com.ksyun.ks3.config.Constants;
-
-import static com.ksyun.ks3.exception.client.ClientIllegalArgumentExceptionGenerator.notNull;
 import static com.ksyun.ks3.exception.client.ClientIllegalArgumentExceptionGenerator.between;
+import static com.ksyun.ks3.exception.client.ClientIllegalArgumentExceptionGenerator.notNull;
 
+import com.ksyun.ks3.config.Constants;
+import com.ksyun.ks3.dto.SSECustomerKey;
 import com.ksyun.ks3.http.HttpHeaders;
 import com.ksyun.ks3.http.HttpMethod;
 import com.ksyun.ks3.http.Request;
+import com.ksyun.ks3.utils.HttpUtils;
 import com.ksyun.ks3.utils.StringUtils;
 
 /**
@@ -37,8 +38,8 @@ public class CopyPartRequest extends Ks3WebServiceRequest{
 	/**
 	 * 从数据源复制的字节范围
 	 */
-	private long beginRange;
-	private long endRange;
+	private long beginRange = -1;
+	private long endRange = -1;
 	/**
 	 * 块顺序
 	 */
@@ -47,13 +48,21 @@ public class CopyPartRequest extends Ks3WebServiceRequest{
 	 * 由init multipart获得的uploadId
 	 */
 	private String uploadId;
-	public CopyPartRequest(String sourceBucket,String sourceObject,String destinationBucket,String destinationObject,long beginRange,long endRange,int partNumber,String uploadId){
+	
+    /**
+     * 如果copy的源object使用客户提供的key加密，则需要提供
+     */
+    private SSECustomerKey sourceSSECustomerKey;
+    /**
+     * 指定目标object的加密
+     */
+    private SSECustomerKey destinationSSECustomerKey;
+    
+	public CopyPartRequest(String sourceBucket,String sourceObject,String destinationBucket,String destinationObject,int partNumber,String uploadId){
 		this.destinationBucket = destinationBucket;
 		this.destinationKey = destinationObject;
 		this.sourceBucket = sourceBucket;
 		this.sourceObject = sourceObject;
-		this.beginRange = beginRange;
-		this.endRange = endRange;
 		this.partNumber = partNumber;
 		this.uploadId = uploadId;
 	}
@@ -67,8 +76,8 @@ public class CopyPartRequest extends Ks3WebServiceRequest{
 			throw notNull("destinationBucket");
 		if(StringUtils.isBlank(this.destinationKey))
 			throw notNull("destinationObject");
-		if(beginRange<0||endRange-beginRange<Constants.minPartSize||endRange-beginRange>Constants.maxPartSize)
-	    	throw between("partsize",String.valueOf(endRange-beginRange),String.valueOf(Constants.minPartSize),String.valueOf(Constants.maxPartSize));
+//		if(beginRange<0||endRange-beginRange<Constants.minPartSize||endRange-beginRange>Constants.maxPartSize)
+//	    	throw between("partsize",String.valueOf(endRange-beginRange),String.valueOf(Constants.minPartSize),String.valueOf(Constants.maxPartSize));
 		if(partNumber<Constants.minPartNumber||partNumber>Constants.maxPartNumber)
 			throw between("partNumber",String.valueOf(partNumber),String.valueOf(Constants.minPartNumber),String.valueOf(Constants.maxPartNumber));
 		if(StringUtils.isBlank(uploadId))
@@ -123,6 +132,20 @@ public class CopyPartRequest extends Ks3WebServiceRequest{
 	public void setUploadId(String uploadId) {
 		this.uploadId = uploadId;
 	}
+	
+	public SSECustomerKey getSourceSSECustomerKey() {
+		return sourceSSECustomerKey;
+	}
+	public void setSourceSSECustomerKey(SSECustomerKey sourceSSECustomerKey) {
+		this.sourceSSECustomerKey = sourceSSECustomerKey;
+	}
+	public SSECustomerKey getDestinationSSECustomerKey() {
+		return destinationSSECustomerKey;
+	}
+	public void setDestinationSSECustomerKey(SSECustomerKey destinationSSECustomerKey) {
+		this.destinationSSECustomerKey = destinationSSECustomerKey;
+	}
+	
 	@Override
 	public void buildRequest(Request request) {
 		request.setBucket(this.destinationBucket);
@@ -131,7 +154,12 @@ public class CopyPartRequest extends Ks3WebServiceRequest{
 		request.getQueryParams().put("partNumber", String.valueOf(this.partNumber));
 		request.getQueryParams().put("uploadId", String.valueOf(this.uploadId));
 		request.addHeader(HttpHeaders.XKssCopySource,"/"+ this.sourceBucket+"/"+this.sourceObject);
-		request.addHeader(HttpHeaders.XKssCopySourceRange, "bytes="+this.beginRange+"-"+this.endRange);
+		if (this.beginRange !=-1 && this.endRange != -1) {
+			request.addHeader(HttpHeaders.XKssCopySourceRange, "bytes="
+					+ this.beginRange + "-" + this.endRange);
+		}
+		request.getHeaders().putAll(HttpUtils.convertSSECustomerKey2Headers(this.destinationSSECustomerKey));
+        request.getHeaders().putAll(HttpUtils.convertCopySourceSSECustomerKey2Headers(this.sourceSSECustomerKey));
 	}
 
 }

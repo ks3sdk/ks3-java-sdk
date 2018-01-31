@@ -1,28 +1,19 @@
 package com.ksyun.ks3.service.request;
 
-import java.util.ArrayList;
-
-import static com.ksyun.ks3.exception.client.ClientIllegalArgumentExceptionGenerator.notNull;
-import static com.ksyun.ks3.exception.client.ClientIllegalArgumentExceptionGenerator.notCorrect;
-
-import java.util.List;
-import java.util.Map.Entry;
-
-import com.ksyun.ks3.config.Constants;
 import com.ksyun.ks3.dto.AccessControlList;
 import com.ksyun.ks3.dto.CannedAccessControlList;
-import com.ksyun.ks3.dto.Grant;
 import com.ksyun.ks3.dto.ObjectMetadata;
-import com.ksyun.ks3.dto.Permission;
 import com.ksyun.ks3.dto.SSECustomerKey;
 import com.ksyun.ks3.http.HttpHeaders;
 import com.ksyun.ks3.http.HttpMethod;
 import com.ksyun.ks3.http.Mimetypes;
 import com.ksyun.ks3.http.Request;
-import com.ksyun.ks3.utils.DateUtils;
+import com.ksyun.ks3.service.common.StorageClass;
 import com.ksyun.ks3.utils.HttpUtils;
 import com.ksyun.ks3.utils.StringUtils;
-import com.ksyun.ks3.utils.DateUtils.DATETIME_PROTOCOL;
+
+import static com.ksyun.ks3.exception.client.ClientIllegalArgumentExceptionGenerator.notCorrect;
+import static com.ksyun.ks3.exception.client.ClientIllegalArgumentExceptionGenerator.notNull;
 
 /**
  * @author lijunwei[lijunwei@kingsoft.com]  
@@ -32,6 +23,7 @@ import com.ksyun.ks3.utils.DateUtils.DATETIME_PROTOCOL;
  * @description 初始化分块上传
  **/
 public class InitiateMultipartUploadRequest extends Ks3WebServiceRequest {
+
 	private String bucket;
 	private String key;
 	/**
@@ -46,6 +38,12 @@ public class InitiateMultipartUploadRequest extends Ks3WebServiceRequest {
 	 * 使用一种快捷的方式设置acl
 	 */
 	private CannedAccessControlList cannedAcl;
+
+	/**
+	 * KS3存储类型
+	 */
+	private StorageClass storageClass;
+
 	private String redirectLocation;
 	/**
 	 * 使用用户指定的key进行服务端加密
@@ -120,12 +118,23 @@ public class InitiateMultipartUploadRequest extends Ks3WebServiceRequest {
 	public void setRedirectLocation(String redirectLocation) {
 		this.redirectLocation = redirectLocation;
 	}
+
 	public SSECustomerKey getSseCustomerKey() {
 		return sseCustomerKey;
 	}
+
 	public void setSseCustomerKey(SSECustomerKey sseCustomerKey) {
 		this.sseCustomerKey = sseCustomerKey;
 	}
+
+	public void setStorageClass(StorageClass storageClass) {
+		this.storageClass = storageClass;
+	}
+
+	public StorageClass getStorageClass() {
+		return storageClass;
+	}
+
 	@Override
 	public void buildRequest(Request request) {
 		request.setMethod(HttpMethod.POST);
@@ -154,9 +163,11 @@ public class InitiateMultipartUploadRequest extends Ks3WebServiceRequest {
 			request.addHeader(HttpHeaders.XKssWebsiteRedirectLocation,
 					this.redirectLocation);
 		}
+
+		if (this.storageClass != null)
+			request.addHeader(HttpHeaders.StorageClass, this.storageClass.toString());
 		
 		//这个请求是不需要content-length的
 		request.getHeaders().remove(HttpHeaders.ContentLength);
 	}
-
 }

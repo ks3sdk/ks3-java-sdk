@@ -1,23 +1,22 @@
 <?xml version="1.0"?>
-<project
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.ksyun</groupId>
 	<artifactId>ks3-kss-java-sdk</artifactId>
-	<version>0.6.2-SNAPSHOT</version>
+	<version>0.8.5</version>
 	<name>ks3-kss-java-sdk</name>
 	<url>http://maven.apache.org</url>
 	<description>Java SDK for KS3</description>
 	<scm>
-		<connection>scm:git:git@github.com:ks3sdk/ks3-java-sdk.git</connection>
-		<developerConnection>scm:git:git@github.com:ks3sdk/ks3-java-sdk.git</developerConnection>
-		<url>https://github.com/ks3sdk/ks3-java-sdk</url>
-	</scm>
+		<connection>scm:git:git@newgit.op.ksyun.com:ks3/ks3-kss-java-sdk.git</connection>
+		<developerConnection>scm:git:git@newgit.op.ksyun.com:ks3/ks3-kss-java-sdk.git</developerConnection>
+		<url>http://newgit.op.ksyun.com/ks3/ks3-kss-java-sdk</url>
+	  <tag>ks3-kss-java-sdk-0.8.5</tag>
+  </scm>
 	<developers>
 		<developer>
-			<name>lijunwei</name>
-			<email>lijunwei@kingsoft.com</email>
+            <name>guozhanzhen</name>
+			<email>guozhanzhen@kingsoft.com</email>
 		</developer>
 	</developers>
 	<licenses>
@@ -66,7 +65,7 @@
 		</plugins>
 	</build>
 
-	<distributionManagement>
+<distributionManagement>
 		<repository>
 			<id>oss</id>
 			<name>Proj Release Repository</name>

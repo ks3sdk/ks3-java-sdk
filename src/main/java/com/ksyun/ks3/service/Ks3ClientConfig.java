@@ -48,6 +48,15 @@ public class Ks3ClientConfig {
 	private boolean domainMode = false;
 	private String signerClass = "com.ksyun.ks3.signer.DefaultSigner";
 	private HttpClientConfig httpClientConfig =  new HttpClientConfig();
+	private boolean useGzip = false;
+	
+	public boolean isUseGzip() {
+		return useGzip;
+	}
+	public void setUseGzip(boolean useGzip) {
+		this.useGzip = useGzip;
+	}
+	
 	public String getEndpoint() {
 		return endpoint;
 	}

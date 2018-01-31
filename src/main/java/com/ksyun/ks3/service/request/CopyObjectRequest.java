@@ -7,6 +7,7 @@ import com.ksyun.ks3.dto.SSECustomerKey;
 import com.ksyun.ks3.http.HttpHeaders;
 import com.ksyun.ks3.http.HttpMethod;
 import com.ksyun.ks3.http.Request;
+import com.ksyun.ks3.service.common.StorageClass;
 import com.ksyun.ks3.utils.HttpUtils;
 import com.ksyun.ks3.utils.StringUtils;
 
@@ -48,6 +49,12 @@ public class CopyObjectRequest extends Ks3WebServiceRequest{
 	 * 设置新的object的acl
 	 */
 	private AccessControlList accessControlList;
+	
+	/**
+     * KS3存储类型
+     */
+    private String storageClass;
+	
 	/**
 	 * 设置新的object的元数据
 	 */
@@ -159,6 +166,15 @@ public class CopyObjectRequest extends Ks3WebServiceRequest{
 	public void setDestinationSSECustomerKey(SSECustomerKey destinationSSECustomerKey) {
 		this.destinationSSECustomerKey = destinationSSECustomerKey;
 	}
+	
+	public String getStorageClass() {
+        return storageClass;
+    }
+
+    public void setStorageClass(StorageClass storageClass) {
+        this.storageClass = storageClass.toString();
+    }
+	
 	@Override
 	public void buildRequest(Request request) {
 		request.setMethod(HttpMethod.PUT);
@@ -176,6 +192,9 @@ public class CopyObjectRequest extends Ks3WebServiceRequest{
         if(this.accessControlList!=null)
         {
         	request.getHeaders().putAll(HttpUtils.convertAcl2Headers(accessControlList));
+        }
+        if (this.storageClass != null) {
+            request.addHeader(HttpHeaders.StorageClass, storageClass);
         }
 	}
 	@Override

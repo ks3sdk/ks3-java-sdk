@@ -1,11 +1,5 @@
 package com.ksyun.ks3.service.response;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.http.Header;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
-
 import com.ksyun.ks3.AutoAbortInputStream;
 import com.ksyun.ks3.config.Constants;
 import com.ksyun.ks3.dto.GetObjectResult;
@@ -13,6 +7,9 @@ import com.ksyun.ks3.dto.ObjectMetadata;
 import com.ksyun.ks3.http.HttpHeaders;
 import com.ksyun.ks3.utils.Converter;
 import com.ksyun.ks3.utils.DateUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.http.Header;
 
 /**
  * @author lijunwei[lijunwei@kingsoft.com]  
@@ -21,8 +18,7 @@ import com.ksyun.ks3.utils.DateUtils;
  * 
  * @description
  **/
-public class GetObjectResponse extends
-		Ks3WebServiceStreamResponse<GetObjectResult> {
+public class GetObjectResponse extends Ks3WebServiceStreamResponse<GetObjectResult> {
 	private static Log log = LogFactory.getLog(GetObjectResponse.class);
 
 	public int[] expectedStatus() {
@@ -92,5 +88,4 @@ public class GetObjectResponse extends
 			result.setIfPreconditionSuccess(false);
 		}
 	}
-
 }

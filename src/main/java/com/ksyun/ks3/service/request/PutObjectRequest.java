@@ -1,52 +1,33 @@
 package com.ksyun.ks3.service.request;
 
-import java.io.File;
-
-import static com.ksyun.ks3.exception.client.ClientIllegalArgumentExceptionGenerator.notNull;
-import static com.ksyun.ks3.exception.client.ClientIllegalArgumentExceptionGenerator.notNullInCondition;
-import static com.ksyun.ks3.exception.client.ClientIllegalArgumentExceptionGenerator.notCorrect;
-import static com.ksyun.ks3.exception.client.ClientIllegalArgumentExceptionGenerator.between;
-
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.ksyun.ks3.LengthCheckInputStream;
-import com.ksyun.ks3.MD5DigestCalculatingInputStream;
 import com.ksyun.ks3.RepeatableFileInputStream;
-import com.ksyun.ks3.RepeatableInputStream;
 import com.ksyun.ks3.config.Constants;
-import com.ksyun.ks3.dto.AccessControlList;
-import com.ksyun.ks3.dto.CallBackConfiguration;
+import com.ksyun.ks3.dto.*;
 import com.ksyun.ks3.dto.CallBackConfiguration.MagicVariables;
-import com.ksyun.ks3.dto.CannedAccessControlList;
-import com.ksyun.ks3.dto.Adp;
-import com.ksyun.ks3.dto.Grant;
-import com.ksyun.ks3.dto.ObjectMetadata;
-import com.ksyun.ks3.dto.Permission;
-import com.ksyun.ks3.dto.SSECustomerKey;
-import com.ksyun.ks3.dto.SSEKssKMSParams;
 import com.ksyun.ks3.exception.Ks3ClientException;
 import com.ksyun.ks3.exception.client.ClientFileNotFoundException;
 import com.ksyun.ks3.http.HttpHeaders;
 import com.ksyun.ks3.http.HttpMethod;
 import com.ksyun.ks3.http.Mimetypes;
 import com.ksyun.ks3.http.Request;
-import com.ksyun.ks3.utils.DateUtils;
+import com.ksyun.ks3.service.common.StorageClass;
 import com.ksyun.ks3.utils.HttpUtils;
 import com.ksyun.ks3.utils.Md5Utils;
 import com.ksyun.ks3.utils.StringUtils;
-import com.ksyun.ks3.utils.DateUtils.DATETIME_PROTOCOL;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map.Entry;
+
+import static com.ksyun.ks3.exception.client.ClientIllegalArgumentExceptionGenerator.*;
 
 /**
  * @author lijunwei[lijunwei@kingsoft.com]  
@@ -66,6 +47,7 @@ import com.ksyun.ks3.utils.DateUtils.DATETIME_PROTOCOL;
  *              </p>
  **/
 public class PutObjectRequest extends Ks3WebServiceRequest implements SSECustomerKeyRequest{
+
 	private static final Log log = LogFactory.getLog(PutObjectRequest.class);
 	/**
 	 * 目标bucket
@@ -79,6 +61,7 @@ public class PutObjectRequest extends Ks3WebServiceRequest implements SSECustome
 	 * 要上传的文件
 	 */
 	private File file;
+	
 	private InputStream inputStream;
 	/**
 	 * 将要上传的object的元数据
@@ -92,6 +75,12 @@ public class PutObjectRequest extends Ks3WebServiceRequest implements SSECustome
 	 * 设置新的object的acl
 	 */
 	private AccessControlList acl = new AccessControlList();
+	
+	 /**
+     * KS3存储类型
+     */
+    private String storageClass;
+    
 	/**
 	 * 设置callback
 	 */
@@ -104,6 +93,7 @@ public class PutObjectRequest extends Ks3WebServiceRequest implements SSECustome
 	 * 数据处理任务完成后通知的url
 	 */
 	private String notifyURL;
+	
 	private String redirectLocation;
 	
 	/**
@@ -283,6 +273,14 @@ public class PutObjectRequest extends Ks3WebServiceRequest implements SSECustome
 		this.sseCustomerKey = sseCustomerKey;
 	}
 
+	public String getStorageClass() {
+		return storageClass;
+	}
+
+	public void setStorageClass(StorageClass storageClass) {
+		this.storageClass = storageClass.toString();
+	}
+
 	@Override
 	public void buildRequest(Request request) {
 		request.setMethod(HttpMethod.PUT);
@@ -377,6 +375,9 @@ public class PutObjectRequest extends Ks3WebServiceRequest implements SSECustome
 				bodyString = bodyString.substring(0, bodyString.length() - 1);
 			}
 			request.addHeader(HttpHeaders.XKssCallbackBody, bodyString);
+		}
+		if (storageClass != null) {
+			request.addHeader(HttpHeaders.StorageClass, storageClass);
 		}
 		if (this.adps != null && adps.size() > 0) {
 			request.addHeader(HttpHeaders.AsynchronousProcessingList,

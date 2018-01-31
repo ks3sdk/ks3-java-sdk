@@ -1,12 +1,5 @@
 package com.ksyun.ks3.http;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-
 import com.ksyun.ks3.config.Constants;
 
 /**
@@ -82,7 +75,9 @@ public enum HttpHeaders {
 	XKssCallbackBody("callbackbody"), 
 	AsynchronousProcessingList("kss-async-process", false), 
 	NotifyURL("kss-notifyurl", false),
-	TaskId("TaskID", false), 
+	TaskId("TaskID", false),
+
+	StorageClass("storage-class"),
 	/** * 客户端加密 */
 	CRYPTO_KEY("key"), 
 	CRYPTO_KEY_V2("key-v2"), 

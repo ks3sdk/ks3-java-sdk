@@ -4,49 +4,55 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.Charset;
 import java.security.SignatureException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
- 
-
-
-
-
-
-
-
-
-
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
 
 import com.ksyun.ks3.config.Constants;
-import com.ksyun.ks3.dto.*;
+import com.ksyun.ks3.dto.AccessControlList;
+import com.ksyun.ks3.dto.AccessControlPolicy;
+import com.ksyun.ks3.dto.Adp;
+import com.ksyun.ks3.dto.AdpTask;
+import com.ksyun.ks3.dto.Authorization;
+import com.ksyun.ks3.dto.Bucket;
+import com.ksyun.ks3.dto.BucketCorsConfiguration;
+import com.ksyun.ks3.dto.BucketLoggingStatus;
+import com.ksyun.ks3.dto.CannedAccessControlList;
+import com.ksyun.ks3.dto.CompleteMultipartUploadResult;
+import com.ksyun.ks3.dto.CopyResult;
 import com.ksyun.ks3.dto.CreateBucketConfiguration.REGION;
+import com.ksyun.ks3.dto.GetObjectResult;
+import com.ksyun.ks3.dto.HeadBucketResult;
+import com.ksyun.ks3.dto.HeadObjectResult;
+import com.ksyun.ks3.dto.InitiateMultipartUploadResult;
+import com.ksyun.ks3.dto.ListMultipartUploadsResult;
+import com.ksyun.ks3.dto.ListPartsResult;
+import com.ksyun.ks3.dto.ObjectListing;
+import com.ksyun.ks3.dto.ObjectMetadata;
+import com.ksyun.ks3.dto.PartETag;
+import com.ksyun.ks3.dto.PostObjectFormFields;
+import com.ksyun.ks3.dto.PostPolicy;
+import com.ksyun.ks3.dto.PostPolicyCondition;
 import com.ksyun.ks3.dto.PostPolicyCondition.MatchingType;
+import com.ksyun.ks3.dto.PutAdpResult;
+import com.ksyun.ks3.dto.PutObjectResult;
+import com.ksyun.ks3.dto.ResponseHeaderOverrides;
+import com.ksyun.ks3.dto.SSECustomerKey;
 import com.ksyun.ks3.exception.Ks3ClientException;
 import com.ksyun.ks3.exception.Ks3ServiceException;
 import com.ksyun.ks3.exception.client.ClientIllegalArgumentException;
 import com.ksyun.ks3.exception.client.ClientIllegalArgumentExceptionGenerator;
 import com.ksyun.ks3.exception.serviceside.NotFoundException;
-import com.ksyun.ks3.http.HttpMethod;
 import com.ksyun.ks3.http.Ks3CoreController;
 import com.ksyun.ks3.http.Request;
 import com.ksyun.ks3.http.RequestBuilder;
-import com.ksyun.ks3.service.Ks3ClientConfig.PROTOCOL;
 import com.ksyun.ks3.service.request.AbortMultipartUploadRequest;
 import com.ksyun.ks3.service.request.CompleteMultipartUploadRequest;
 import com.ksyun.ks3.service.request.CopyObjectRequest;
@@ -54,9 +60,9 @@ import com.ksyun.ks3.service.request.CopyPartRequest;
 import com.ksyun.ks3.service.request.CreateBucketRequest;
 import com.ksyun.ks3.service.request.DeleteBucketCorsRequest;
 import com.ksyun.ks3.service.request.DeleteBucketRequest;
-import com.ksyun.ks3.service.request.DeleteMultipleObjectsRequest;
 import com.ksyun.ks3.service.request.DeleteObjectRequest;
 import com.ksyun.ks3.service.request.GeneratePresignedUrlRequest;
+import com.ksyun.ks3.service.request.GetAdpRequest;
 import com.ksyun.ks3.service.request.GetBucketACLRequest;
 import com.ksyun.ks3.service.request.GetBucketCorsRequest;
 import com.ksyun.ks3.service.request.GetBucketLocationRequest;
@@ -71,27 +77,43 @@ import com.ksyun.ks3.service.request.ListBucketsRequest;
 import com.ksyun.ks3.service.request.ListMultipartUploadsRequest;
 import com.ksyun.ks3.service.request.ListObjectsRequest;
 import com.ksyun.ks3.service.request.ListPartsRequest;
+import com.ksyun.ks3.service.request.PutAdpRequest;
+import com.ksyun.ks3.service.request.PutBucketACLRequest;
 import com.ksyun.ks3.service.request.PutBucketCorsRequest;
 import com.ksyun.ks3.service.request.PutBucketLoggingRequest;
+import com.ksyun.ks3.service.request.PutObjectACLRequest;
 import com.ksyun.ks3.service.request.PutObjectRequest;
-import com.ksyun.ks3.service.request.PutAdpRequest;
 import com.ksyun.ks3.service.request.UploadPartRequest;
 import com.ksyun.ks3.service.response.AbortMultipartUploadResponse;
 import com.ksyun.ks3.service.response.CompleteMultipartUploadResponse;
+import com.ksyun.ks3.service.response.CopyObjectResponse;
+import com.ksyun.ks3.service.response.CopyPartResponse;
 import com.ksyun.ks3.service.response.CreateBucketResponse;
+import com.ksyun.ks3.service.response.DeleteBucketCorsResponse;
 import com.ksyun.ks3.service.response.DeleteBucketResponse;
 import com.ksyun.ks3.service.response.DeleteObjectResponse;
+import com.ksyun.ks3.service.response.GetAdpResponse;
+import com.ksyun.ks3.service.response.GetBucketACLResponse;
+import com.ksyun.ks3.service.response.GetBucketCorsResponse;
+import com.ksyun.ks3.service.response.GetBucketLocationResponse;
+import com.ksyun.ks3.service.response.GetBucketLoggingResponse;
+import com.ksyun.ks3.service.response.GetObjectACLResponse;
 import com.ksyun.ks3.service.response.GetObjectResponse;
 import com.ksyun.ks3.service.response.HeadBucketResponse;
 import com.ksyun.ks3.service.response.HeadObjectResponse;
 import com.ksyun.ks3.service.response.InitiateMultipartUploadResponse;
 import com.ksyun.ks3.service.response.Ks3WebServiceResponse;
 import com.ksyun.ks3.service.response.ListBucketsResponse;
+import com.ksyun.ks3.service.response.ListMultipartUploadsResponse;
 import com.ksyun.ks3.service.response.ListObjectsResponse;
 import com.ksyun.ks3.service.response.ListPartsResponse;
+import com.ksyun.ks3.service.response.PutAdpResponse;
+import com.ksyun.ks3.service.response.PutBucketACLResponse;
+import com.ksyun.ks3.service.response.PutBucketCorsResponse;
+import com.ksyun.ks3.service.response.PutBucketLoggingResponse;
+import com.ksyun.ks3.service.response.PutObjectACLResponse;
 import com.ksyun.ks3.service.response.PutObjectResponse;
-import com.ksyun.ks3.service.request.*;
-import com.ksyun.ks3.service.response.*;
+import com.ksyun.ks3.service.response.UploadPartResponse;
 import com.ksyun.ks3.utils.AuthUtils;
 import com.ksyun.ks3.utils.DateUtils;
 import com.ksyun.ks3.utils.DateUtils.DATETIME_PROTOCOL;
@@ -322,10 +344,6 @@ public class Ks3Client implements Ks3 {
 		return bucket;
 	}
 
-	public void clearBucket(String bucketName) throws Ks3ClientException,
-			Ks3ServiceException {
-		this.removeDir(bucketName, null);
-	}
 
 	public void makeDir(String bucketName, String dir)
 			throws Ks3ClientException, Ks3ServiceException {
@@ -336,38 +354,6 @@ public class Ks3Client implements Ks3 {
 		this.putObject(request);
 	}
 
-	public void removeDir(String bucketName, String dir)
-			throws Ks3ClientException, Ks3ServiceException {
-		if (dir != null && !dir.endsWith("/") && !StringUtils.isBlank(dir))
-			throw ClientIllegalArgumentExceptionGenerator.notCorrect("dir", dir,"ends with / or blank");
-		String marker = null;
-		ObjectListing list = null;
-		do {
-			ListObjectsRequest request = new ListObjectsRequest(bucketName);
-			request.setPrefix(dir);
-			request.setMarker(marker);
-			list = this.listObjects(request);
-			List<String> keys = new ArrayList<String>();
-			for (Ks3ObjectSummary obj : list.getObjectSummaries()) {
-				keys.add(obj.getKey());
-				marker = obj.getKey();
-			}
-			if (keys.size() > 0)
-				this.deleteObjects(keys, bucketName);
-			else
-				break;
-		} while (list.isTruncated());
-		if (dir != null) {
-			boolean exists = true;
-			try {
-				headObject(bucketName, dir);
-			} catch (NotFoundException e) {
-				exists = false;
-			}
-			if (exists)
-				deleteObject(bucketName, dir);
-		}
-	}
 
 	public void deleteBucket(String bucketname) throws Ks3ClientException,
 			Ks3ServiceException {
@@ -548,6 +534,17 @@ public class Ks3Client implements Ks3 {
 		}
 		return true;
 	}
+	
+	public boolean objectExists(String bucket, String key, SSECustomerKey sseKey) {
+	    try {
+	        HeadObjectRequest request = new HeadObjectRequest(bucket, key);
+	        request.setSseCustomerKey(sseKey);
+	        this.headObject(request);
+	    } catch (NotFoundException e) {
+	        return false;
+	    }
+	    return true;
+	}
 
 	public InitiateMultipartUploadResult initiateMultipartUpload(
 			String bucketname, String objectkey) throws Ks3ClientException,
@@ -657,24 +654,6 @@ public class Ks3Client implements Ks3 {
 		this.putBucketACL(new PutBucketACLRequest(bucketName, CannedAcl));
 	}
 
-	public DeleteMultipleObjectsResult deleteObjects(
-			DeleteMultipleObjectsRequest request) throws Ks3ClientException,
-			Ks3ServiceException {
-		return client.execute(ks3config,auth, request,
-				DeleteMultipleObjectsResponse.class);
-	}
-
-	public DeleteMultipleObjectsResult deleteObjects(List<String> keys,
-			String bucketName) throws Ks3ClientException, Ks3ServiceException {
-		return this.deleteObjects(new DeleteMultipleObjectsRequest(bucketName,
-				keys));
-	}
-
-	public DeleteMultipleObjectsResult deleteObjects(String[] keys,
-			String bucketName) throws Ks3ClientException, Ks3ServiceException {
-		return this.deleteObjects(new DeleteMultipleObjectsRequest(bucketName,
-				keys));
-	}
 
 	public ListMultipartUploadsResult listMultipartUploads(String bucketName)
 			throws Ks3ClientException, Ks3ServiceException {
