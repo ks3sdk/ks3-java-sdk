@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.ksyun</groupId>
 	<artifactId>ks3-kss-java-sdk</artifactId>
-	<version>0.8.5</version>
+	<version>0.8.6</version>
 	<name>ks3-kss-java-sdk</name>
 	<url>http://maven.apache.org</url>
 	<description>Java SDK for KS3</description>
@@ -11,7 +11,6 @@
 		<connection>scm:git:git@newgit.op.ksyun.com:ks3/ks3-kss-java-sdk.git</connection>
 		<developerConnection>scm:git:git@newgit.op.ksyun.com:ks3/ks3-kss-java-sdk.git</developerConnection>
 		<url>http://newgit.op.ksyun.com/ks3/ks3-kss-java-sdk</url>
-	  <tag>ks3-kss-java-sdk-0.8.5</tag>
   </scm>
 	<developers>
 		<developer>
