@@ -116,6 +116,9 @@
 	<profiles>
 		<profile>
 			<id>deploy</id>
+			<properties>
+				<additionalparam>-Xdoclint:none</additionalparam>
+			</properties>
 			<build>
 				<plugins>
 					<plugin>
