@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.SimpleTimeZone;
+import java.util.concurrent.TimeUnit;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -95,4 +96,19 @@ public class DateUtils {
 		}
 		return null;
 	}
+	
+	 public static Date truncateToDay(Date date) {
+	        return DateUtils.truncateToDay(date, 8);
+	    }
+	    
+	    public static Date truncateToDay(Date date, int timeZone) {
+	        long time = date.getTime();
+	        // step 1 转换为中时区
+	        time = time + TimeUnit.HOURS.toMillis(timeZone);
+	        // step 2 按天截取
+	        time = time - time % TimeUnit.DAYS.toMillis(1);
+	        // step 3 转回原时区
+	        time = time - TimeUnit.HOURS.toMillis(timeZone);
+	        return new Date(time);
+	    }
 }

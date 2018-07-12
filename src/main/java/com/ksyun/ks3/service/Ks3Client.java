@@ -23,6 +23,7 @@ import com.ksyun.ks3.dto.AdpTask;
 import com.ksyun.ks3.dto.Authorization;
 import com.ksyun.ks3.dto.Bucket;
 import com.ksyun.ks3.dto.BucketCorsConfiguration;
+import com.ksyun.ks3.dto.BucketLifecycleConfiguration;
 import com.ksyun.ks3.dto.BucketLoggingStatus;
 import com.ksyun.ks3.dto.CannedAccessControlList;
 import com.ksyun.ks3.dto.CompleteMultipartUploadResult;
@@ -32,6 +33,7 @@ import com.ksyun.ks3.dto.GetObjectResult;
 import com.ksyun.ks3.dto.HeadBucketResult;
 import com.ksyun.ks3.dto.HeadObjectResult;
 import com.ksyun.ks3.dto.InitiateMultipartUploadResult;
+import com.ksyun.ks3.dto.Ks3Result;
 import com.ksyun.ks3.dto.ListMultipartUploadsResult;
 import com.ksyun.ks3.dto.ListPartsResult;
 import com.ksyun.ks3.dto.ObjectListing;
@@ -59,12 +61,14 @@ import com.ksyun.ks3.service.request.CopyObjectRequest;
 import com.ksyun.ks3.service.request.CopyPartRequest;
 import com.ksyun.ks3.service.request.CreateBucketRequest;
 import com.ksyun.ks3.service.request.DeleteBucketCorsRequest;
+import com.ksyun.ks3.service.request.DeleteBucketLifecycleRequest;
 import com.ksyun.ks3.service.request.DeleteBucketRequest;
 import com.ksyun.ks3.service.request.DeleteObjectRequest;
 import com.ksyun.ks3.service.request.GeneratePresignedUrlRequest;
 import com.ksyun.ks3.service.request.GetAdpRequest;
 import com.ksyun.ks3.service.request.GetBucketACLRequest;
 import com.ksyun.ks3.service.request.GetBucketCorsRequest;
+import com.ksyun.ks3.service.request.GetBucketLifecycleRequest;
 import com.ksyun.ks3.service.request.GetBucketLocationRequest;
 import com.ksyun.ks3.service.request.GetBucketLoggingRequest;
 import com.ksyun.ks3.service.request.GetObjectACLRequest;
@@ -80,8 +84,10 @@ import com.ksyun.ks3.service.request.ListPartsRequest;
 import com.ksyun.ks3.service.request.PutAdpRequest;
 import com.ksyun.ks3.service.request.PutBucketACLRequest;
 import com.ksyun.ks3.service.request.PutBucketCorsRequest;
+import com.ksyun.ks3.service.request.PutBucketLifecycleRequest;
 import com.ksyun.ks3.service.request.PutBucketLoggingRequest;
 import com.ksyun.ks3.service.request.PutObjectACLRequest;
+import com.ksyun.ks3.service.request.PutObjectFetchRequest;
 import com.ksyun.ks3.service.request.PutObjectRequest;
 import com.ksyun.ks3.service.request.UploadPartRequest;
 import com.ksyun.ks3.service.response.AbortMultipartUploadResponse;
@@ -90,11 +96,13 @@ import com.ksyun.ks3.service.response.CopyObjectResponse;
 import com.ksyun.ks3.service.response.CopyPartResponse;
 import com.ksyun.ks3.service.response.CreateBucketResponse;
 import com.ksyun.ks3.service.response.DeleteBucketCorsResponse;
+import com.ksyun.ks3.service.response.DeleteBucketLifecycleResponse;
 import com.ksyun.ks3.service.response.DeleteBucketResponse;
 import com.ksyun.ks3.service.response.DeleteObjectResponse;
 import com.ksyun.ks3.service.response.GetAdpResponse;
 import com.ksyun.ks3.service.response.GetBucketACLResponse;
 import com.ksyun.ks3.service.response.GetBucketCorsResponse;
+import com.ksyun.ks3.service.response.GetBucketLifecycleResponse;
 import com.ksyun.ks3.service.response.GetBucketLocationResponse;
 import com.ksyun.ks3.service.response.GetBucketLoggingResponse;
 import com.ksyun.ks3.service.response.GetObjectACLResponse;
@@ -110,8 +118,10 @@ import com.ksyun.ks3.service.response.ListPartsResponse;
 import com.ksyun.ks3.service.response.PutAdpResponse;
 import com.ksyun.ks3.service.response.PutBucketACLResponse;
 import com.ksyun.ks3.service.response.PutBucketCorsResponse;
+import com.ksyun.ks3.service.response.PutBucketLifecycleResponse;
 import com.ksyun.ks3.service.response.PutBucketLoggingResponse;
 import com.ksyun.ks3.service.response.PutObjectACLResponse;
+import com.ksyun.ks3.service.response.PutObjectFetchResponse;
 import com.ksyun.ks3.service.response.PutObjectResponse;
 import com.ksyun.ks3.service.response.UploadPartResponse;
 import com.ksyun.ks3.utils.AuthUtils;
@@ -820,9 +830,48 @@ public class Ks3Client implements Ks3 {
 		return getAdpTask(request);
 	}
 
+
 	public AdpTask getAdpTask(GetAdpRequest request)
 			throws Ks3ClientException, Ks3ServiceException {
 		return client.execute(ks3config,auth, request, GetAdpResponse.class);
+	}
+	
+	public void putBucketLifecycle(PutBucketLifecycleRequest request)
+			throws Ks3ClientException, Ks3ServiceException {
+		 client.execute(ks3config,auth, request, PutBucketLifecycleResponse.class);
+	}
+	
+	public BucketLifecycleConfiguration getBucketLifecycle(String bucket){
+		GetBucketLifecycleRequest request = new GetBucketLifecycleRequest(bucket);
+		return client.execute(ks3config,auth, request, GetBucketLifecycleResponse.class);
+	}
+
+	public void deleteBucketLifecycle(String bucket) {
+		DeleteBucketLifecycleRequest requst = new DeleteBucketLifecycleRequest(bucket);
+		client.execute(ks3config,auth, requst, DeleteBucketLifecycleResponse.class);
+		
+	}
+
+	public void putBucketLifecycle(String bucket, BucketLifecycleConfiguration bucketLifecycleConfiguration) {
+             PutBucketLifecycleRequest request = new PutBucketLifecycleRequest(bucket, bucketLifecycleConfiguration);	
+             client.execute(ks3config,auth, request, PutBucketLifecycleResponse.class);
+	}
+
+	public BucketLifecycleConfiguration getBucketLifecycle(GetBucketLifecycleRequest request) {
+		return client.execute(ks3config,auth, request, GetBucketLifecycleResponse.class);
+	}
+
+	public void deleteBucketLifecycle(DeleteBucketLifecycleRequest request) {
+		client.execute(ks3config,auth, request, DeleteBucketLifecycleResponse.class);
+		
+	}
+	public Ks3Result putObjectFetch(String bucketName,String objectKey,String sourceUrl){
+		PutObjectFetchRequest  request = new PutObjectFetchRequest(bucketName,objectKey,sourceUrl);
+		return client.execute(ks3config,auth, request, PutObjectFetchResponse.class);
+		
+	}
+	public Ks3Result putObjectFetch(PutObjectFetchRequest  request){
+		return client.execute(ks3config,auth, request, PutObjectFetchResponse.class);
 	}
 
 

@@ -88,7 +88,14 @@ public enum HttpHeaders {
 	CRYPTO_INSTRUCTION_FILE("crypto-instr-file"), 
 	CRYPTO_CEK_ALGORITHM("cek-alg"), 
 	CRYPTO_TAG_LENGTH("tag-len"),
-	CRYPTO_KEYWRAP_ALGORITHM("wrap-alg");
+	CRYPTO_KEYWRAP_ALGORITHM("wrap-alg"),
+	Accept_Encoding("Accept-Encoding"),
+	/**
+	 *fetch sourceUrl 
+	 */
+	XKssSourceUrl("sourceurl"),
+	XKssForce("force"),
+	XKssFetchSourceHeader("fetchsourceheader");
 	private String value;
 	private String value2;
 	private boolean isSpecHeader;

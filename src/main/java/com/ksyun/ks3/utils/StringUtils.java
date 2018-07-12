@@ -1,20 +1,16 @@
 package com.ksyun.ks3.utils;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -25,8 +21,6 @@ import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 
 import com.ksyun.ks3.config.Constants;
-import com.ksyun.ks3.dto.Owner;
-import com.ksyun.ks3.dto.PutObjectResult;
 
 /**
  * @author lijunwei[lijunwei@kingsoft.com]  
@@ -38,6 +32,7 @@ import com.ksyun.ks3.dto.PutObjectResult;
 public class StringUtils {
 	public static final int MIN_BUCKET_NAME_LENGTH = 3;
 	public static final int MAX_BUCKET_NAME_LENGTH = 63;
+    public final static int MAXIMUM_ALLOWED_ID_LENGTH = 255;
 
 	public static String join(Object[] strings, String spliter) {
 		int i = 0;

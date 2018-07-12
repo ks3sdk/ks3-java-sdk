@@ -2,34 +2,75 @@ package com.ksyun.ks3.service;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import com.ksyun.ks3.dto.AccessControlList;
+import com.ksyun.ks3.dto.AccessControlPolicy;
+import com.ksyun.ks3.dto.Adp;
+import com.ksyun.ks3.dto.AdpTask;
+import com.ksyun.ks3.dto.Authorization;
+import com.ksyun.ks3.dto.Bucket;
+import com.ksyun.ks3.dto.BucketCorsConfiguration;
+import com.ksyun.ks3.dto.BucketLifecycleConfiguration;
+import com.ksyun.ks3.dto.BucketLoggingStatus;
+import com.ksyun.ks3.dto.CannedAccessControlList;
+import com.ksyun.ks3.dto.CompleteMultipartUploadResult;
+import com.ksyun.ks3.dto.CopyResult;
 import com.ksyun.ks3.dto.CreateBucketConfiguration.REGION;
-import com.ksyun.ks3.dto.*;
+import com.ksyun.ks3.dto.GetObjectResult;
+import com.ksyun.ks3.dto.HeadBucketResult;
+import com.ksyun.ks3.dto.HeadObjectResult;
+import com.ksyun.ks3.dto.InitiateMultipartUploadResult;
+import com.ksyun.ks3.dto.Ks3Result;
+import com.ksyun.ks3.dto.ListMultipartUploadsResult;
+import com.ksyun.ks3.dto.ListPartsResult;
+import com.ksyun.ks3.dto.ObjectListing;
+import com.ksyun.ks3.dto.ObjectMetadata;
+import com.ksyun.ks3.dto.PartETag;
+import com.ksyun.ks3.dto.PostObjectFormFields;
+import com.ksyun.ks3.dto.PostPolicy;
+import com.ksyun.ks3.dto.PutAdpResult;
+import com.ksyun.ks3.dto.PutObjectResult;
+import com.ksyun.ks3.dto.ResponseHeaderOverrides;
 import com.ksyun.ks3.exception.Ks3ClientException;
 import com.ksyun.ks3.exception.Ks3ServiceException;
-import com.ksyun.ks3.service.request.*;
-import com.ksyun.ks3.service.response.GetBucketACLResponse;
-import com.ksyun.ks3.service.response.Ks3WebServiceResponse;
 import com.ksyun.ks3.service.request.AbortMultipartUploadRequest;
 import com.ksyun.ks3.service.request.CompleteMultipartUploadRequest;
+import com.ksyun.ks3.service.request.CopyObjectRequest;
+import com.ksyun.ks3.service.request.CopyPartRequest;
 import com.ksyun.ks3.service.request.CreateBucketRequest;
+import com.ksyun.ks3.service.request.DeleteBucketCorsRequest;
+import com.ksyun.ks3.service.request.DeleteBucketLifecycleRequest;
 import com.ksyun.ks3.service.request.DeleteBucketRequest;
 import com.ksyun.ks3.service.request.DeleteObjectRequest;
 import com.ksyun.ks3.service.request.GeneratePresignedUrlRequest;
+import com.ksyun.ks3.service.request.GetAdpRequest;
+import com.ksyun.ks3.service.request.GetBucketACLRequest;
+import com.ksyun.ks3.service.request.GetBucketCorsRequest;
+import com.ksyun.ks3.service.request.GetBucketLifecycleRequest;
+import com.ksyun.ks3.service.request.GetBucketLocationRequest;
+import com.ksyun.ks3.service.request.GetBucketLoggingRequest;
+import com.ksyun.ks3.service.request.GetObjectACLRequest;
 import com.ksyun.ks3.service.request.GetObjectRequest;
 import com.ksyun.ks3.service.request.HeadBucketRequest;
 import com.ksyun.ks3.service.request.HeadObjectRequest;
 import com.ksyun.ks3.service.request.InitiateMultipartUploadRequest;
 import com.ksyun.ks3.service.request.Ks3WebServiceRequest;
 import com.ksyun.ks3.service.request.ListBucketsRequest;
+import com.ksyun.ks3.service.request.ListMultipartUploadsRequest;
 import com.ksyun.ks3.service.request.ListObjectsRequest;
 import com.ksyun.ks3.service.request.ListPartsRequest;
+import com.ksyun.ks3.service.request.PutAdpRequest;
+import com.ksyun.ks3.service.request.PutBucketACLRequest;
+import com.ksyun.ks3.service.request.PutBucketCorsRequest;
+import com.ksyun.ks3.service.request.PutBucketLifecycleRequest;
+import com.ksyun.ks3.service.request.PutBucketLoggingRequest;
+import com.ksyun.ks3.service.request.PutObjectACLRequest;
+import com.ksyun.ks3.service.request.PutObjectFetchRequest;
 import com.ksyun.ks3.service.request.PutObjectRequest;
 import com.ksyun.ks3.service.request.UploadPartRequest;
+import com.ksyun.ks3.service.response.Ks3WebServiceResponse;
 
 /**
  * @author lijunwei[lijunwei@kingsoft.com]  
@@ -54,17 +95,18 @@ public interface Ks3 {
 	public Ks3 withAuth(Authorization auth);
 	/**
 	 * 设置服务地址</br>
-	 * 中国标准:kss.ksyun.com</br>
-	 * 中国cdn:kssws.ks-cdn.com</br>
-	 * 美国（圣克拉拉）:ks3-us-west-1.ksyun.com</br>
+     * 杭州:kss.ksyun.com</br>
+     * 北京:ks3-cn-beijing.ksyun.com</br>
+     * 上海:ks3-cn-shanghai.ksyun.com</br>
+     * 香港:ks3-cn-hk-1.ksyun.com</br>
+     * 俄罗斯:ks3-rus.ksyun.com</br>
+
 	 * @param endpoint
 	 */
 	public void setEndpoint(String endpoint);
 	/**
 	 * 设置服务地址
 	 * 中国标准:kss.ksyun.com</br>
-	 * 中国cdn:kssws.ks-cdn.com</br>
-	 * 美国（圣克拉拉）:ks3-us-west-1.ksyun.com</br>
 	 * @param endpoint
 	 */
 	public Ks3 withEndpoint(String endpoint);
@@ -1373,4 +1415,69 @@ public interface Ks3 {
 	 * <p>查询数据处理任务的状态</p>
 	 */
 	public AdpTask getAdpTask(GetAdpRequest request) throws Ks3ClientException, Ks3ServiceException;
+	
+	/**
+	 * @param request {@link PutBucketLifecycleRequest}
+	 * @throws Ks3ClientException
+	 * @throws Ks3ServiceException
+	 * <p>增加生命周期配置</p>
+	 */
+	public void putBucketLifecycle(PutBucketLifecycleRequest request);
+	/**
+	 * @param bucket 
+	 * @param bucketLifecycleConfiguration {@link BucketLifecycleConfiguration}
+	 * @throws Ks3ClientException
+	 * @throws Ks3ServiceException
+	 * <p>增加生命周期配置</p>
+	 */
+	public void putBucketLifecycle(String bucket, BucketLifecycleConfiguration bucketLifecycleConfiguration);
+	/**
+	 * @param bucket 
+	 * @return {@link BucketLifecycleConfiguration}
+	 * @throws Ks3ClientException
+	 * @throws Ks3ServiceException
+	 * <p>查询生命周期配置</p>
+	 */
+	public BucketLifecycleConfiguration getBucketLifecycle(String bucket);
+	/**
+	 * @param bucket 
+	 * @param {@link GetBucketLifecycleRequest}
+	 * @return {@link BucketLifecycleConfiguration}
+	 * @throws Ks3ClientException
+	 * @throws Ks3ServiceException
+	 * <p>查询生命周期配置</p>
+	 */
+	public BucketLifecycleConfiguration getBucketLifecycle(GetBucketLifecycleRequest request);
+	/**
+	 * @param bucket 
+	 * @throws Ks3ClientException
+	 * @throws Ks3ServiceException
+	 * <p>删除生命周期配置</p>
+	 */
+	public void deleteBucketLifecycle(String  bucket);
+	/**
+	 * @param request {@link DeleteBucketLifecycleRequest}
+	 * @throws Ks3ClientException
+	 * @throws Ks3ServiceException
+	 * <p>删除生命周期配置</p>
+	 */
+	public void deleteBucketLifecycle(DeleteBucketLifecycleRequest  request);
+	
+	
+	/**
+	 * @param bucketName
+	 * @param objectKey
+	 * @param sourceUrl
+	 * @throws Ks3ClientException
+	 * @throws Ks3ServiceException
+	 * <p>fetch 文件接口</p>
+	 */
+	public Ks3Result putObjectFetch(String bucketName,String objectKey,String sourceUrl);
+	/**
+	 * @param request {@link PutObjectFetchRequest}
+	 * @throws Ks3ClientException
+	 * @throws Ks3ServiceException
+	 * <p>fetch 文件接口</p>
+	 */
+	public Ks3Result putObjectFetch(PutObjectFetchRequest  request);
 }

@@ -1,14 +1,11 @@
 package com.ksyun.ks3.service.request;
 
-import java.io.File;
-
+import static com.ksyun.ks3.exception.client.ClientIllegalArgumentExceptionGenerator.between;
 import static com.ksyun.ks3.exception.client.ClientIllegalArgumentExceptionGenerator.notNull;
 import static com.ksyun.ks3.exception.client.ClientIllegalArgumentExceptionGenerator.notNullInCondition;
-import static com.ksyun.ks3.exception.client.ClientIllegalArgumentExceptionGenerator.notCorrect;
-import static com.ksyun.ks3.exception.client.ClientIllegalArgumentExceptionGenerator.between;
 
+import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.commons.logging.Log;
@@ -16,18 +13,14 @@ import org.apache.commons.logging.LogFactory;
 
 import com.ksyun.ks3.InputSubStream;
 import com.ksyun.ks3.LengthCheckInputStream;
-import com.ksyun.ks3.MD5DigestCalculatingInputStream;
 import com.ksyun.ks3.RepeatableFileInputStream;
-import com.ksyun.ks3.RepeatableInputStream;
 import com.ksyun.ks3.config.Constants;
 import com.ksyun.ks3.dto.SSECustomerKey;
-import com.ksyun.ks3.exception.Ks3ClientException;
 import com.ksyun.ks3.exception.client.ClientFileNotFoundException;
 import com.ksyun.ks3.http.HttpHeaders;
 import com.ksyun.ks3.http.HttpMethod;
 import com.ksyun.ks3.http.Request;
 import com.ksyun.ks3.utils.HttpUtils;
-import com.ksyun.ks3.utils.Md5Utils;
 import com.ksyun.ks3.utils.StringUtils;
 
 /**
@@ -319,3 +312,4 @@ public class UploadPartRequest extends Ks3WebServiceRequest implements SSECustom
 		}
 	}
 }
+
