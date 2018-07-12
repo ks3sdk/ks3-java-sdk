@@ -28,9 +28,11 @@ lib目录下为该项目所依赖的所有jar包，以及将sdk打好的jar包
 	Ks3ClientConfig config = new Ks3ClientConfig();
 	/**
 	 * 设置服务地址</br>
-	 * 中国标准:kss.ksyun.com</br>
-	 * 中国cdn:kssws.ks-cdn.com</br>
-	 * 美国（圣克拉拉）:ks3-us-west-1.ksyun.com</br>
+	 * 杭州:kss.ksyun.com</br>
+	 * 北京:ks3-cn-beijing.ksyun.com</br>
+	 * 上海:ks3-cn-shanghai.ksyun.com</br>
+	 * 香港:ks3-cn-hk-1.ksyun.com</br>
+	 * 俄罗斯:ks3-rus.ksyun.com</br>
 	*/
 	config.setEndpoint("kssws.ks-cdn.com");
 	config.setProtocol(PROTOCOL.http);
