@@ -34,7 +34,7 @@ lib目录下为该项目所依赖的所有jar包，以及将sdk打好的jar包
 	 * 香港:ks3-cn-hk-1.ksyun.com</br>
 	 * 俄罗斯:ks3-rus.ksyun.com</br>
 	*/
-	config.setEndpoint("kssws.ks-cdn.com");
+	config.setEndpoint("kss.ksyun.com");
 	config.setProtocol(PROTOCOL.http);
 	/**
 	*true表示以   endpoint/{bucket}/{key}的方式访问</br>
@@ -166,7 +166,7 @@ lib目录下为该项目所依赖的所有jar包，以及将sdk打好的jar包
 
 ### 4.4 获取文件访问地址
 1、如果是公开文件  
-通过：http://{bucket}.{endpoint}/{key}的方式拼接一个URL即可。比如：http://test-bucket.kssws.ks-cdn.com/2015/10/19/image.jpg,该URL中的{bucket}是test-bucket,{endpoint}是kssws.ks-cdn.com,{key}是2015/10/19/image.jpg  
+通过：http://{bucket}.{endpoint}/{key}的方式拼接一个URL即可。比如：http://test-bucket.kss.ksyun.com/2015/10/19/image.jpg,该URL中的{bucket}是test-bucket,{endpoint}是kss.ksyun.com,{key}是2015/10/19/image.jpg  
 2、如果是私有文件  
 通过以下代码可以生成一个访问地址
 
@@ -729,7 +729,7 @@ copy的文件以用户提供key的方式进行服务端加密，并设置新的�
 ### 6.8 获取文件访问地址
 
 1、如果是公开文件  
-通过：http://{bucket}.{endpoint}/{key}的方式拼接一个URL即可。比如：http://test-bucket.kssws.ks-cdn.com/2015/10/19/image.jpg,该URL中的{bucket}是test-bucket,{endpoint}是kssws.ks-cdn.com,{key}是2015/10/19/image.jpg  
+通过：http://{bucket}.{endpoint}/{key}的方式拼接一个URL即可。比如：http://test-bucket.kss.ksyun.com/2015/10/19/image.jpg,该URL中的{bucket}是test-bucket,{endpoint}是kss.ksyun.com,{key}是2015/10/19/image.jpg  
 2、如果是私有文件  
 通过以下代码可以生成一个访问地址
 
