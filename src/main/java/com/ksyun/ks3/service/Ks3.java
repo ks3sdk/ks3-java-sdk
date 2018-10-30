@@ -95,18 +95,17 @@ public interface Ks3 {
 	public Ks3 withAuth(Authorization auth);
 	/**
 	 * 设置服务地址</br>
-     * 杭州:kss.ksyun.com</br>
-     * 北京:ks3-cn-beijing.ksyun.com</br>
-     * 上海:ks3-cn-shanghai.ksyun.com</br>
-     * 香港:ks3-cn-hk-1.ksyun.com</br>
-     * 俄罗斯:ks3-rus.ksyun.com</br>
-
+	 * 中国标准:kss.ksyun.com</br>
+	 * 中国cdn:kssws.ks-cdn.com</br>
+	 * 美国（圣克拉拉）:ks3-us-west-1.ksyun.com</br>
 	 * @param endpoint
 	 */
 	public void setEndpoint(String endpoint);
 	/**
 	 * 设置服务地址
 	 * 中国标准:kss.ksyun.com</br>
+	 * 中国cdn:kssws.ks-cdn.com</br>
+	 * 美国（圣克拉拉）:ks3-us-west-1.ksyun.com</br>
 	 * @param endpoint
 	 */
 	public Ks3 withEndpoint(String endpoint);

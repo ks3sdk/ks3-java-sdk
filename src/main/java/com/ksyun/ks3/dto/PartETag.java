@@ -20,7 +20,7 @@ public class PartETag extends SSEResultBase{
 		this.partNumber = partNumber;
 	}
 	public String geteTag() {
-		return eTag;
+		return eTag.replace("\"", "");
 	}
 	public void seteTag(String eTag) {
 		this.eTag = eTag;
@@ -38,7 +38,8 @@ public class PartETag extends SSEResultBase{
 	{
 		if(obj instanceof PartETag)
 		{
-			if(this.partNumber == ((PartETag) obj).partNumber&&this.eTag.equals(((PartETag) obj).geteTag()))
+			if(this.partNumber == ((PartETag) obj).partNumber&&this.eTag.
+					replace("\"", "").equals(((PartETag) obj).geteTag()))
 			{
 				return true;
 			}

@@ -58,7 +58,7 @@ public class CompleteMultipartUploadResponse extends
 			result.setKey(s);
 		}else if("ETag".equalsIgnoreCase(getTag()))
 		{
-			result.seteTag(s);
+			result.seteTag(s.replace("\"", ""));
 		}
 	}
 

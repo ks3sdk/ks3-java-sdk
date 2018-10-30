@@ -46,7 +46,7 @@ public class CopyPartResponse extends Ks3WebServiceXmlResponse<CopyResult>{
 		if("LastModified".equals(getTag())){
 			result.setLastModified(DateUtils.convertStr2Date(s));
 		}else if("ETag".equals(getTag())){
-			result.setETag(s);
+			result.setETag(s.replace("\"", ""));
 		}
 	}
 }

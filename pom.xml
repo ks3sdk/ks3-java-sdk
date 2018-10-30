@@ -3,7 +3,8 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.ksyun</groupId>
 	<artifactId>ks3-kss-java-sdk</artifactId>
-	<version>0.8.7</version>
+
+	<version>0.8.8</version>
 	<name>ks3-kss-java-sdk</name>
 	<url>http://maven.apache.org</url>
 	<description>Java SDK for KS3</description>
@@ -11,6 +12,7 @@
 		<connection>scm:git:git@newgit.op.ksyun.com:ks3/ks3-kss-java-sdk.git</connection>
 		<developerConnection>scm:git:git@newgit.op.ksyun.com:ks3/ks3-kss-java-sdk.git</developerConnection>
 		<url>http://newgit.op.ksyun.com/ks3/ks3-kss-java-sdk</url>
+	  <tag>ks3-kss-java-sdk-0.8.8</tag>
   </scm>
 	<developers>
 		<developer>
@@ -70,7 +72,6 @@
 			<name>Proj Release Repository</name>
 			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
 		</repository>
-
 		<snapshotRepository>
 			<id>oss</id>
 			<name>Proj Snapshot Repository</name>
@@ -116,9 +117,6 @@
 	<profiles>
 		<profile>
 			<id>deploy</id>
-			<properties>
-				<additionalparam>-Xdoclint:none</additionalparam>
-			</properties>
 			<build>
 				<plugins>
 					<plugin>

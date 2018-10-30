@@ -17,7 +17,7 @@ lib目录下为该项目所依赖的所有jar包，以及将sdk打好的jar包
     <dependency>
         <groupId>com.ksyun</groupId>
         <artifactId>ks3-kss-java-sdk</artifactId>
-        <version>0.7.0</version>
+        <version>0.8.8</version>
     </dependency>
     
 或者直接引用lib目录下的所有jar包
@@ -27,26 +27,35 @@ lib目录下为该项目所依赖的所有jar包，以及将sdk打好的jar包
 
 	Ks3ClientConfig config = new Ks3ClientConfig();
 	/**
-	 * 设置服务地址</br>
-	 * 杭州:kss.ksyun.com</br>
-	 * 北京:ks3-cn-beijing.ksyun.com</br>
-	 * 上海:ks3-cn-shanghai.ksyun.com</br>
-	 * 香港:ks3-cn-hk-1.ksyun.com</br>
-	 * 俄罗斯:ks3-rus.ksyun.com</br>
+	 * 设置服务地址
+	 * 杭州:kss.ksyun.com
+     * 北京:ks3-cn-beijing.ksyun.com
+     * 上海:ks3-cn-shanghai.ksyun.com
+     * 香港:ks3-cn-hk-1.ksyun.com
+     * 俄罗斯:ks3-rus.ksyun.com
+     * 新加坡:ks3-sgp.ksyun.com
+     * 广州：ks3-cn-guangzhou.ksyun.com     
 	*/
-	config.setEndpoint("kss.ksyun.com");
-	config.setProtocol(PROTOCOL.http);
-	/**
-	*true表示以   endpoint/{bucket}/{key}的方式访问</br>
-	*false表示以  {bucket}.endpoint/{key}的方式访问
-	*/
-	config.setPathStyleAccess(false);
-	
-	HttpClientConfig hconfig = new HttpClientConfig();
+	config.setEndpoint("ks3-cn-beijing.ksyun.com");//此处以北京为例
+	/**     
+     *true：表示以自定义域名访问    
+     *false：表示以KS3的外网域名或内网域名访问，默认为false    
+    */   
+    config.setDomainMode(false);    
+    config.setProtocol(PROTOCOL.http);    
+    /**    
+     *true表示以   endpoint/{bucket}/{key}的方式访问    
+     *false表示以  {bucket}.endpoint/{key}的方式访问    
+     *如果domainMode设置为true，pathStyleAccess可忽略设置    
+    */   
+    config.setPathStyleAccess(false);     
+    HttpClientConfig hconfig = new HttpClientConfig();
 	//在HttpClientConfig中可以设置httpclient的相关属性，比如代理，超时，重试等。
-	
-	config.setHttpClientConfig(hconfig);
-	
+    config.setHttpClientConfig(hconfig);    
+    Ks3 client = new Ks3Client("<您的AccessKeyID>","<您的AccessKeySecret>",config);    
+    /* 或者：client.setKs3config(config); */
+    
+    
 ### 3.2 配置日志
 该SDK使用commons-logging
 
@@ -166,7 +175,7 @@ lib目录下为该项目所依赖的所有jar包，以及将sdk打好的jar包
 
 ### 4.4 获取文件访问地址
 1、如果是公开文件  
-通过：http://{bucket}.{endpoint}/{key}的方式拼接一个URL即可。比如：http://test-bucket.kss.ksyun.com/2015/10/19/image.jpg,该URL中的{bucket}是test-bucket,{endpoint}是kss.ksyun.com,{key}是2015/10/19/image.jpg  
+通过：http://{bucket}.{endpoint}/{key}的方式拼接一个URL即可。比如：http://test-bucket.kssws.ks-cdn.com/2015/10/19/image.jpg,该URL中的{bucket}是test-bucket,{endpoint}是kssws.ks-cdn.com,{key}是2015/10/19/image.jpg  
 2、如果是私有文件  
 通过以下代码可以生成一个访问地址
 
@@ -456,7 +465,7 @@ bucket的访问权限说明 [http://ks3.ksyun.com/doc/api/index.html](http://ks3
 		//设置参数
 		request.setMaxKeys("<max keys>");//指定返回条数最大值
 		request.setPrefix("<object key前缀>");//返回以指定前缀开头的object
-       request.setDelimiter("<delimiter>");//设置文件分隔符，系统将根据该分隔符组织文件夹结构，默认是"/"
+        request.setDelimiter("<delimiter>");//设置文件分隔符，系统将根据该分隔符组织文件夹结构，默认是"/"
 		//执行操作
 		list = client.listObjects(request);
 		return list;
@@ -729,7 +738,7 @@ copy的文件以用户提供key的方式进行服务端加密，并设置新的�
 ### 6.8 获取文件访问地址
 
 1、如果是公开文件  
-通过：http://{bucket}.{endpoint}/{key}的方式拼接一个URL即可。比如：http://test-bucket.kss.ksyun.com/2015/10/19/image.jpg,该URL中的{bucket}是test-bucket,{endpoint}是kss.ksyun.com,{key}是2015/10/19/image.jpg  
+通过：http://{bucket}.{endpoint}/{key}的方式拼接一个URL即可。比如：http://test-bucket.kssws.ks-cdn.com/2015/10/19/image.jpg,该URL中的{bucket}是test-bucket,{endpoint}是kssws.ks-cdn.com,{key}是2015/10/19/image.jpg  
 2、如果是私有文件  
 通过以下代码可以生成一个访问地址
 

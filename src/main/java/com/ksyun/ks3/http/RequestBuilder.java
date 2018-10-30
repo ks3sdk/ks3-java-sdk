@@ -48,7 +48,6 @@ public class RequestBuilder {
 		}
 		ks3Request.buildRequest(request);
 		request.addHeaderIfNotContains(HttpHeaders.UserAgent.toString(),ks3Request.getRequestConfig().getUserAgent());
-		//user gzip or not
 		if((ks3config != null && !ks3config.isUseGzip()) && 
 				(ks3Request instanceof GetObjectRequest || ks3Request instanceof HeadObjectRequest)){
 			request.addHeader("Accept-Encoding","none");

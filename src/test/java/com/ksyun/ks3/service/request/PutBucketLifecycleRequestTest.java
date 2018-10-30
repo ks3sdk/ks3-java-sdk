@@ -38,7 +38,7 @@ public class PutBucketLifecycleRequestTest {
 
 		Rule rule2 = new Rule();
 		rule2.setId("123456");
-//		rule2.setExpirationInDays(6);
+		rule2.setExpirationInDays(6);
 		rule2.setPrefix("345");
 		rule2.setStatus(Status.ENABLED);
 		rule2.setExpirationDate(new Date());

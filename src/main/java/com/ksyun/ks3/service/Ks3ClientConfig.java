@@ -16,10 +16,11 @@ public class Ks3ClientConfig {
 	/**
 	 * 服务地址,参考{@linkplain http://ks3.ksyun.com/doc/api/index.html} </br>
 	 * 中国（杭州）:kss.ksyun.com</br>
+	 * 中国（杭州）cdn:kssws.ks-cdn.com</br>
+	 * 美国（圣克拉拉）:ks3-us-west-1.ksyun.com</br>
 	 * 中国（北京）:ks3-cn-beijing.ksyun.com</br>
 	 * 中国（香港）:ks3-cn-hk-1.ksyun.com</br>
 	 * 中国（上海）:ks3-cn-shanghai.ksyun.com</br>
-	 * 中国（俄罗斯）:ks3-rus.ksyun.com</br>
 	 */
 	private String endpoint;
 	/**
@@ -53,7 +54,7 @@ public class Ks3ClientConfig {
 	public void setUseGzip(boolean useGzip) {
 		this.useGzip = useGzip;
 	}
-	
+
 	public String getEndpoint() {
 		return endpoint;
 	}

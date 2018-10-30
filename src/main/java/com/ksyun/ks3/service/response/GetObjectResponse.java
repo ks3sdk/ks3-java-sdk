@@ -67,7 +67,8 @@ public class GetObjectResponse extends Ks3WebServiceStreamResponse<GetObjectResu
 						}
 					} else if (key.equals(HttpHeaders.ETag.toString())) {
 						metaData.setHeader(key, value.replace("\"", ""));
-						metaData.setHeader(HttpHeaders.ContentMD5.toString(), Converter.ETag2MD5(value));
+					}else if (key.equals(HttpHeaders.ContentMD5.toString())){
+						metaData.setHeader(HttpHeaders.ContentMD5.toString(),value.replace("\"", "") );
 					} else if (key.equals(HttpHeaders.Expires.toString())) {
 						try {
 							metaData.setHttpExpiresDate(DateUtils

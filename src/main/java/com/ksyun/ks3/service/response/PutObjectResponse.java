@@ -20,7 +20,7 @@ public class PutObjectResponse extends Ks3WebServiceDefaultResponse<PutObjectRes
 	@Override
 	public void preHandle() {
 		result = new PutObjectResult();
-		result.seteTag(this.getHeader(HttpHeaders.ETag.toString()));
+		result.seteTag(this.getHeader(HttpHeaders.ETag.toString()).replace("\"", ""));
 		result.setTaskid(super.getHeader(HttpHeaders.TaskId.toString()));
 		result.setSseAlgorithm(super.getHeader(HttpHeaders.XKssServerSideEncryption.toString()));
 		result.setSseCustomerAlgorithm(super.getHeader(HttpHeaders.XKssServerSideEncryptionCustomerAlgorithm.toString()));

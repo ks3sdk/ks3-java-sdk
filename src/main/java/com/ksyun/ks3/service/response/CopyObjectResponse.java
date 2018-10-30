@@ -1,5 +1,7 @@
 package com.ksyun.ks3.service.response;
 
+import com.ksyun.ks3.http.HttpHeaders;
+import org.apache.http.Header;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -21,7 +23,6 @@ public class CopyObjectResponse extends Ks3WebServiceXmlResponse<CopyResult>{
 
 	@Override
 	public void preHandle() {
-		
 	}
 
 	@Override
@@ -46,7 +47,7 @@ public class CopyObjectResponse extends Ks3WebServiceXmlResponse<CopyResult>{
 		if("LastModified".equals(getTag())){
 			result.setLastModified(DateUtils.convertStr2Date(s));
 		}else if("ETag".equals(getTag())){
-			result.setETag(s);
+			result.setETag(s.replace("\"", ""));
 		}
 	}
 
