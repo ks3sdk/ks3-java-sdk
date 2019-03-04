@@ -17,7 +17,7 @@ lib目录下为该项目所依赖的所有jar包，以及将sdk打好的jar包
     <dependency>
         <groupId>com.ksyun</groupId>
         <artifactId>ks3-kss-java-sdk</artifactId>
-        <version>0.8.8</version>
+        <version>0.8.9</version>
     </dependency>
     
 或者直接引用lib目录下的所有jar包
@@ -210,6 +210,10 @@ lib目录下为该项目所依赖的所有jar包，以及将sdk打好的jar包
 			bucket.getName();
 			//获取bucket的拥有者（用户ID base64后的值）
 			bucket.getOwner();
+			//获取bucket的区域信息
+			bucket.getRegion();
+			//获取bucket类型，非归档（BucketType.Normal）、归档（BucketType.Archive）
+			bucket.getType();
 		}
 		
 		return buckets;
@@ -232,6 +236,8 @@ lib目录下为该项目所依赖的所有jar包，以及将sdk打好的jar包
 		//配置bucket的存储地点
 		CreateBucketConfiguration config = new CreateBucketConfiguration(REGION.HANGZHOU);
 		request.setConfig(config);
+		//配置bucket类型，非归档（BucketType.Normal）、归档（BucketType.Archive）
+		request.setBucketType(BucketType.Normal);
 		//配置bucket的访问权限
 		request.setCannedAcl(CannedAccessControlList.Private);
 		//执行操作
@@ -528,6 +534,8 @@ bucket的访问权限说明 [http://ks3.ksyun.com/doc/api/index.html](http://ks3
 	request.setStorageClass(StorageClass.Standard);
 	或
 	request.setStorageClass(StorageClass.StandardInfrequentAccess);
+	或
+	request.setStorageClass(StorageClass.Archive);
 	
 上传文件时设置元数据
 
@@ -825,6 +833,22 @@ object的访问权限说明 [http://ks3.ksyun.com/doc/api/index.html](http://ks3
 		client.deleteObject("<bucket名称>","<object key>");
 	}
 
+
+### 6.12 解冻文件
+
+	/**
+	 * 解冻<bucket名称>这个存储空间下的<object key>文件
+	 */
+	public RestoreObjectResult restoreObject(){
+		RestoreObjectResult result = client.restoreObject("<bucket名称>","<object key>");
+		//获取<object key>文件的存储类型，类型如下
+		//标准（StorageClass.Standard）、低频（StorageClass.StandardInfrequentAccess）、归档（StorageClass.Archive）
+		result.getCls();
+		//获取<object key>文件的解冻状态，状态如下
+		//解冻成功（RestoreCycle.RESTORE）、正在解冻中（RestoreCycle.RESTORING）、已解冻（RestoreCycle.RESTORED）
+		result.getType();
+		return result;
+	}
 
 
 
