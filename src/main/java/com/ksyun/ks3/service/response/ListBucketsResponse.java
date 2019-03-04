@@ -8,6 +8,7 @@ import org.xml.sax.SAXException;
 
 import com.ksyun.ks3.dto.Bucket;
 import com.ksyun.ks3.dto.Owner;
+import com.ksyun.ks3.service.common.BucketType;
 import com.ksyun.ks3.utils.DateUtils;
 
 /**
@@ -60,6 +61,14 @@ public class ListBucketsResponse extends Ks3WebServiceXmlResponse<List<Bucket>>{
 			if("Name".equalsIgnoreCase(getTag()))
 			{
 				bucket.setName(s);
+			}
+			if("Region".equalsIgnoreCase(getTag()))
+			{
+				bucket.setRegion(s);
+			}
+			if("Type".equalsIgnoreCase(getTag()))
+			{
+				bucket.setType(BucketType.fromValue(s));
 			}
 			if("CreationDate".equalsIgnoreCase(getTag()))
 			{

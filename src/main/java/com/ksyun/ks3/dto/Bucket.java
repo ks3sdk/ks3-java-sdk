@@ -2,6 +2,7 @@ package com.ksyun.ks3.dto;
 
 import java.util.Date;
 
+import com.ksyun.ks3.service.common.BucketType;
 import com.ksyun.ks3.utils.StringUtils;
 
 /**
@@ -26,8 +27,25 @@ public class Bucket extends Ks3Result{
      * bucket创建时间
      */
     private Date creationDate = null;
+    
+    private String region = null;
+    
+    private BucketType type = null;
+    
     public Bucket() {}
-    public Bucket(String name) {
+    public String getRegion() {
+		return region;
+	}
+	public void setRegion(String region) {
+		this.region = region;
+	}
+	public BucketType getType() {
+		return type;
+	}
+	public void setType(BucketType type) {
+		this.type = type;
+	}
+	public Bucket(String name) {
         this.name = name;
     }
     public String toString() {

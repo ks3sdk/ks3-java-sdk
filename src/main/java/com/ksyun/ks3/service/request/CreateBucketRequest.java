@@ -1,9 +1,8 @@
 package com.ksyun.ks3.service.request;
 
-import java.io.ByteArrayInputStream;
-
-import static com.ksyun.ks3.exception.client.ClientIllegalArgumentExceptionGenerator.notNull;
 import static com.ksyun.ks3.exception.client.ClientIllegalArgumentExceptionGenerator.notCorrect;
+
+import java.io.ByteArrayInputStream;
 
 import com.ksyun.ks3.dto.AccessControlList;
 import com.ksyun.ks3.dto.CannedAccessControlList;
@@ -11,6 +10,7 @@ import com.ksyun.ks3.dto.CreateBucketConfiguration;
 import com.ksyun.ks3.http.HttpHeaders;
 import com.ksyun.ks3.http.HttpMethod;
 import com.ksyun.ks3.http.Request;
+import com.ksyun.ks3.service.common.BucketType;
 import com.ksyun.ks3.utils.HttpUtils;
 import com.ksyun.ks3.utils.StringUtils;
 import com.ksyun.ks3.utils.XmlWriter;
@@ -57,9 +57,19 @@ public class CreateBucketRequest extends Ks3WebServiceRequest {
 	 * Bucket存储地点配置
 	 */
 	private CreateBucketConfiguration config = null;
-
+	
+	private BucketType type = null;
+	
 	public CreateBucketRequest(String bucketName) {
 		this.bucket = bucketName;
+	}
+	
+	public void setBucketType(BucketType type) {
+		this.type = type;
+	}
+	
+	public BucketType getBucketType() {
+		return this.type;
 	}
 
 	public CreateBucketRequest(String bucketName,
@@ -131,6 +141,9 @@ public class CreateBucketRequest extends Ks3WebServiceRequest {
 		}
 		if (this.acl != null) {
 			request.getHeaders().putAll(HttpUtils.convertAcl2Headers(acl));
+		}
+		if(this.type != null) {
+			request.getHeaders().put("x-kss-bucket-type", this.type.toString());
 		}
 	}
 

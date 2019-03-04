@@ -21,13 +21,13 @@ public class CreateBucketConfiguration {
 	 *
 	 */
 	public static enum REGION {
-		HANGZHOU,AMERICA,HONGKONG,BEIJING,SHANGHAI,GUANGZHOU,SINGAPORE,RUSSIA;
+		HANGZHOU,AMERICA,HONGKONG,BEIJING,SHANGHAI,GUANGZHOU,SINGAPORE,RUSSIA,TAIWAN;
 		public static REGION load(String s){
 			for(REGION region :REGION.values()){
 				if(region.toString().equals(s))
 					return region;
 			}
-			throw ClientIllegalArgumentExceptionGenerator.notCorrect("region",s,"AMERICA,HANGZHOU,HONGKONG,BEIJING,SHANGHAI,GUANGZHOU,SINGAPORE,RUSSIA");
+			throw ClientIllegalArgumentExceptionGenerator.notCorrect("region",s,"AMERICA,HANGZHOU,HONGKONG,BEIJING,SHANGHAI,GUANGZHOU,SINGAPORE,RUSSIA,TAIWAN");
 		}
 	}
 	public CreateBucketConfiguration(REGION region){

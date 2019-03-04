@@ -33,6 +33,7 @@ import com.ksyun.ks3.dto.PostPolicy;
 import com.ksyun.ks3.dto.PutAdpResult;
 import com.ksyun.ks3.dto.PutObjectResult;
 import com.ksyun.ks3.dto.ResponseHeaderOverrides;
+import com.ksyun.ks3.dto.RestoreObjectResult;
 import com.ksyun.ks3.exception.Ks3ClientException;
 import com.ksyun.ks3.exception.Ks3ServiceException;
 import com.ksyun.ks3.service.request.AbortMultipartUploadRequest;
@@ -69,6 +70,7 @@ import com.ksyun.ks3.service.request.PutBucketLoggingRequest;
 import com.ksyun.ks3.service.request.PutObjectACLRequest;
 import com.ksyun.ks3.service.request.PutObjectFetchRequest;
 import com.ksyun.ks3.service.request.PutObjectRequest;
+import com.ksyun.ks3.service.request.RestoreObjectRequest;
 import com.ksyun.ks3.service.request.UploadPartRequest;
 import com.ksyun.ks3.service.response.Ks3WebServiceResponse;
 
@@ -1479,4 +1481,10 @@ public interface Ks3 {
 	 * <p>fetch 文件接口</p>
 	 */
 	public Ks3Result putObjectFetch(PutObjectFetchRequest  request);
+	
+	public RestoreObjectResult restoreObject(String bucketName, String objectKey);
+	
+	public RestoreObjectResult restoreObject(RestoreObjectRequest request);
+	
+	
 }

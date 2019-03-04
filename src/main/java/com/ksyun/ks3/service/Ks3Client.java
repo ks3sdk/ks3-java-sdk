@@ -46,6 +46,7 @@ import com.ksyun.ks3.dto.PostPolicyCondition.MatchingType;
 import com.ksyun.ks3.dto.PutAdpResult;
 import com.ksyun.ks3.dto.PutObjectResult;
 import com.ksyun.ks3.dto.ResponseHeaderOverrides;
+import com.ksyun.ks3.dto.RestoreObjectResult;
 import com.ksyun.ks3.dto.SSECustomerKey;
 import com.ksyun.ks3.exception.Ks3ClientException;
 import com.ksyun.ks3.exception.Ks3ServiceException;
@@ -89,6 +90,7 @@ import com.ksyun.ks3.service.request.PutBucketLoggingRequest;
 import com.ksyun.ks3.service.request.PutObjectACLRequest;
 import com.ksyun.ks3.service.request.PutObjectFetchRequest;
 import com.ksyun.ks3.service.request.PutObjectRequest;
+import com.ksyun.ks3.service.request.RestoreObjectRequest;
 import com.ksyun.ks3.service.request.UploadPartRequest;
 import com.ksyun.ks3.service.response.AbortMultipartUploadResponse;
 import com.ksyun.ks3.service.response.CompleteMultipartUploadResponse;
@@ -123,6 +125,7 @@ import com.ksyun.ks3.service.response.PutBucketLoggingResponse;
 import com.ksyun.ks3.service.response.PutObjectACLResponse;
 import com.ksyun.ks3.service.response.PutObjectFetchResponse;
 import com.ksyun.ks3.service.response.PutObjectResponse;
+import com.ksyun.ks3.service.response.RestoreObjectResponse;
 import com.ksyun.ks3.service.response.UploadPartResponse;
 import com.ksyun.ks3.utils.AuthUtils;
 import com.ksyun.ks3.utils.DateUtils;
@@ -874,5 +877,11 @@ public class Ks3Client implements Ks3 {
 		return client.execute(ks3config,auth, request, PutObjectFetchResponse.class);
 	}
 
-
+	public RestoreObjectResult restoreObject(String bucketName, String objectKey) {
+		return restoreObject(new RestoreObjectRequest(bucketName, objectKey));
+	}
+	
+	public RestoreObjectResult restoreObject(RestoreObjectRequest request) {
+		return client.execute(ks3config, auth, request, RestoreObjectResponse.class);
+	}
 }

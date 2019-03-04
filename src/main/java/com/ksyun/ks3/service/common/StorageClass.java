@@ -15,7 +15,9 @@ public enum StorageClass {
     /**
      * 用于不频繁访问但在需要时也要求快速访问的数据。Standard – IA 提供较高的持久性、吞吐量和较低的延迟
      */
-    StandardInfrequentAccess("STANDARD_IA");
+    StandardInfrequentAccess("STANDARD_IA"),
+	
+	Archive("ARCHIVE");
 
     public static StorageClass fromValue(String s3StorageClassString) throws IllegalArgumentException {
         for (StorageClass storageClass : StorageClass.values()) {
