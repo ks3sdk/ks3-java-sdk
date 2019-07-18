@@ -1,6 +1,7 @@
 
 package com.ksyun.ks3.http;
 
+import java.lang.reflect.Method;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.TimeUnit;
@@ -76,12 +77,21 @@ public class HttpClientFactory {
 		ConnectionConfig coConfig = ConnectionConfig.custom()
 				.setBufferSize(buffersize)
 				.build();
-		RequestConfig reConfig = RequestConfig.custom()
+		//==解决httpclient4.5.7以后版本会重新编解码uri造成签名失败的问题（exclude:4.5.7,未开放相关接口）
+		RequestConfig reConfig =null;
+		RequestConfig.Builder builder=RequestConfig.custom()
 				.setConnectTimeout(config.getConnectionTimeOut())
 				.setSocketTimeout(config.getSocketTimeOut())
-				.setStaleConnectionCheckEnabled(true)
-				.build();		
-
+				.setStaleConnectionCheckEnabled(true);
+		try {
+			if(RequestConfig.class.getDeclaredField("normalizeUri")!=null){
+				Method me=RequestConfig.Builder.class.getDeclaredMethod("setNormalizeUri",boolean.class);
+				me.invoke(builder,false);
+            }
+		} catch (Exception e) {
+		}
+		reConfig=builder.build();
+		//==END
 		PlainConnectionSocketFactory sf = PlainConnectionSocketFactory.getSocketFactory();
 		SSLContext sslContext;
 		SSLConnectionSocketFactory sslsf = null;

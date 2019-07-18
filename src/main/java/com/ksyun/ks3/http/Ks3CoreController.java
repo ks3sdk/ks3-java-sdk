@@ -2,6 +2,7 @@ package com.ksyun.ks3.http;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -15,6 +16,7 @@ import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -108,7 +110,21 @@ public class Ks3CoreController {
 		RequestBuilder.buildRequest(request, req, auth, ks3config);
 		HttpRequestBase httpRequest = RequestBuilder.buildHttpRequest(request,
 				req, auth, ks3config);
-
+		//==解决httpclient4.5.7以后版本会重新编解码uri造成签名失败的问题（exclude:4.5.7,未开放相关接口）
+		if(httpRequest.getConfig()==null){
+			try {
+				if(client.getClass().getDeclaredField("defaultConfig")!=null){
+                	Method m=client.getClass().getDeclaredMethod("getConfig");
+                	m.setAccessible(true);
+					RequestConfig reConfig= (RequestConfig) m.invoke(client);
+					if(reConfig!=null){
+						httpRequest.setConfig(reConfig);
+					}
+                }
+			} catch (Exception e) {
+			}
+		}
+		//===END
 		Ks3WebServiceResponse<Y> ksResponse = null;
 		try {
 			ksResponse = clazz.newInstance();
