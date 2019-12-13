@@ -237,7 +237,7 @@ public interface Ks3 {
 	 *             </p>
 	 */
 	public void putBucketLogging(String bucketName, boolean enable,
-			String targetBucket) throws Ks3ClientException, Ks3ServiceException;
+                                 String targetBucket) throws Ks3ClientException, Ks3ServiceException;
 
 	/**
 	 * PUT Bucket Logging
@@ -256,7 +256,7 @@ public interface Ks3 {
 	 *             </p>
 	 */
 	public void putBucketLogging(String bucketName, boolean enable,
-			String targetBucket, String targetPrefix)
+                                 String targetBucket, String targetPrefix)
 			throws Ks3ClientException, Ks3ServiceException;
 
 	/**
@@ -346,7 +346,7 @@ public interface Ks3 {
 	 *             </p>
 	 */
 	public void putBucketACL(String bucketName,
-			AccessControlList accessControlList) throws Ks3ClientException,
+                             AccessControlList accessControlList) throws Ks3ClientException,
 			Ks3ServiceException;
 
 	/**
@@ -363,7 +363,7 @@ public interface Ks3 {
 	 *             </p>
 	 */
 	public void putBucketACL(String bucketName,
-			CannedAccessControlList CannedAcl) throws Ks3ClientException,
+                             CannedAccessControlList CannedAcl) throws Ks3ClientException,
 			Ks3ServiceException;
 
 	/**
@@ -397,7 +397,7 @@ public interface Ks3 {
 	 *             </p>
 	 */
 	public void putObjectACL(String bucketName, String objectName,
-			CannedAccessControlList accessControlList)
+                             CannedAccessControlList accessControlList)
 			throws Ks3ClientException, Ks3ServiceException;
 
 	/**
@@ -416,7 +416,7 @@ public interface Ks3 {
 	 *             </p>
 	 */
 	public void putObjectACL(String bucketName, String objectName,
-			AccessControlList accessControlList) throws Ks3ClientException,
+                             AccessControlList accessControlList) throws Ks3ClientException,
 			Ks3ServiceException;
 
 	/**
@@ -764,7 +764,7 @@ public interface Ks3 {
 	 * @return
 	 * @throws Ks3ClientException
 	 */
-	public String generatePresignedUrl(String bucket, String key, int expiration,ResponseHeaderOverrides overrides)
+	public String generatePresignedUrl(String bucket, String key, int expiration, ResponseHeaderOverrides overrides)
 			throws Ks3ClientException;
 	/**
 	 * 生成外链
@@ -791,7 +791,7 @@ public interface Ks3 {
 	 *             </p>
 	 */
 	public PutObjectResult putObject(String bucketname, String objectkey,
-			File file) throws Ks3ClientException, Ks3ServiceException;
+                                     File file) throws Ks3ClientException, Ks3ServiceException;
 
 	/**
 	 * PUT OBJECT
@@ -816,7 +816,7 @@ public interface Ks3 {
 	 *             </p>
 	 */
 	public PutObjectResult putObject(String bucketname, String objectkey,
-			InputStream inputstream, ObjectMetadata objectmeta)
+                                     InputStream inputstream, ObjectMetadata objectmeta)
 			throws Ks3ClientException, Ks3ServiceException;
 	/**
 	 * PUT Object
@@ -830,7 +830,7 @@ public interface Ks3 {
 	 * 将一个字符串作为内容上传
 	 * </p>
 	 */
-	public PutObjectResult putObject(String bucketname,String objectkey,String content)
+	public PutObjectResult putObject(String bucketname, String objectkey, String content)
 	throws Ks3ClientException, Ks3ServiceException;
 
 	/**
@@ -867,7 +867,7 @@ public interface Ks3 {
 	 *             </p>
 	 */
 	public CopyResult copyObject(String destinationBucket,
-			String destinationObject, String sourceBucket, String sourceKey)
+                                 String destinationObject, String sourceBucket, String sourceKey)
 			throws Ks3ClientException, Ks3ServiceException;
 
 	/**
@@ -891,8 +891,8 @@ public interface Ks3 {
 	 *             </p>
 	 */
 	public CopyResult copyObject(String destinationBucket,
-			String destinationObject, String sourceBucket, String sourceKey,
-			CannedAccessControlList cannedAcl) throws Ks3ClientException,
+                                 String destinationObject, String sourceBucket, String sourceKey,
+                                 CannedAccessControlList cannedAcl) throws Ks3ClientException,
 			Ks3ServiceException;
 
 	/**
@@ -916,8 +916,8 @@ public interface Ks3 {
 	 *             </p>
 	 */
 	public CopyResult copyObject(String destinationBucket,
-			String destinationObject, String sourceBucket, String sourceKey,
-			AccessControlList accessControlList) throws Ks3ClientException,
+                                 String destinationObject, String sourceBucket, String sourceKey,
+                                 AccessControlList accessControlList) throws Ks3ClientException,
 			Ks3ServiceException;
 
 	/**
@@ -971,7 +971,7 @@ public interface Ks3 {
 	 * @param key
 	 * @return boolean
 	 */
-	public boolean objectExists(String bucket,String key);
+	public boolean objectExists(String bucket, String key);
 	/**
 	 * Initiate Multipart Upload
 	 * 
@@ -987,7 +987,7 @@ public interface Ks3 {
 	 *             </p>
 	 */
 	public InitiateMultipartUploadResult initiateMultipartUpload(
-			String bucketname, String objectkey) throws Ks3ClientException,
+            String bucketname, String objectkey) throws Ks3ClientException,
 			Ks3ServiceException;
 
 	/**
@@ -1003,7 +1003,7 @@ public interface Ks3 {
 	 *             </p>
 	 */
 	public InitiateMultipartUploadResult initiateMultipartUpload(
-			InitiateMultipartUploadRequest request) throws Ks3ClientException,
+            InitiateMultipartUploadRequest request) throws Ks3ClientException,
 			Ks3ServiceException;
 
 	/**
@@ -1059,8 +1059,8 @@ public interface Ks3 {
 	 *             </p>
 	 */
 	public CompleteMultipartUploadResult completeMultipartUpload(
-			String bucketname, String objectkey, String uploadId,
-			List<PartETag> partETags) throws Ks3ClientException,
+            String bucketname, String objectkey, String uploadId,
+            List<PartETag> partETags) throws Ks3ClientException,
 			Ks3ServiceException;
 
 	/**
@@ -1076,7 +1076,7 @@ public interface Ks3 {
 	 *             </p>
 	 */
 	public CompleteMultipartUploadResult completeMultipartUpload(
-			ListPartsResult result) throws Ks3ClientException,
+            ListPartsResult result) throws Ks3ClientException,
 			Ks3ServiceException;
 
 	/**
@@ -1092,7 +1092,7 @@ public interface Ks3 {
 	 *             </p>
 	 */
 	public CompleteMultipartUploadResult completeMultipartUpload(
-			CompleteMultipartUploadRequest request) throws Ks3ClientException,
+            CompleteMultipartUploadRequest request) throws Ks3ClientException,
 			Ks3ServiceException;
 
 	/**
@@ -1111,7 +1111,7 @@ public interface Ks3 {
 	 *             </p>
 	 */
 	public void abortMultipartUpload(String bucketname, String objectkey,
-			String uploadId) throws Ks3ClientException, Ks3ServiceException;
+                                     String uploadId) throws Ks3ClientException, Ks3ServiceException;
 
 	/**
 	 * Abort Multipart Upload
@@ -1144,7 +1144,7 @@ public interface Ks3 {
 	 *             </p>
 	 */
 	public ListPartsResult listParts(String bucketname, String objectkey,
-			String uploadId) throws Ks3ClientException, Ks3ServiceException;
+                                     String uploadId) throws Ks3ClientException, Ks3ServiceException;
 
 	/**
 	 * List Parts
@@ -1165,7 +1165,7 @@ public interface Ks3 {
 	 *             </p>
 	 */
 	public ListPartsResult listParts(String bucketname, String objectkey,
-			String uploadId, int maxParts) throws Ks3ClientException,
+                                     String uploadId, int maxParts) throws Ks3ClientException,
 			Ks3ServiceException;
 
 	/**
@@ -1189,7 +1189,7 @@ public interface Ks3 {
 	 *             </p>
 	 */
 	public ListPartsResult listParts(String bucketname, String objectkey,
-			String uploadId, int maxParts, int partNumberMarker)
+                                     String uploadId, int maxParts, int partNumberMarker)
 			throws Ks3ClientException, Ks3ServiceException;
 
 	/**
@@ -1235,7 +1235,7 @@ public interface Ks3 {
 	 *             </p>
 	 */
 	public ListMultipartUploadsResult listMultipartUploads(String bucketName,
-			String prefix) throws Ks3ClientException, Ks3ServiceException;
+                                                           String prefix) throws Ks3ClientException, Ks3ServiceException;
 
 	/**
 	 * List Multipart Uploads
@@ -1271,7 +1271,7 @@ public interface Ks3 {
 	 *             </p>
 	 */
 	public ListMultipartUploadsResult listMultipartUploads(String bucketName,
-			String prefix, String keyMarker, String uploadIdMarker)
+                                                           String prefix, String keyMarker, String uploadIdMarker)
 			throws Ks3ClientException, Ks3ServiceException;
 
 	/**
@@ -1287,7 +1287,7 @@ public interface Ks3 {
 	 *             </p>
 	 */
 	public ListMultipartUploadsResult listMultipartUploads(
-			ListMultipartUploadsRequest request) throws Ks3ClientException,
+            ListMultipartUploadsRequest request) throws Ks3ClientException,
 			Ks3ServiceException;
 	/**
 	 * PUT Bucket cors
@@ -1342,7 +1342,7 @@ public interface Ks3 {
 	 * <p>对于自定义的request和response可以通过这个方法执行</p>
 	 */
 	public <X extends Ks3WebServiceResponse<Y>, Y> Y execute(
-			Ks3WebServiceRequest request, Class<X> clazz)
+            Ks3WebServiceRequest request, Class<X> clazz)
 			throws Ks3ClientException, Ks3ServiceException;
 	/**
 	 * 
@@ -1363,7 +1363,7 @@ public interface Ks3 {
 	 * <p>通过bucket和表单中的除 Signature、KSSAccessKeyId、policy外的所有表单项 获取post object时表单中的Signature、KSSAccessKeyId、policy三项的值</p>
 	 * <p>由此方法生成的签名只能适用于本次请求，matchingType全部使用eq或通配</p>
 	 */
-	public PostObjectFormFields postObject(String bucket,String filename,Map<String,String> postFormData,List<String> unknowValueFormFiled) throws Ks3ClientException;
+	public PostObjectFormFields postObject(String bucket, String filename, Map<String, String> postFormData, List<String> unknowValueFormFiled) throws Ks3ClientException;
 	/**
 	 * 
 	 * @param bucketName 要处理的数据所在的bucket
@@ -1375,7 +1375,7 @@ public interface Ks3 {
 	 * 
 	 * <p>添加数据处理任务</p>
 	 */
-	public PutAdpResult putAdpTask(String bucketName,String objectKey,List<Adp> adps) throws Ks3ClientException, Ks3ServiceException;;
+	public PutAdpResult putAdpTask(String bucketName, String objectKey, List<Adp> adps) throws Ks3ClientException, Ks3ServiceException;;
 	/**
 	 * 
 	 * @param bucketName 要处理的数据所在的bucket
@@ -1388,7 +1388,7 @@ public interface Ks3 {
 	 * 
 	 * <p>添加数据处理任务</p>
 	 */
-	public PutAdpResult putAdpTask(String bucketName,String objectKey,List<Adp> adps,String notifyURL) throws Ks3ClientException, Ks3ServiceException;
+	public PutAdpResult putAdpTask(String bucketName, String objectKey, List<Adp> adps, String notifyURL) throws Ks3ClientException, Ks3ServiceException;
 	/**
 	 * 
 	 * @param request {@link PutAdpRequest}
@@ -1455,14 +1455,14 @@ public interface Ks3 {
 	 * @throws Ks3ServiceException
 	 * <p>删除生命周期配置</p>
 	 */
-	public void deleteBucketLifecycle(String  bucket);
+	public void deleteBucketLifecycle(String bucket);
 	/**
 	 * @param request {@link DeleteBucketLifecycleRequest}
 	 * @throws Ks3ClientException
 	 * @throws Ks3ServiceException
 	 * <p>删除生命周期配置</p>
 	 */
-	public void deleteBucketLifecycle(DeleteBucketLifecycleRequest  request);
+	public void deleteBucketLifecycle(DeleteBucketLifecycleRequest request);
 	
 	
 	/**
@@ -1473,18 +1473,17 @@ public interface Ks3 {
 	 * @throws Ks3ServiceException
 	 * <p>fetch 文件接口</p>
 	 */
-	public Ks3Result putObjectFetch(String bucketName,String objectKey,String sourceUrl);
+	public Ks3Result putObjectFetch(String bucketName, String objectKey, String sourceUrl);
 	/**
 	 * @param request {@link PutObjectFetchRequest}
 	 * @throws Ks3ClientException
 	 * @throws Ks3ServiceException
 	 * <p>fetch 文件接口</p>
 	 */
-	public Ks3Result putObjectFetch(PutObjectFetchRequest  request);
+	public Ks3Result putObjectFetch(PutObjectFetchRequest request);
 	
 	public RestoreObjectResult restoreObject(String bucketName, String objectKey);
 	
 	public RestoreObjectResult restoreObject(RestoreObjectRequest request);
-	
-	
+
 }

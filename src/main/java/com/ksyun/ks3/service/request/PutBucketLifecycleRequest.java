@@ -6,12 +6,12 @@ import static com.ksyun.ks3.exception.client.ClientIllegalArgumentExceptionGener
 import java.io.ByteArrayInputStream;
 import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 
 import com.fasterxml.jackson.databind.util.ISO8601Utils;
 import com.ksyun.ks3.config.Constants;
 import com.ksyun.ks3.dto.BucketLifecycleConfiguration;
 import com.ksyun.ks3.dto.BucketLifecycleConfiguration.Rule;
+import com.ksyun.ks3.dto.BucketLifecycleConfiguration.Transition;
 import com.ksyun.ks3.http.HttpHeaders;
 import com.ksyun.ks3.http.HttpMethod;
 import com.ksyun.ks3.http.Request;
@@ -66,18 +66,37 @@ public class PutBucketLifecycleRequest extends Ks3WebServiceRequest {
 			//Status
 			writer.start("Status").value(rule.getStatus().status2Str()).end();
 			
-			//Expiration
-			writer.start("Expiration");
-			if(rule.getExpirationDate() != null){
-				//timezone?
-				writer.start("Date").value(getISO8601Timestamp(rule.getExpirationDate())).end();
-			}
-			else{
-				if(rule.getExpirationInDays() > 0){
-				 writer.start("Days").value(rule.getExpirationInDays()).end();
+			if (rule.getExpirationDate() != null || (rule.getExpirationInDays() != null &&rule.getExpirationInDays() > 0)) {
+				//Expiration
+				writer.start("Expiration");
+				if (rule.getExpirationDate() != null) {
+					//timezone?
+					writer.start("Date").value(getISO8601Timestamp(rule.getExpirationDate())).end();
+				} else {
+					if (rule.getExpirationInDays() > 0) {
+						writer.start("Days").value(rule.getExpirationInDays()).end();
+					}
 				}
+				writer.end();
 			}
-			writer.end();
+			if(rule.getStorageTransitions() != null 
+					&& rule.getStorageTransitions().size()>0){
+				for(Transition trans : rule.getStorageTransitions()){
+					writer.start("Transition");
+					writer.start("StorageClass").value(trans.getStorageClass().toString()).end();
+					if(trans.getTransDate() != null){
+						//timezone?
+						writer.start("Date").value(getISO8601Timestamp(trans.getTransDate())).end();
+					}
+					else{
+						if(trans.getTransDays() > 0){
+						 writer.start("Days").value(trans.getTransDays()).end();
+						}
+					}
+					writer.end();
+				}
+				
+			}
 			
 			writer.end();
 		}
@@ -95,7 +114,7 @@ public class PutBucketLifecycleRequest extends Ks3WebServiceRequest {
 		if(lifecycleConfiguration == null)
 			throw notNull("lifecycleConfiguration");
 		if(lifecycleConfiguration.getRules() == null||lifecycleConfiguration.getRules().size() == 0)
-			throw notNull("bucketCorsConfiguration.rules");
+			throw notNull("bucketLifecycleConfiguration.rules");
 		if(lifecycleConfiguration.getRules().size() > Constants.lifecycleMaxRules)
 			throw between("lifecycleConfiguration.rules.size()",String.valueOf(lifecycleConfiguration.getRules().size()),"0",String.valueOf(Constants.lifecycleMaxRules));
 		List<Rule> rules = lifecycleConfiguration.getRules();

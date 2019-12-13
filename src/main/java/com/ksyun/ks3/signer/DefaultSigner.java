@@ -18,9 +18,15 @@ import com.ksyun.ks3.utils.AuthUtils;
 public class DefaultSigner implements Signer {
 	public void sign(Authorization auth, Request request) {
 		try {
-			if(!request.isPresign())
+			if(!request.isPresign()) {
+				if (auth.getSecurityToken() != null) {
+					request.addHeader(com.ksyun.ks3.http.HttpHeaders.XKssSecurityTokenHeader.toString(), auth.getSecurityToken());
+				}
 				request.addHeader(HttpHeaders.AUTHORIZATION.toString(),AuthUtils.calcAuthorization(auth, request));
-			else{
+			} else{
+				if (auth.getSecurityToken() != null) {
+					request.getQueryParams().put("security-token", auth.getSecurityToken());
+				}
 				request.getQueryParams().put("AccessKeyId",auth.getAccessKeyId());
 				request.getQueryParams().put("Signature",AuthUtils.calcSignature(auth.getAccessKeySecret(), request));
 				request.getQueryParams().put("Expires", String.valueOf(request.getExpires().getTime()/1000));

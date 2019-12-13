@@ -77,6 +77,7 @@ public enum HttpHeaders {
 	NotifyURL("kss-notifyurl", false),
 	TaskId("TaskID", false),
 
+	XKssMetadataDirective("metadata-directive"),
 	StorageClass("storage-class"),
 	/** * 客户端加密 */
 	CRYPTO_KEY("key"), 
@@ -95,7 +96,12 @@ public enum HttpHeaders {
 	 */
 	XKssSourceUrl("sourceurl"),
 	XKssForce("force"),
-	XKssFetchSourceHeader("fetchsourceheader");
+	XKssFetchSourceHeader("fetchsourceheader"),
+
+	/**
+	 * securityToken
+	 */
+	XKssSecurityTokenHeader("security-token");
 	private String value;
 	private String value2;
 	private boolean isSpecHeader;

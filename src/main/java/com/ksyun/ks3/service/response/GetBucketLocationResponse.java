@@ -13,7 +13,7 @@ import com.ksyun.ks3.dto.CreateBucketConfiguration.REGION;
  * 
  * @description 获取 bucket的存储地点
  **/
-public class GetBucketLocationResponse extends Ks3WebServiceXmlResponse<CreateBucketConfiguration.REGION>{
+public class GetBucketLocationResponse extends Ks3WebServiceXmlResponse<REGION>{
 
 	public int[] expectedStatus() {
 		return new int[]{200};

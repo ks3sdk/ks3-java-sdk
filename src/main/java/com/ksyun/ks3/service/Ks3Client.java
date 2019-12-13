@@ -1,53 +1,9 @@
 package com.ksyun.ks3.service;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.security.SignatureException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import org.apache.commons.codec.binary.Base64;
-import org.joda.time.DateTime;
-
 import com.ksyun.ks3.config.Constants;
-import com.ksyun.ks3.dto.AccessControlList;
-import com.ksyun.ks3.dto.AccessControlPolicy;
-import com.ksyun.ks3.dto.Adp;
-import com.ksyun.ks3.dto.AdpTask;
-import com.ksyun.ks3.dto.Authorization;
-import com.ksyun.ks3.dto.Bucket;
-import com.ksyun.ks3.dto.BucketCorsConfiguration;
-import com.ksyun.ks3.dto.BucketLifecycleConfiguration;
-import com.ksyun.ks3.dto.BucketLoggingStatus;
-import com.ksyun.ks3.dto.CannedAccessControlList;
-import com.ksyun.ks3.dto.CompleteMultipartUploadResult;
-import com.ksyun.ks3.dto.CopyResult;
+import com.ksyun.ks3.dto.*;
 import com.ksyun.ks3.dto.CreateBucketConfiguration.REGION;
-import com.ksyun.ks3.dto.GetObjectResult;
-import com.ksyun.ks3.dto.HeadBucketResult;
-import com.ksyun.ks3.dto.HeadObjectResult;
-import com.ksyun.ks3.dto.InitiateMultipartUploadResult;
-import com.ksyun.ks3.dto.Ks3Result;
-import com.ksyun.ks3.dto.ListMultipartUploadsResult;
-import com.ksyun.ks3.dto.ListPartsResult;
-import com.ksyun.ks3.dto.ObjectListing;
-import com.ksyun.ks3.dto.ObjectMetadata;
-import com.ksyun.ks3.dto.PartETag;
-import com.ksyun.ks3.dto.PostObjectFormFields;
-import com.ksyun.ks3.dto.PostPolicy;
-import com.ksyun.ks3.dto.PostPolicyCondition;
 import com.ksyun.ks3.dto.PostPolicyCondition.MatchingType;
-import com.ksyun.ks3.dto.PutAdpResult;
-import com.ksyun.ks3.dto.PutObjectResult;
-import com.ksyun.ks3.dto.ResponseHeaderOverrides;
-import com.ksyun.ks3.dto.RestoreObjectResult;
-import com.ksyun.ks3.dto.SSECustomerKey;
 import com.ksyun.ks3.exception.Ks3ClientException;
 import com.ksyun.ks3.exception.Ks3ServiceException;
 import com.ksyun.ks3.exception.client.ClientIllegalArgumentException;
@@ -56,81 +12,22 @@ import com.ksyun.ks3.exception.serviceside.NotFoundException;
 import com.ksyun.ks3.http.Ks3CoreController;
 import com.ksyun.ks3.http.Request;
 import com.ksyun.ks3.http.RequestBuilder;
-import com.ksyun.ks3.service.request.AbortMultipartUploadRequest;
-import com.ksyun.ks3.service.request.CompleteMultipartUploadRequest;
-import com.ksyun.ks3.service.request.CopyObjectRequest;
-import com.ksyun.ks3.service.request.CopyPartRequest;
-import com.ksyun.ks3.service.request.CreateBucketRequest;
-import com.ksyun.ks3.service.request.DeleteBucketCorsRequest;
-import com.ksyun.ks3.service.request.DeleteBucketLifecycleRequest;
-import com.ksyun.ks3.service.request.DeleteBucketRequest;
-import com.ksyun.ks3.service.request.DeleteObjectRequest;
-import com.ksyun.ks3.service.request.GeneratePresignedUrlRequest;
-import com.ksyun.ks3.service.request.GetAdpRequest;
-import com.ksyun.ks3.service.request.GetBucketACLRequest;
-import com.ksyun.ks3.service.request.GetBucketCorsRequest;
-import com.ksyun.ks3.service.request.GetBucketLifecycleRequest;
-import com.ksyun.ks3.service.request.GetBucketLocationRequest;
-import com.ksyun.ks3.service.request.GetBucketLoggingRequest;
-import com.ksyun.ks3.service.request.GetObjectACLRequest;
-import com.ksyun.ks3.service.request.GetObjectRequest;
-import com.ksyun.ks3.service.request.HeadBucketRequest;
-import com.ksyun.ks3.service.request.HeadObjectRequest;
-import com.ksyun.ks3.service.request.InitiateMultipartUploadRequest;
-import com.ksyun.ks3.service.request.Ks3WebServiceRequest;
-import com.ksyun.ks3.service.request.ListBucketsRequest;
-import com.ksyun.ks3.service.request.ListMultipartUploadsRequest;
-import com.ksyun.ks3.service.request.ListObjectsRequest;
-import com.ksyun.ks3.service.request.ListPartsRequest;
-import com.ksyun.ks3.service.request.PutAdpRequest;
-import com.ksyun.ks3.service.request.PutBucketACLRequest;
-import com.ksyun.ks3.service.request.PutBucketCorsRequest;
-import com.ksyun.ks3.service.request.PutBucketLifecycleRequest;
-import com.ksyun.ks3.service.request.PutBucketLoggingRequest;
-import com.ksyun.ks3.service.request.PutObjectACLRequest;
-import com.ksyun.ks3.service.request.PutObjectFetchRequest;
-import com.ksyun.ks3.service.request.PutObjectRequest;
-import com.ksyun.ks3.service.request.RestoreObjectRequest;
-import com.ksyun.ks3.service.request.UploadPartRequest;
-import com.ksyun.ks3.service.response.AbortMultipartUploadResponse;
-import com.ksyun.ks3.service.response.CompleteMultipartUploadResponse;
-import com.ksyun.ks3.service.response.CopyObjectResponse;
-import com.ksyun.ks3.service.response.CopyPartResponse;
-import com.ksyun.ks3.service.response.CreateBucketResponse;
-import com.ksyun.ks3.service.response.DeleteBucketCorsResponse;
-import com.ksyun.ks3.service.response.DeleteBucketLifecycleResponse;
-import com.ksyun.ks3.service.response.DeleteBucketResponse;
-import com.ksyun.ks3.service.response.DeleteObjectResponse;
-import com.ksyun.ks3.service.response.GetAdpResponse;
-import com.ksyun.ks3.service.response.GetBucketACLResponse;
-import com.ksyun.ks3.service.response.GetBucketCorsResponse;
-import com.ksyun.ks3.service.response.GetBucketLifecycleResponse;
-import com.ksyun.ks3.service.response.GetBucketLocationResponse;
-import com.ksyun.ks3.service.response.GetBucketLoggingResponse;
-import com.ksyun.ks3.service.response.GetObjectACLResponse;
-import com.ksyun.ks3.service.response.GetObjectResponse;
-import com.ksyun.ks3.service.response.HeadBucketResponse;
-import com.ksyun.ks3.service.response.HeadObjectResponse;
-import com.ksyun.ks3.service.response.InitiateMultipartUploadResponse;
-import com.ksyun.ks3.service.response.Ks3WebServiceResponse;
-import com.ksyun.ks3.service.response.ListBucketsResponse;
-import com.ksyun.ks3.service.response.ListMultipartUploadsResponse;
-import com.ksyun.ks3.service.response.ListObjectsResponse;
-import com.ksyun.ks3.service.response.ListPartsResponse;
-import com.ksyun.ks3.service.response.PutAdpResponse;
-import com.ksyun.ks3.service.response.PutBucketACLResponse;
-import com.ksyun.ks3.service.response.PutBucketCorsResponse;
-import com.ksyun.ks3.service.response.PutBucketLifecycleResponse;
-import com.ksyun.ks3.service.response.PutBucketLoggingResponse;
-import com.ksyun.ks3.service.response.PutObjectACLResponse;
-import com.ksyun.ks3.service.response.PutObjectFetchResponse;
-import com.ksyun.ks3.service.response.PutObjectResponse;
-import com.ksyun.ks3.service.response.RestoreObjectResponse;
-import com.ksyun.ks3.service.response.UploadPartResponse;
+import com.ksyun.ks3.service.request.*;
+import com.ksyun.ks3.service.response.*;
 import com.ksyun.ks3.utils.AuthUtils;
 import com.ksyun.ks3.utils.DateUtils;
 import com.ksyun.ks3.utils.DateUtils.DATETIME_PROTOCOL;
 import com.ksyun.ks3.utils.StringUtils;
+import org.apache.commons.codec.binary.Base64;
+import org.joda.time.DateTime;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.security.SignatureException;
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * @author lijunwei[lijunwei@kingsoft.com]  
@@ -219,8 +116,17 @@ public class Ks3Client implements Ks3 {
 	public Ks3Client(String accesskeyid, String accesskeysecret) {
 		this(new Authorization(accesskeyid, accesskeysecret));
 	}
+
+	public Ks3Client(String accesskeyid, String accesskeysecret, String securityToken) {
+		this(new Authorization(accesskeyid, accesskeysecret, securityToken));
+	}
+
 	public Ks3Client(String accesskeyid, String accesskeysecret,Ks3ClientConfig config){
 		this.auth =new Authorization(accesskeyid, accesskeysecret);
+		this.ks3config = config;
+	}
+	public Ks3Client(String accesskeyid, String accesskeysecret, String securityToken, Ks3ClientConfig config){
+		this.auth =new Authorization(accesskeyid, accesskeysecret, securityToken);
 		this.ks3config = config;
 	}
 	private Ks3CoreController client = new Ks3CoreController();
@@ -884,4 +790,5 @@ public class Ks3Client implements Ks3 {
 	public RestoreObjectResult restoreObject(RestoreObjectRequest request) {
 		return client.execute(ks3config, auth, request, RestoreObjectResponse.class);
 	}
+
 }

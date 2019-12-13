@@ -17,6 +17,7 @@ public class CallBackConfiguration {
 		bucket,/**文件上传的Bucket*/
 		key,/**文件的名称*/
 		etag,/**文件Md5值经过base64处理*/
+		encodedKey,/**文件的经过url编码的key*/
 		objectSize,/**文件大小*/
 		mimeType,/**文件类型*/
 		createTime/**文件创建时间.Unix时间戳表示，1420629372，精确到秒*/

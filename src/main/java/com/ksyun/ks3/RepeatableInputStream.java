@@ -42,7 +42,7 @@ public class RepeatableInputStream extends InputStream {
 	}
 
 	/**
-	 * @see java.io.InputStream#markSupported()
+	 * @see InputStream#markSupported()
 	 */
 	public boolean markSupported() {
 		return true;
@@ -76,21 +76,21 @@ public class RepeatableInputStream extends InputStream {
 	}
 
 	/**
-	 * @see java.io.InputStream#available()
+	 * @see InputStream#available()
 	 */
 	public int available() throws IOException {
 		return is.available();
 	}
 
 	/**
-	 * @see java.io.InputStream#close()
+	 * @see InputStream#close()
 	 */
 	public void close() throws IOException {
 		is.close();
 	}
 
 	/**
-	 * @see java.io.InputStream#read(byte[], int, int)
+	 * @see InputStream#read(byte[], int, int)
 	 */
 	public int read(byte[] out, int outOffset, int outLength)
 			throws IOException {
@@ -138,7 +138,7 @@ public class RepeatableInputStream extends InputStream {
 	}
 
 	/**
-	 * @see java.io.InputStream#read()
+	 * @see InputStream#read()
 	 */
 	public int read() throws IOException {
 		byte[] tmp = new byte[1];

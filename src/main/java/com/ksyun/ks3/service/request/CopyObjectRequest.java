@@ -1,5 +1,6 @@
 package com.ksyun.ks3.service.request;
 
+import com.ksyun.ks3.config.Constants;
 import com.ksyun.ks3.dto.AccessControlList;
 import com.ksyun.ks3.dto.CannedAccessControlList;
 import com.ksyun.ks3.dto.ObjectMetadata;
@@ -181,6 +182,11 @@ public class CopyObjectRequest extends Ks3WebServiceRequest{
 		request.setBucket(this.destinationBucket);
 		request.setKey(this.destinationKey);
 		request.addHeader(HttpHeaders.XKssCopySource,("/"+this.getSourceBucket()+"/"+HttpUtils.urlEncode(this.getSourceKey(),true)).replace("//", "/%2F"));
+		if (this.sourceBucket == this.destinationBucket && this.sourceKey == this.destinationKey && this.newObjectMetadata != null) {
+			if ("REPLACE".equals(this.newObjectMetadata.getMeta(HttpHeaders.XKssMetadataDirective.toString()))) {
+				request.addHeader(HttpHeaders.ContentType.toString(), null);
+			}
+		}
         if(getCannedAcl()!=null){
         	request.addHeader(HttpHeaders.CannedAcl,getCannedAcl().toString());
         }

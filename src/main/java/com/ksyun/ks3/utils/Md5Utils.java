@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -87,4 +88,68 @@ public class Md5Utils {
     public static String md5AsBase64(File file) throws FileNotFoundException, IOException {
         return Base64.encodeAsString(computeMD5Hash(file));
     }
+    
+	
+	/**
+	 * @Title:md5
+	 * @Description: 加密
+	 * @param str
+	 * @return String
+	 * @author kyj
+	 */
+	public static String md5(String str)
+	{
+		String key = md5(str, "MD5", "UTF-8");
+		
+		return key;
+	}
+	
+	/**
+	 * @method_name md5
+	 * @desc 
+	 * @param str
+	 * @param signType
+	 * @param charset
+	 * @return
+	 * @date 2014-9-16
+	 * @return String
+	 * @throws 
+	 * @author kyj
+	 */
+	public static String md5(String str, String signType, String charset)
+	{
+		if (str == null)
+		{
+			return null;
+		}
+
+		MessageDigest messageDigest = null;
+		try
+		{
+			messageDigest = MessageDigest.getInstance(signType);
+			messageDigest.reset();
+			messageDigest.update(str.getBytes(charset));
+		}
+		catch (NoSuchAlgorithmException e)
+		{
+			return str;
+		}
+		catch (UnsupportedEncodingException e)
+		{
+			return str;
+		}
+
+		byte[] byteArray = messageDigest.digest();
+
+		StringBuffer md5StrBuff = new StringBuffer();
+
+		for (int i = 0; i < byteArray.length; ++i)
+			if (Integer.toHexString(0xFF & byteArray[i]).length() == 1)
+				md5StrBuff.append("0").append(
+						Integer.toHexString(0xFF & byteArray[i]));
+			else
+				md5StrBuff.append(Integer.toHexString(0xFF & byteArray[i]));
+
+		return md5StrBuff.toString();
+	}
 }

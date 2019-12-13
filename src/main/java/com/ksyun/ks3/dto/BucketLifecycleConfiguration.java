@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.ksyun.ks3.exception.client.ClientIllegalArgumentException;
+import com.ksyun.ks3.service.common.StorageClass;
 import com.ksyun.ks3.utils.StringUtils;
 
 public class BucketLifecycleConfiguration {
@@ -68,6 +69,16 @@ public class BucketLifecycleConfiguration {
 		private Integer expirationInDays;
 
 		private Date expirationDate;
+		
+		private List<Transition> storageTransitions;
+
+		public List<Transition> getStorageTransitions() {
+			return storageTransitions;
+		}
+
+		public void setStorageTransitions(List<Transition> storageTransitions) {
+			this.storageTransitions = storageTransitions;
+		}
 
 		public void setId(String id) {
 			this.id = id;
@@ -115,7 +126,8 @@ public class BucketLifecycleConfiguration {
 		public String toString() {
 			return "BucketLifecycleConfiguration.Rule(id=" + getId() + ", prefix=" + getPrefix() + ", status="
 					+ getStatus() + ", expirationInDays=" + getExpirationInDays()
-					+ ", expirationDate=" + getExpirationDate() ;
+					+ ", expirationDate=" + getExpirationDate() 
+				    + ", storageTransitions=" + getStorageTransitions() ;
 		}
 		
 		
@@ -125,6 +137,7 @@ public class BucketLifecycleConfiguration {
 //	        validateFilter();
 	        validateExpiration();
 	        validateStatus();
+	        validateStorageTransition();
 	    }
 	    
 	    private void validateRuleId() throws ClientIllegalArgumentException {
@@ -144,8 +157,8 @@ public class BucketLifecycleConfiguration {
 	    }
 	    
 	    private void validateExpiration() throws ClientIllegalArgumentException {
-	        if (expirationInDays == null && expirationDate == null) {
-	        	throw notNull("expirationInDays","expirationDate");
+	        if (expirationInDays == null && expirationDate == null && (storageTransitions == null || storageTransitions.size() == 0)) {
+	        	throw notNull("expiration","transition");
 	            //throw between("expirationInDays",String.valueOf(expirationInDays),String.valueOf(0),String.valueOf(10000));
 	        }
 	        if (expirationInDays !=null && expirationDate != null) {
@@ -158,6 +171,13 @@ public class BucketLifecycleConfiguration {
 	        	}
 	        }
 	    }
+	    private void validateStorageTransition() throws ClientIllegalArgumentException {
+	        if (storageTransitions != null) {
+	            for(Transition transition : storageTransitions){
+	            	transition.validate();
+	            }
+	        }
+	    }
 	    
 	    private void validateStatus() throws ClientIllegalArgumentException {
 	        if (status == null) {
@@ -165,4 +185,88 @@ public class BucketLifecycleConfiguration {
 	        }
 	    }
 	}
+	
+	public static class Transition{
+		
+		private Integer transDays;
+		private Date transDate;
+		private StorageClass storageClass;
+		
+		public Transition() {
+			
+		}
+		
+		public Transition(Integer transDays, StorageClass storageClass) {
+			this.transDays = transDays;
+			this.storageClass = storageClass;
+		}
+
+		public Transition(Date transDate, StorageClass storageClass) {
+			this.transDate = transDate;
+			this.storageClass = storageClass;
+		}
+
+		public Integer getTransDays() {
+			return transDays;
+		}
+
+		public void setTransDays(Integer transDays) {
+			this.transDays = transDays;
+		}
+
+		public Date getTransDate() {
+			return transDate;
+		}
+
+		public void setTransDate(Date transDate) {
+			this.transDate = transDate;
+		}
+
+		public StorageClass getStorageClass() {
+			return storageClass;
+		}
+
+		public void setStorageClass(StorageClass storageClass) {
+			this.storageClass = storageClass;
+		}
+
+		@Override
+		public String toString() {
+			return "Transition [transDays=" + transDays + ", transDate=" + transDate + ", storageClass=" + storageClass
+					+ "]";
+		}
+		
+		   public void validate() throws ClientIllegalArgumentException {
+		    	
+		    	if(storageClass == null){
+		    		throw new ClientIllegalArgumentException("missing transition storageClass");
+		    	}
+		    	
+		    	
+		        if (transDays == null && transDate == null) {
+		            throw new ClientIllegalArgumentException("missing transition transDate and days");
+		        }
+		        
+		        if (transDays != null && transDate != null) {
+		            throw new ClientIllegalArgumentException("conflict transition transDate and days");
+		        }
+		        
+		        
+		        if (transDays != null) {
+		                if (transDays <= 0) {
+		                    throw new ClientIllegalArgumentException("transDays must be positive");
+		                }
+		                
+		                if (transDays > 10000) {
+		                    throw new ClientIllegalArgumentException("transDays cannot be greater than 10000");
+		                }
+		        }
+		    }
+		
+		
+		
+		
+		
+	}
+	
 }

@@ -182,7 +182,7 @@ public class AuthUtils {
     }
 	private static final String HMAC_SHA1_ALGORITHM = "HmacSHA1";
 	public static String calculateRFC2104HMAC(String data, String key)
-			throws java.security.SignatureException {
+			throws SignatureException {
 		String result;
 		try {
 
@@ -208,10 +208,10 @@ public class AuthUtils {
 	}
 	//专为计算resource提供的方法
 	public static String encodeParams(Map<String,String> params) {
-		List<Map.Entry<String, String>> arrayList = new ArrayList<Map.Entry<String, String>>(
+		List<Entry<String, String>> arrayList = new ArrayList<Entry<String, String>>(
 				params.entrySet());
 		Collections.sort(arrayList,
-				new Comparator<Map.Entry<String, String>>() {
+				new Comparator<Entry<String, String>>() {
 					public int compare(Entry<String, String> o1,
 							Entry<String, String> o2) {
 						return o1.getKey().compareTo(o2.getKey());

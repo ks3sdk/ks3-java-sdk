@@ -12,5 +12,5 @@ import com.ksyun.ks3.service.request.Ks3WebServiceRequest;
  * @description 签名计算器
  **/
 public interface Signer {
-	public void sign(Authorization auth,Request request);
+	public void sign(Authorization auth, Request request);
 }
