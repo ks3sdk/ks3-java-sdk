@@ -52,8 +52,12 @@ public class RequestBuilder {
 				(ks3Request instanceof GetObjectRequest || ks3Request instanceof HeadObjectRequest)){
 			request.addHeader("Accept-Encoding","none");
 		}
-		if(!request.isPresign())
+		if(!request.isPresign()) {
 			request.addHeaderIfNotContains(HttpHeaders.ContentType.toString(),"application/xml");
+			if (request.getHeaders().get(HttpHeaders.ContentType.toString()) == null) {
+				request.getHeaders().remove(HttpHeaders.ContentType.toString());
+			}
+		}
 		String endpoint0 = ks3Request.getRequestConfig().getEndpoint();
 		if(StringUtils.isBlank(endpoint0)){
 			endpoint0 = ks3config.getEndpoint();

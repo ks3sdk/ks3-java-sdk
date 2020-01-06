@@ -4,7 +4,7 @@
 	<groupId>com.ksyun</groupId>
 	<artifactId>ks3-kss-java-sdk</artifactId>
 
-	<version>0.8.14</version>
+	<version>0.8.14.1</version>
 	<name>ks3-kss-java-sdk</name>
 	<url>http://maven.apache.org</url>
 	<description>Java SDK for KS3</description>
