@@ -1,5 +1,6 @@
 package com.ksyun.ks3.service;
 
+
 import com.ksyun.ks3.config.Constants;
 import com.ksyun.ks3.dto.*;
 import com.ksyun.ks3.dto.CreateBucketConfiguration.REGION;
@@ -122,6 +123,8 @@ public class Ks3Client implements Ks3 {
 	}
 
 	public Ks3Client(String accesskeyid, String accesskeysecret,Ks3ClientConfig config){
+		if (config.getVersion() == Ks3ClientConfig.SignerVersion.V4 && config.getRegion() == null)
+			throw new Ks3ClientException("V4Signer must set region");
 		this.auth =new Authorization(accesskeyid, accesskeysecret);
 		this.ks3config = config;
 	}
@@ -153,6 +156,29 @@ public class Ks3Client implements Ks3 {
 			throws Ks3ClientException, Ks3ServiceException {
 		return this.client.execute(ks3config,auth, request,
 				GetBucketLocationResponse.class);
+	}
+
+	public void putBucketReplicationConfiguration(String bucketName,ReplicationRule rule)
+			throws Ks3ClientException, Ks3ServiceException{
+		PutBucketReplicationConfigurationRequest request = new PutBucketReplicationConfigurationRequest(bucketName,rule);
+		this.putBucketReplicationConfiguration(request);
+	}
+
+	public ReplicationRule getBucketReplicationConfiguration(String bucketName)
+			throws Ks3ClientException, Ks3ServiceException{
+		GetBucketReplicationConfigurationRequest request = new GetBucketReplicationConfigurationRequest(bucketName);
+		return client.execute(ks3config, auth, request, GetBucketReplicationConfigurationResponse.class);
+	}
+
+	public void deleteBucketReplicationConfiguration(String bucketName)
+			throws Ks3ClientException, Ks3ServiceException{
+		DeleteBucketReplicationConfigurationRequest request = new DeleteBucketReplicationConfigurationRequest(bucketName);
+		client.execute(ks3config, auth, request, DeleteBucketReplicationConfigurationResponse.class);
+	}
+
+	public void putBucketReplicationConfiguration(PutBucketReplicationConfigurationRequest request)
+			throws Ks3ClientException, Ks3ServiceException{
+		client.execute(ks3config, auth, request, PutBucketReplicationConfigurationResponse.class);
 	}
 
 	public BucketLoggingStatus getBucketLogging(String bucketName)
@@ -356,7 +382,7 @@ public class Ks3Client implements Ks3 {
 
 	public HeadBucketResult headBucket(String bucketname)
 			throws Ks3ClientException, Ks3ServiceException {
-		return this.headBucket(new HeadBucketRequest(bucketname));
+        return this.headBucket(new HeadBucketRequest(bucketname));
 	}
 
 	public HeadBucketResult headBucket(HeadBucketRequest request)
@@ -789,6 +815,33 @@ public class Ks3Client implements Ks3 {
 	
 	public RestoreObjectResult restoreObject(RestoreObjectRequest request) {
 		return client.execute(ks3config, auth, request, RestoreObjectResponse.class);
+	}
+
+	public void putObjectTagging(String bucketName, String objectName, ObjectTagging objectTagging) {
+		PutObjectTaggingRequest request = new PutObjectTaggingRequest(bucketName, objectName, objectTagging);
+		client.execute(ks3config,auth, request, PutObjectTaggingResponse.class);
+	}
+
+	public void putObjectTagging(PutObjectTaggingRequest request) {
+		client.execute(ks3config,auth, request, PutObjectTaggingResponse.class);
+	}
+
+	public ObjectTagging getObjectTagging(String bucketName, String objectName) {
+		GetObjectTaggingRequest request = new GetObjectTaggingRequest(bucketName, objectName);
+		return client.execute(ks3config,auth, request, GetObjectTaggingResponse.class);
+	}
+
+	public ObjectTagging getObjectTagging(GetObjectTaggingRequest request) {
+		return client.execute(ks3config,auth, request, GetObjectTaggingResponse.class);
+	}
+
+	public void deleteObjectTagging(String bucketName, String objectName) {
+		DeleteObjectTaggingRequest request = new DeleteObjectTaggingRequest(bucketName, objectName);
+		client.execute(ks3config,auth, request, DeleteObjectTaggingResponse.class);
+	}
+
+	public void deleteObjectTagging(DeleteObjectTaggingRequest request) {
+		client.execute(ks3config,auth, request, DeleteObjectTaggingResponse.class);
 	}
 
 }

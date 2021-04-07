@@ -197,6 +197,9 @@ public class CompleteMultipartUploadRequest extends Ks3WebServiceRequest {
 				bodyString = bodyString.substring(0,bodyString.length()-1);
 			}
 			request.addHeader(HttpHeaders.XKssCallbackBody.toString(),bodyString);
+			if (callBackConfiguration.getCallBackAuth()){
+				request.addHeader(HttpHeaders.XKssCallbackAuth, "1");
+			}
 		}
 		if(this.adps!=null&&adps.size()>0){
 			request.addHeader(HttpHeaders.AsynchronousProcessingList.toString(), URLEncoder.encode(HttpUtils.convertAdps2String(adps)));

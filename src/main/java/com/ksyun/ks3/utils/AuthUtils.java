@@ -1,7 +1,6 @@
 package com.ksyun.ks3.utils;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.security.SignatureException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,18 +22,19 @@ import com.ksyun.ks3.config.Constants;
 import com.ksyun.ks3.dto.Authorization;
 import com.ksyun.ks3.http.HttpHeaders;
 import com.ksyun.ks3.http.Request;
-import com.ksyun.ks3.service.request.Ks3WebServiceRequest;
 import com.ksyun.ks3.utils.DateUtils.DATETIME_PROTOCOL;
+
 
 /**
  * @author lijunwei[lijunwei@kingsoft.com]  
- * 
+ *
  * @date 2014年10月16日 下午7:31:45
- * 
- * @description 
+ *
+ * @description
  **/
 public class AuthUtils {
-	private static final Log log = LogFactory.getLog(AuthUtils.class); 
+
+	private static final Log log = LogFactory.getLog(AuthUtils.class);
 	public static String calcAuthorization (Authorization auth,Request request) throws SignatureException
 	{
 		String signature = calcSignature(auth.getAccessKeySecret(),request);
@@ -43,7 +43,7 @@ public class AuthUtils {
 	}
 	//post表单时的签名
 	/**
-	 * 
+	 *
 	 * @param accessKeySecret
 	 * @param policy  getPolicy(Date expiration,String bucket)得到的结果
 	 * @return
@@ -56,7 +56,7 @@ public class AuthUtils {
 	}
 	//post表单时的policy
 	/**
-	 * 
+	 *
 	 * @param expiration 该签名过期时间
 	 * @param bucket 该签名只能在该bucket上使用
 	 * @return
@@ -64,8 +64,8 @@ public class AuthUtils {
 	@Deprecated
 	public static String getPolicy(Date expiration,String bucket) {
 		String policy = "{\"expiration\": \""
-						+DateUtils.convertDate2Str(expiration, DATETIME_PROTOCOL.ISO8861)
-						+"\",\"conditions\": [ {\"bucket\": \""+bucket+"\"}]}";
+				+DateUtils.convertDate2Str(expiration, DATETIME_PROTOCOL.ISO8861)
+				+"\",\"conditions\": [ {\"bucket\": \""+bucket+"\"}]}";
 		log.debug("policy:"+policy);
 		try {
 			String _policy = new String(Base64.encodeBase64(policy.getBytes("UTF-8")),"UTF-8");
@@ -83,103 +83,104 @@ public class AuthUtils {
 		resource = resource.replace("//", "/%2F");
 		if(!StringUtils.isBlank(paramsToSign))
 			resource+="?"+paramsToSign;
-		 List<String> signList = new ArrayList<String>();
-	        signList.addAll(Arrays.asList(new String[] {
-	                requestMethod,"","",String.valueOf(_signDate),resource
-	        }));
-	    String signStr = StringUtils.join(signList.toArray(), "\n");
-	    log.debug("StringToSign:"+signStr.replace("\n","\\n"));
+		List<String> signList = new ArrayList<String>();
+		signList.addAll(Arrays.asList(new String[] {
+				requestMethod,"","",String.valueOf(_signDate),resource
+		}));
+		String signStr = StringUtils.join(signList.toArray(), "\n");
+		log.debug("StringToSign:"+signStr.replace("\n","\\n"));
 		return calculateRFC2104HMAC(signStr, accessKeySecret);
 	}
 	//普通
 	public static String calcSignature (String accessKeySecret,Request request) throws SignatureException
 	{
-        String resource = CanonicalizedKSSResource(request);
-        String requestMethod = request.getMethod().toString();
-        String contentMd5 = request.getHeaders().containsKey(HttpHeaders.ContentMD5.toString())?request.getHeaders().get(HttpHeaders.ContentMD5.toString()):"";
-        String contentType = request.getHeaders().containsKey(HttpHeaders.ContentType.toString())?request.getHeaders().get(HttpHeaders.ContentType.toString()):"";
-        String _signDate;
-        if(request.isPresign()){
-        	_signDate =String.valueOf(request.getExpires().getTime()/1000);
-        }else{
-            request.addHeaderIfNotContains(HttpHeaders.Date.toString(), DateUtils.convertDate2Str(new Date(), DATETIME_PROTOCOL.RFC1123));
-            _signDate = request.getHeaders().get(HttpHeaders.Date.toString());	
-        }
+		String resource = CanonicalizedKSSResource(request);
+		String requestMethod = request.getMethod().toString();
+		String contentMd5 = request.getHeaders().containsKey(HttpHeaders.ContentMD5.toString())?request.getHeaders().get(HttpHeaders.ContentMD5.toString()):"";
+		String contentType = request.getHeaders().containsKey(HttpHeaders.ContentType.toString())?request.getHeaders().get(HttpHeaders.ContentType.toString()):"";
+		String _signDate;
+		if(request.isPresign()){
+			_signDate =String.valueOf(request.getExpires().getTime()/1000);
+		}else{
+			request.addHeaderIfNotContains(HttpHeaders.Date.toString(), DateUtils.convertDate2Str(new Date(), DATETIME_PROTOCOL.RFC1123));
+			_signDate = request.getHeaders().get(HttpHeaders.Date.toString());
 
-        List<String> signList = new ArrayList<String>();
-        signList.addAll(Arrays.asList(new String[] {
-                requestMethod, contentMd5, contentType, _signDate
-        }));
+		}
 
-        String _headers = CanonicalizedKSSHeaders(request);
-        if (_headers != null && !_headers.equals("")){
-            signList.add(_headers);
-        }
+		List<String> signList = new ArrayList<String>();
+		signList.addAll(Arrays.asList(new String[] {
+				requestMethod, contentMd5, contentType, _signDate
+		}));
 
-        signList.add(resource);
-        
-        String signStr = StringUtils.join(signList.toArray(), "\n");
-        
-        log.debug("StringToSign:"+signStr.replace("\n","\\n"));
-        
-        String serverSignature = calculateRFC2104HMAC(signStr, accessKeySecret);
-        return serverSignature;
+		String _headers = CanonicalizedKSSHeaders(request);
+		if (_headers != null && !_headers.equals("")){
+			signList.add(_headers);
+		}
+
+		signList.add(resource);
+
+		String signStr = StringUtils.join(signList.toArray(), "\n");
+
+		log.debug("StringToSign:"+signStr.replace("\n","\\n"));
+
+		String serverSignature = calculateRFC2104HMAC(signStr, accessKeySecret);
+		return serverSignature;
 	}
-    public static String CanonicalizedKSSResource(Request request) {
-    	boolean escapeDoubleSlash = true;
+	public static String CanonicalizedKSSResource(Request request) {
+		boolean escapeDoubleSlash = true;
 
-        String bucketName = request.getBucket();
-        String objectKey = request.getKey();
+		String bucketName = request.getBucket();
+		String objectKey = request.getKey();
 
-        StringBuffer buffer = new StringBuffer();
-        buffer.append("/");
-        if (!StringUtils.isBlank(bucketName)) {
-            buffer.append(bucketName).append("/");
-        }
-        
-        if (!StringUtils.isBlank(objectKey)) {
-        	String encodedPath = HttpUtils.urlEncode(objectKey, true);
-            buffer.append(encodedPath);
-        }
-        
-        String resource = buffer.toString();
-        if (escapeDoubleSlash) {
-        	resource = resource.replace("//", "/%2F");
-        }
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("/");
+		if (!StringUtils.isBlank(bucketName)) {
+			buffer.append(bucketName).append("/");
+		}
 
-        String queryParams = encodeParams(request.getQueryParams());
-        if (queryParams != null && !queryParams.equals(""))
-        	resource = resource + "?" + queryParams;
-        return resource;
-    }
-    private static String CanonicalizedKSSHeaders(Request request) {
-    	String prefix = Constants.specHeaderPrefix;
-        Map<String, String> headers = request.getHeaders();
+		if (!StringUtils.isBlank(objectKey)) {
+			String encodedPath = HttpUtils.urlEncode(objectKey, true);
+			buffer.append(encodedPath);
+		}
 
-        List<String> headList = new ArrayList<String>();
+		String resource = buffer.toString();
+		if (escapeDoubleSlash) {
+			resource = resource.replace("//", "/%2F");
+		}
 
-        for (String _header : headers.keySet()) {
-            if (_header.toLowerCase().startsWith(prefix)) {
-                headList.add(_header);
-            }
-        }
+		String queryParams = encodeParams(request.getQueryParams());
+		if (queryParams != null && !queryParams.equals(""))
+			resource = resource + "?" + queryParams;
+		return resource;
+	}
+	private static String CanonicalizedKSSHeaders(Request request) {
+		String prefix = Constants.specHeaderPrefix;
+		Map<String, String> headers = request.getHeaders();
 
-        Collections.sort(headList, new Comparator<String>() {
+		List<String> headList = new ArrayList<String>();
+
+		for (String _header : headers.keySet()) {
+			if (_header.toLowerCase().startsWith(prefix)) {
+				headList.add(_header);
+			}
+		}
+
+		Collections.sort(headList, new Comparator<String>() {
 
 			public int compare(String o1, String o2) {
 				return o1.compareTo(o2);
 			}
-         
-        });
-        StringBuffer buffer = new StringBuffer();
-        for (int i = 0; i < headList.size(); i++) {
-            String _key = headList.get(i);
-            buffer.append(headList.get(i).toLowerCase() + ":" + headers.get(_key));
-            if (i < (headList.size() - 1))
-                buffer.append("\n");
-        }
-        return buffer.toString();
-    }
+
+		});
+		StringBuffer buffer = new StringBuffer();
+		for (int i = 0; i < headList.size(); i++) {
+			String _key = headList.get(i);
+			buffer.append(headList.get(i).toLowerCase() + ":" + headers.get(_key));
+			if (i < (headList.size() - 1))
+				buffer.append("\n");
+		}
+		return buffer.toString();
+	}
 	private static final String HMAC_SHA1_ALGORITHM = "HmacSHA1";
 	public static String calculateRFC2104HMAC(String data, String key)
 			throws SignatureException {
@@ -213,7 +214,7 @@ public class AuthUtils {
 		Collections.sort(arrayList,
 				new Comparator<Entry<String, String>>() {
 					public int compare(Entry<String, String> o1,
-							Entry<String, String> o2) {
+									   Entry<String, String> o2) {
 						return o1.getKey().compareTo(o2.getKey());
 					}
 				});
@@ -236,4 +237,7 @@ public class AuthUtils {
 
 		return StringUtils.join(kvList.toArray(), "&");
 	}
+
+
+
 }

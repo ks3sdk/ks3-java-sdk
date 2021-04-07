@@ -26,6 +26,8 @@ public class CallBackConfiguration {
 	 * 回调地址
 	 */
 	private String callBackUrl;
+
+	private Boolean callBackAuth = false;
 	/**
 	 *KS3 服务器回调时body中带的魔法参数
 	 */
@@ -37,9 +39,11 @@ public class CallBackConfiguration {
 	public String getCallBackUrl() {
 		return callBackUrl;
 	}
+	public Boolean getCallBackAuth() {return callBackAuth;}
 	public void setCallBackUrl(String callBackUrl) {
 		this.callBackUrl = callBackUrl;
 	}
+	public void setCallBackAuth(Boolean callBackAuth){this.callBackAuth = callBackAuth;}
 	
 	public Map<String, MagicVariables> getBodyMagicVariables() {
 		return bodyMagicVariables;

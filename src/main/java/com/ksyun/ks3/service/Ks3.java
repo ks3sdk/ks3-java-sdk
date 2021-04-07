@@ -5,73 +5,11 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
-import com.ksyun.ks3.dto.AccessControlList;
-import com.ksyun.ks3.dto.AccessControlPolicy;
-import com.ksyun.ks3.dto.Adp;
-import com.ksyun.ks3.dto.AdpTask;
-import com.ksyun.ks3.dto.Authorization;
-import com.ksyun.ks3.dto.Bucket;
-import com.ksyun.ks3.dto.BucketCorsConfiguration;
-import com.ksyun.ks3.dto.BucketLifecycleConfiguration;
-import com.ksyun.ks3.dto.BucketLoggingStatus;
-import com.ksyun.ks3.dto.CannedAccessControlList;
-import com.ksyun.ks3.dto.CompleteMultipartUploadResult;
-import com.ksyun.ks3.dto.CopyResult;
+import com.ksyun.ks3.dto.*;
 import com.ksyun.ks3.dto.CreateBucketConfiguration.REGION;
-import com.ksyun.ks3.dto.GetObjectResult;
-import com.ksyun.ks3.dto.HeadBucketResult;
-import com.ksyun.ks3.dto.HeadObjectResult;
-import com.ksyun.ks3.dto.InitiateMultipartUploadResult;
-import com.ksyun.ks3.dto.Ks3Result;
-import com.ksyun.ks3.dto.ListMultipartUploadsResult;
-import com.ksyun.ks3.dto.ListPartsResult;
-import com.ksyun.ks3.dto.ObjectListing;
-import com.ksyun.ks3.dto.ObjectMetadata;
-import com.ksyun.ks3.dto.PartETag;
-import com.ksyun.ks3.dto.PostObjectFormFields;
-import com.ksyun.ks3.dto.PostPolicy;
-import com.ksyun.ks3.dto.PutAdpResult;
-import com.ksyun.ks3.dto.PutObjectResult;
-import com.ksyun.ks3.dto.ResponseHeaderOverrides;
-import com.ksyun.ks3.dto.RestoreObjectResult;
 import com.ksyun.ks3.exception.Ks3ClientException;
 import com.ksyun.ks3.exception.Ks3ServiceException;
-import com.ksyun.ks3.service.request.AbortMultipartUploadRequest;
-import com.ksyun.ks3.service.request.CompleteMultipartUploadRequest;
-import com.ksyun.ks3.service.request.CopyObjectRequest;
-import com.ksyun.ks3.service.request.CopyPartRequest;
-import com.ksyun.ks3.service.request.CreateBucketRequest;
-import com.ksyun.ks3.service.request.DeleteBucketCorsRequest;
-import com.ksyun.ks3.service.request.DeleteBucketLifecycleRequest;
-import com.ksyun.ks3.service.request.DeleteBucketRequest;
-import com.ksyun.ks3.service.request.DeleteObjectRequest;
-import com.ksyun.ks3.service.request.GeneratePresignedUrlRequest;
-import com.ksyun.ks3.service.request.GetAdpRequest;
-import com.ksyun.ks3.service.request.GetBucketACLRequest;
-import com.ksyun.ks3.service.request.GetBucketCorsRequest;
-import com.ksyun.ks3.service.request.GetBucketLifecycleRequest;
-import com.ksyun.ks3.service.request.GetBucketLocationRequest;
-import com.ksyun.ks3.service.request.GetBucketLoggingRequest;
-import com.ksyun.ks3.service.request.GetObjectACLRequest;
-import com.ksyun.ks3.service.request.GetObjectRequest;
-import com.ksyun.ks3.service.request.HeadBucketRequest;
-import com.ksyun.ks3.service.request.HeadObjectRequest;
-import com.ksyun.ks3.service.request.InitiateMultipartUploadRequest;
-import com.ksyun.ks3.service.request.Ks3WebServiceRequest;
-import com.ksyun.ks3.service.request.ListBucketsRequest;
-import com.ksyun.ks3.service.request.ListMultipartUploadsRequest;
-import com.ksyun.ks3.service.request.ListObjectsRequest;
-import com.ksyun.ks3.service.request.ListPartsRequest;
-import com.ksyun.ks3.service.request.PutAdpRequest;
-import com.ksyun.ks3.service.request.PutBucketACLRequest;
-import com.ksyun.ks3.service.request.PutBucketCorsRequest;
-import com.ksyun.ks3.service.request.PutBucketLifecycleRequest;
-import com.ksyun.ks3.service.request.PutBucketLoggingRequest;
-import com.ksyun.ks3.service.request.PutObjectACLRequest;
-import com.ksyun.ks3.service.request.PutObjectFetchRequest;
-import com.ksyun.ks3.service.request.PutObjectRequest;
-import com.ksyun.ks3.service.request.RestoreObjectRequest;
-import com.ksyun.ks3.service.request.UploadPartRequest;
+import com.ksyun.ks3.service.request.*;
 import com.ksyun.ks3.service.response.Ks3WebServiceResponse;
 
 /**
@@ -192,6 +130,66 @@ public interface Ks3 {
 	 */
 	public REGION getBucketLoaction(GetBucketLocationRequest request)
 			throws Ks3ClientException, Ks3ServiceException;
+
+	/**
+	 * PUT Bucket crr
+	 *
+	 * @param bucketName
+	 * @param rule
+	 *
+	 * @return
+	 * @throws Ks3ClientException
+	 * @throws Ks3ServiceException
+	 *             <p>
+	 *             设置bucket的跨区域复制
+	 *             </p>
+	 */
+	public void putBucketReplicationConfiguration(String bucketName, ReplicationRule rule)
+			throws Ks3ClientException, Ks3ServiceException;
+
+	/**
+	 * PUT Bucket crr
+	 *
+	 * @param request
+	 *            {@link PutBucketReplicationConfigurationRequest}
+	 * @return
+	 * @throws Ks3ClientException
+	 * @throws Ks3ServiceException
+	 *             <p>
+	 *             设置bucket的跨区域复制
+	 *             </p>
+	 */
+	public void putBucketReplicationConfiguration(PutBucketReplicationConfigurationRequest request)
+			throws Ks3ClientException, Ks3ServiceException;
+
+	/**
+	 * GET Bucket crr
+	 *
+	 * @param bucketName
+	 * @return
+	 * @throws Ks3ClientException
+	 * @throws Ks3ServiceException
+	 *             <p>
+	 *             获取bucket的跨区域复制
+	 *             </p>
+	 */
+	public ReplicationRule getBucketReplicationConfiguration(String bucketName)
+			throws Ks3ClientException, Ks3ServiceException;
+
+	/**
+	 * DEL Bucket crr
+	 *
+	 * @param bucketName
+	 * @return
+	 * @throws Ks3ClientException
+	 * @throws Ks3ServiceException
+	 *             <p>
+	 *             删除bucket的跨区域复制
+	 *             </p>
+	 */
+	public void deleteBucketReplicationConfiguration(String bucketName)
+			throws Ks3ClientException, Ks3ServiceException;
+
 
 	/**
 	 * GET Bucket Logging
@@ -1485,5 +1483,17 @@ public interface Ks3 {
 	public RestoreObjectResult restoreObject(String bucketName, String objectKey);
 	
 	public RestoreObjectResult restoreObject(RestoreObjectRequest request);
+
+	public void putObjectTagging(String bucketName, String objectName, ObjectTagging objectTagging);
+
+	public void putObjectTagging(PutObjectTaggingRequest request);
+
+	public ObjectTagging getObjectTagging(String bucketName, String objectName);
+
+	public ObjectTagging getObjectTagging(GetObjectTaggingRequest request);
+
+	public void deleteObjectTagging(String bucketName, String objectName);
+
+	public void deleteObjectTagging(DeleteObjectTaggingRequest request);
 
 }

@@ -71,7 +71,7 @@ public class Md5Utils {
      * Returns the MD5 in base64 for the given byte array.
      */
     public static String md5AsBase64(byte[] input) {
-    	
+
         return Base64.encodeAsString(computeMD5Hash(input));
     }
 
@@ -88,68 +88,68 @@ public class Md5Utils {
     public static String md5AsBase64(File file) throws FileNotFoundException, IOException {
         return Base64.encodeAsString(computeMD5Hash(file));
     }
-    
-	
-	/**
-	 * @Title:md5
-	 * @Description: 加密
-	 * @param str
-	 * @return String
-	 * @author kyj
-	 */
-	public static String md5(String str)
-	{
-		String key = md5(str, "MD5", "UTF-8");
-		
-		return key;
-	}
-	
-	/**
-	 * @method_name md5
-	 * @desc 
-	 * @param str
-	 * @param signType
-	 * @param charset
-	 * @return
-	 * @date 2014-9-16
-	 * @return String
-	 * @throws 
-	 * @author kyj
-	 */
-	public static String md5(String str, String signType, String charset)
-	{
-		if (str == null)
-		{
-			return null;
-		}
 
-		MessageDigest messageDigest = null;
-		try
-		{
-			messageDigest = MessageDigest.getInstance(signType);
-			messageDigest.reset();
-			messageDigest.update(str.getBytes(charset));
-		}
-		catch (NoSuchAlgorithmException e)
-		{
-			return str;
-		}
-		catch (UnsupportedEncodingException e)
-		{
-			return str;
-		}
 
-		byte[] byteArray = messageDigest.digest();
+    /**
+     * @Title:md5
+     * @Description: 加密
+     * @param str
+     * @return String
+     * @author kyj
+     */
+    public static String md5(String str)
+    {
+        String key = md5(str, "MD5", "UTF-8");
 
-		StringBuffer md5StrBuff = new StringBuffer();
+        return key;
+    }
 
-		for (int i = 0; i < byteArray.length; ++i)
-			if (Integer.toHexString(0xFF & byteArray[i]).length() == 1)
-				md5StrBuff.append("0").append(
-						Integer.toHexString(0xFF & byteArray[i]));
-			else
-				md5StrBuff.append(Integer.toHexString(0xFF & byteArray[i]));
+    /**
+     * @method_name md5
+     * @desc
+     * @param str
+     * @param signType
+     * @param charset
+     * @return
+     * @date 2014-9-16
+     * @return String
+     * @throws
+     * @author kyj
+     */
+    public static String md5(String str, String signType, String charset)
+    {
+        if (str == null)
+        {
+            return null;
+        }
 
-		return md5StrBuff.toString();
-	}
+        MessageDigest messageDigest = null;
+        try
+        {
+            messageDigest = MessageDigest.getInstance(signType);
+            messageDigest.reset();
+            messageDigest.update(str.getBytes(charset));
+        }
+        catch (NoSuchAlgorithmException e)
+        {
+            return str;
+        }
+        catch (UnsupportedEncodingException e)
+        {
+            return str;
+        }
+
+        byte[] byteArray = messageDigest.digest();
+
+        StringBuffer md5StrBuff = new StringBuffer();
+
+        for (int i = 0; i < byteArray.length; ++i)
+            if (Integer.toHexString(0xFF & byteArray[i]).length() == 1)
+                md5StrBuff.append("0").append(
+                        Integer.toHexString(0xFF & byteArray[i]));
+            else
+                md5StrBuff.append(Integer.toHexString(0xFF & byteArray[i]));
+
+        return md5StrBuff.toString();
+    }
 }

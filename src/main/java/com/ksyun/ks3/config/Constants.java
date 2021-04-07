@@ -39,7 +39,7 @@ public class Constants {
 	public static final String defaultAlgm = "AES256";
 	
 	public static final int corsMaxRules = 100;
-	public static final int lifecycleMaxRules = 100;
+	public static final int lifecycleMaxRules = 1000;
 	
 	public static final String headerReg = "^[\\-0-9A-Z_a-z]+$";
 	public static String specHeaderPrefix = "x-kss-";

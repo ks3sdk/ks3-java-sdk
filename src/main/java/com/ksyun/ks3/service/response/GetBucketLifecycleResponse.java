@@ -3,6 +3,7 @@ package com.ksyun.ks3.service.response;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ksyun.ks3.dto.ObjectTag;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -21,6 +22,8 @@ public class GetBucketLifecycleResponse extends
 	private List<Rule> rules = new ArrayList<Rule>();
 	private List<Transition> storageTransList;
 	private Transition transition = null;
+	private List<ObjectTag> tagSet;
+	private ObjectTag tagging;
 
 	@Override
 	public void startDocument() throws SAXException {
@@ -34,8 +37,11 @@ public class GetBucketLifecycleResponse extends
 		if ("Rule".equals(tag)) {
 			rule = new Rule();
 			storageTransList = new ArrayList<Transition>();
+			tagSet = new ArrayList<ObjectTag>();
 		}else if ("Transition".equals(tag)){
 			transition = new Transition();
+		} else if ("Tag".equals(tag)) {
+			tagging = new ObjectTag();
 		}
 	}
 
@@ -47,11 +53,18 @@ public class GetBucketLifecycleResponse extends
 			if(storageTransList != null && storageTransList.size()>0){
 				rule.setStorageTransitions(storageTransList);
 			}
+			if (tagSet != null && tagSet.size()>0) {
+				rule.setTagSet(tagSet);
+			}
 			rules.add(rule);
 		} else if ("LifecycleConfiguration".equals(tag)) {
 			result.setRules(rules);
 		}else if ("Transition".equals(tag)){
 			storageTransList.add(transition);
+		} else if ("Tag".equals(tag)) {
+			if (tagSet != null) {
+				tagSet.add(tagging);
+			}
 		}
 	}
 
@@ -79,6 +92,12 @@ public class GetBucketLifecycleResponse extends
 			}
 			else if ("StorageClass".equals(tag)) {
 				transition.setStorageClass(StorageClass.fromValue(s));
+			}
+		} else if ("Tag".equals(getTag(1))) {
+			if ("Key".equals(tag)) {
+				tagging.setKey(s);
+			} else if ("Value".equals(tag)) {
+				tagging.setValue(s);
 			}
 		}
 		

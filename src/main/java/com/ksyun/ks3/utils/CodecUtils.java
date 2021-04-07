@@ -2,8 +2,7 @@ package com.ksyun.ks3.utils;
 
 /**
  * Codec internal utilities
- * 
- * @author Hanson Char
+ *
  */
 public enum CodecUtils {
     ;

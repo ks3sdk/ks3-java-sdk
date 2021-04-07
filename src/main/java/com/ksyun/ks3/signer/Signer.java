@@ -2,6 +2,7 @@ package com.ksyun.ks3.signer;
 
 import com.ksyun.ks3.dto.Authorization;
 import com.ksyun.ks3.http.Request;
+import com.ksyun.ks3.service.Ks3ClientConfig;
 import com.ksyun.ks3.service.request.Ks3WebServiceRequest;
 
 /**
@@ -13,4 +14,6 @@ import com.ksyun.ks3.service.request.Ks3WebServiceRequest;
  **/
 public interface Signer {
 	public void sign(Authorization auth, Request request);
+
+    public void signV4(Authorization auth, Request request, Ks3ClientConfig ks3config);
 }

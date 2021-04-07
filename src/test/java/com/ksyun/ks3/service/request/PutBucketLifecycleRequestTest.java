@@ -148,7 +148,7 @@ public class PutBucketLifecycleRequestTest {
 		rule.validate();
 		rule2.validate();
 		
-		for(int i = 0;i<200;i++){
+		for(int i = 0;i<1000;i++){
 			Rule rulenew = new Rule();
 			rulenew.setId("123456");
 			rulenew.setExpirationInDays(6);

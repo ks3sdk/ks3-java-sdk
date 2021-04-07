@@ -8,86 +8,89 @@ import com.ksyun.ks3.config.Constants;
  **/
 public enum HttpHeaders {
 	RequestId("request-id"),
-	Authorization("Authorization", false), 
-	Date("Date", false), 
-	Host("Host", false), 
+	Authorization("Authorization", false),
+	Date("Date", false),
+	Host("Host", false),
 	Server("Server", false),
 	UserAgent("User-Agent", false),
-	ExtendedRequestId("id-2"), 
-	ContentMD5("Content-MD5", false), 
+	ExtendedRequestId("id-2"),
+	ContentMD5("Content-MD5", false),
 	Expect("Expect", false),
-	IfMatch("If-Match",false), 
-	IfNoneMatch("If-None-Match", false), 
-	IfModifiedSince("If-Modified-Since", false), 
-	IfUnmodifiedSince("If-Unmodified-Since", false), 
-	XApplicationContext("X-Application-Context", false), 
-	XNoReferer("X-No-Referer", false), 
-	XBlackList("X-Black-List", false), 
-	XWhiteList("X-White-List", false), 
+	IfMatch("If-Match",false),
+	IfNoneMatch("If-None-Match", false),
+	IfModifiedSince("If-Modified-Since", false),
+	IfUnmodifiedSince("If-Unmodified-Since", false),
+	XApplicationContext("X-Application-Context", false),
+	XNoReferer("X-No-Referer", false),
+	XBlackList("X-Black-List", false),
+	XWhiteList("X-White-List", false),
 	XKssOp("Op", false),
 	// put object metadata
-	ContentLength("Content-Length", false), 
-	CacheControl("Cache-Control", false), 
-	ContentType("Content-Type", false), 
-	ContentDisposition("Content-Disposition",false), 
-	ContentEncoding("Content-Encoding", false), 
-	Expires("Expires", false), 
-	Range("Range", false), 
+	ContentLength("Content-Length", false),
+	CacheControl("Cache-Control", false),
+	ContentType("Content-Type", false),
+	ContentDisposition("Content-Disposition",false),
+	ContentEncoding("Content-Encoding", false),
+	Expires("Expires", false),
+	Range("Range", false),
 	ContentRange("Content-Range", false),
 	//
-	AcceptRanges("Accept-Ranges", false), 
+	AcceptRanges("Accept-Ranges", false),
 	Connection("Connection", false),
 	// acl
-	CannedAcl("acl"), 
+	CannedAcl("acl"),
 	AclPrivate("acl-private"),
 	AclPubicRead("acl-public-read"),
 	AclPublicReadWrite("acl-public-write"),
-	AclPublicAuthenticatedRead("acl-public-authenticated-read"), 
+	AclPublicAuthenticatedRead("acl-public-authenticated-read"),
 	GrantFullControl("grant-full-control"),
-	GrantRead("grant-read"), 
+	GrantRead("grant-read"),
 	GrantWrite("grant-write"),
 	//
-	ETag("ETag", false), 
+	ETag("ETag", false),
 	LastModified("Last-Modified", false),
 	// get object response
 	/** *default false */
-	XKssDeleteMarker("delete-marker"), 
+	XKssDeleteMarker("delete-marker"),
 	XKssExpiration("expiration"), /** * 服务端加密 */
-	XKssServerSideEncryption("server-side-encryption"), 
-	XKssServerSideEncryptionKMSKeyId("server-side-encryption-kss-kms-key-id","server-side-encryption-aws-kms-key-id"), 
+	XKssServerSideEncryption("server-side-encryption"),
+	XKssServerSideEncryptionKMSKeyId("server-side-encryption-kss-kms-key-id","server-side-encryption-aws-kms-key-id"),
 	XKssServerSideEncryptionCustomerAlgorithm("server-side-encryption-customer-algorithm"),
 	XkssServerSideEncryptionCustomerKey("server-side-encryption-customer-key"),
 	XkssServerSideEncryptionCustomerKeyMD5("server-side-encryption-customer-key-MD5"),
-	XKssCPSourceServerSideEncryptionCustomerAlgorithm("copy-source-server-side-encryption-customer-algorithm"), 
+	XKssCPSourceServerSideEncryptionCustomerAlgorithm("copy-source-server-side-encryption-customer-algorithm"),
 	XkssCPSourceServerSideEncryptionCustomerKey("copy-source-server-side-encryption-customer-key"),
 	XkssCPSourceServerSideEncryptionCustomerKeyMD5("copy-source-server-side-encryption-customer-key-MD5"), /**
 	 * * default
 	 * None
 	 */
 	XKssRestore("restore"), /** * default None */
-	XKssWebsiteRedirectLocation("website-redirect-location"), 
+	XKssWebsiteRedirectLocation("website-redirect-location"),
 	XKssCopySource("copy-source"),
 	XKssCopySourceRange("copy-source-range"), /**
 	 * *
 	 * callback
 	 */
+
 	XKssCallbackUrl("callbackurl"), 
-	XKssCallbackBody("callbackbody"), 
+	XKssCallbackBody("callbackbody"),
+	XKssCallbackAuth("callbackauth"),
 	AsynchronousProcessingList("kss-async-process", false), 
+
 	NotifyURL("kss-notifyurl", false),
 	TaskId("TaskID", false),
 
 	XKssMetadataDirective("metadata-directive"),
 	StorageClass("storage-class"),
 	/** * 客户端加密 */
-	CRYPTO_KEY("key"), 
-	CRYPTO_KEY_V2("key-v2"), 
-	CRYPTO_IV("iv"), 
+	CRYPTO_KEY("key"),
+	CRYPTO_KEY_V2("key-v2"),
+	CRYPTO_IV("iv"),
 	MATERIALS_DESCRIPTION("matdesc"),
 	UNENCRYPTED_CONTENT_MD5("unencrypted-content-md5"),
-	UNENCRYPTED_CONTENT_LENGTH("unencrypted-content-length"), 
-	CRYPTO_INSTRUCTION_FILE("crypto-instr-file"), 
-	CRYPTO_CEK_ALGORITHM("cek-alg"), 
+	UNENCRYPTED_CONTENT_LENGTH("unencrypted-content-length"),
+	CRYPTO_INSTRUCTION_FILE("crypto-instr-file"),
+	CRYPTO_CEK_ALGORITHM("cek-alg"),
 	CRYPTO_TAG_LENGTH("tag-len"),
 	CRYPTO_KEYWRAP_ALGORITHM("wrap-alg"),
 	Accept_Encoding("Accept-Encoding"),
@@ -101,7 +104,12 @@ public enum HttpHeaders {
 	/**
 	 * securityToken
 	 */
-	XKssSecurityTokenHeader("security-token");
+	XKssSecurityTokenHeader("security-token"),
+
+	//tagging
+	XKssTaggingDirective("tagging-directive"),
+	XKssTagging("tagging");
+
 	private String value;
 	private String value2;
 	private boolean isSpecHeader;

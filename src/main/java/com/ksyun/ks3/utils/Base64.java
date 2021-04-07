@@ -4,10 +4,7 @@ import javax.xml.bind.DatatypeConverter;
 
 /**
  * A Base 64 codec API.
- * 
- * See http://www.ietf.org/rfc/rfc4648.txt
- * 
- * @author Hanson Char
+ *
  */
 public enum Base64 {
     ;

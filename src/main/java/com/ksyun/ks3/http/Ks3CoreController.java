@@ -240,7 +240,7 @@ public class Ks3CoreController {
 		log.info(httpRequest.getRequestLine());
 		for (Header header : httpRequest.getAllHeaders()) {
 			log.info("Request Header->" + header.getName() + ":"
-					+ header.getValue());
+							   + header.getValue());
 		}
 		response = client.execute(httpRequest);
 		log.info(response.getStatusLine());

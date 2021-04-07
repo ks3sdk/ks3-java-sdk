@@ -17,9 +17,9 @@ import static com.ksyun.ks3.exception.client.ClientIllegalArgumentExceptionGener
 
 /**
  * @author lijunwei[lijunwei@kingsoft.com]  
- * 
+ *
  * @date 2014年11月17日 上午11:19:28
- * 
+ *
  * @description Copy Object
  * <p>将指定的object复制到目标地点，将复制源object的元数据、acl等信息</p>
  * <p>public CopyObjectRequest(String destinationBucket,String destinationObject,String sourceBucket,String sourceKey)</p>
@@ -41,7 +41,7 @@ public class CopyObjectRequest extends Ks3WebServiceRequest{
 	 * 源object
 	 */
 	private String sourceKey;
-	
+
 	/**
 	 * 通过CannedAccessControlList设置新的object的acl
 	 */
@@ -50,26 +50,26 @@ public class CopyObjectRequest extends Ks3WebServiceRequest{
 	 * 设置新的object的acl
 	 */
 	private AccessControlList accessControlList;
-	
+
 	/**
-     * KS3存储类型
-     */
-    private String storageClass;
-	
+	 * KS3存储类型
+	 */
+	private String storageClass;
+
 	/**
 	 * 设置新的object的元数据
 	 */
-    private ObjectMetadata newObjectMetadata;
-    /**
-     * 如果copy的源object使用客户提供的key加密，则需要提供
-     */
-    private SSECustomerKey sourceSSECustomerKey;
-    /**
-     * 指定目标object的加密
-     */
-    private SSECustomerKey destinationSSECustomerKey;
+	private ObjectMetadata newObjectMetadata;
 	/**
-	 * 
+	 * 如果copy的源object使用客户提供的key加密，则需要提供
+	 */
+	private SSECustomerKey sourceSSECustomerKey;
+	/**
+	 * 指定目标object的加密
+	 */
+	private SSECustomerKey destinationSSECustomerKey;
+	/**
+	 *
 	 * @param destinationBucket 目标bucket
 	 * @param destinationObject 目标object
 	 * @param sourceBucket 源bucket
@@ -82,7 +82,7 @@ public class CopyObjectRequest extends Ks3WebServiceRequest{
 		this.setSourceKey(sourceKey);
 	}
 	/**
-	 * 
+	 *
 	 * @param destinationBucket 目标bucket
 	 * @param destinationObject 目标object
 	 * @param sourceBucket 源bucket
@@ -94,7 +94,7 @@ public class CopyObjectRequest extends Ks3WebServiceRequest{
 		this.setCannedAcl(cannedAcl);
 	}
 	/**
-	 * 
+	 *
 	 * @param destinationBucket 目标bucket
 	 * @param destinationObject 目标object
 	 * @param sourceBucket 源bucket
@@ -105,7 +105,7 @@ public class CopyObjectRequest extends Ks3WebServiceRequest{
 		this(destinationBucket,destinationObject,sourceBucket,sourceKey);
 		this.setAccessControlList(accessControlList);
 	}
-	
+
 
 	public String getDestinationBucket() {
 		return destinationBucket;
@@ -167,15 +167,15 @@ public class CopyObjectRequest extends Ks3WebServiceRequest{
 	public void setDestinationSSECustomerKey(SSECustomerKey destinationSSECustomerKey) {
 		this.destinationSSECustomerKey = destinationSSECustomerKey;
 	}
-	
-	public String getStorageClass() {
-        return storageClass;
-    }
 
-    public void setStorageClass(StorageClass storageClass) {
-        this.storageClass = storageClass.toString();
-    }
-	
+	public String getStorageClass() {
+		return storageClass;
+	}
+
+	public void setStorageClass(StorageClass storageClass) {
+		this.storageClass = storageClass.toString();
+	}
+
 	@Override
 	public void buildRequest(Request request) {
 		request.setMethod(HttpMethod.PUT);
@@ -187,21 +187,22 @@ public class CopyObjectRequest extends Ks3WebServiceRequest{
 				request.addHeader(HttpHeaders.ContentType.toString(), null);
 			}
 		}
-        if(getCannedAcl()!=null){
-        	request.addHeader(HttpHeaders.CannedAcl,getCannedAcl().toString());
-        }
-        //添加元数据
-        request.getHeaders().putAll(HttpUtils.convertMeta2Headers(this.newObjectMetadata));
-      	//添加服务端加密相关
-        request.getHeaders().putAll(HttpUtils.convertSSECustomerKey2Headers(this.destinationSSECustomerKey));
-        request.getHeaders().putAll(HttpUtils.convertCopySourceSSECustomerKey2Headers(this.sourceSSECustomerKey));
-        if(this.accessControlList!=null)
-        {
-        	request.getHeaders().putAll(HttpUtils.convertAcl2Headers(accessControlList));
-        }
-        if (this.storageClass != null) {
-            request.addHeader(HttpHeaders.StorageClass, storageClass);
-        }
+		if(getCannedAcl()!=null){
+			request.addHeader(HttpHeaders.CannedAcl,getCannedAcl().toString());
+		}
+		//添加元数据
+		request.getHeaders().putAll(HttpUtils.convertMeta2Headers(this.newObjectMetadata));
+		//添加服务端加密相关
+		request.getHeaders().putAll(HttpUtils.convertSSECustomerKey2Headers(this.destinationSSECustomerKey));
+		request.getHeaders().putAll(HttpUtils.convertCopySourceSSECustomerKey2Headers(this.sourceSSECustomerKey));
+		if(this.accessControlList!=null)
+		{
+			request.getHeaders().putAll(HttpUtils.convertAcl2Headers(accessControlList));
+		}
+		if (this.storageClass != null) {
+			request.addHeader(HttpHeaders.StorageClass, storageClass);
+		}
+		System.out.println(request.getHeaders());
 	}
 	@Override
 	public void validateParams() {

@@ -2,8 +2,7 @@ package com.ksyun.ks3.utils;
 
 /**
  * A Base 64 codec implementation.
- * 
- * @author Hanson Char
+ *
  */
 class Base64Codec implements Codec {
     private static final int OFFSET_OF_a = 'a' - 26;

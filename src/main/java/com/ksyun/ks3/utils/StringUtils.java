@@ -7,12 +7,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.nio.charset.Charset;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -33,6 +29,19 @@ public class StringUtils {
 	public static final int MIN_BUCKET_NAME_LENGTH = 3;
 	public static final int MAX_BUCKET_NAME_LENGTH = 63;
     public final static int MAXIMUM_ALLOWED_ID_LENGTH = 255;
+
+	private static final String DEFAULT_ENCODING = "UTF-8";
+	public static final String COMMA_SEPARATOR = ",";
+	public static final Charset UTF8 = Charset.forName(DEFAULT_ENCODING);
+
+	private static final char CHAR_SPACE = ' ';
+	private static final char CHAR_TAB = '\t';
+	private static final char CHAR_NEW_LINE = '\n';
+	private static final char CHAR_VERTICAL_TAB = '\u000b';
+	private static final char CHAR_CARRIAGE_RETURN = '\r';
+	private static final char CHAR_FORM_FEED = '\f';
+
+	private static final Locale LOCALE_ENGLISH = Locale.ENGLISH;
 
 	public static String join(Object[] strings, String spliter) {
 		int i = 0;
@@ -342,5 +351,47 @@ public class StringUtils {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	/**
+	 * @return true if the given value is either null or the empty string
+	 */
+	public static boolean isNullOrEmpty(String value) {
+		return value == null || value.isEmpty();
+	}
+
+	public static String lowerCase(String str) {
+		if(isNullOrEmpty(str)) {
+			return str;
+		}
+		return str.toLowerCase(LOCALE_ENGLISH);
+	}
+
+	public static void appendCompactedString(final StringBuilder destination, final String source) {
+		boolean previousIsWhiteSpace = false;
+		int length = source.length();
+
+		for (int i = 0; i < length; i++) {
+			char ch = source.charAt(i);
+			if (isWhiteSpace(ch)) {
+				if (previousIsWhiteSpace) {
+					continue;
+				}
+				destination.append(CHAR_SPACE);
+				previousIsWhiteSpace = true;
+			} else {
+				destination.append(ch);
+				previousIsWhiteSpace = false;
+			}
+		}
+	}
+	private static boolean isWhiteSpace(final char ch) {
+		if (ch == CHAR_SPACE) return true;
+		if (ch == CHAR_TAB) return true;
+		if (ch == CHAR_NEW_LINE) return true;
+		if (ch == CHAR_VERTICAL_TAB) return true;
+		if (ch == CHAR_CARRIAGE_RETURN) return true;
+		if (ch == CHAR_FORM_FEED) return true;
+		return false;
 	}
 }

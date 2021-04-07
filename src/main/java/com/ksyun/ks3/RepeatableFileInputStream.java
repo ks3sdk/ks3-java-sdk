@@ -33,7 +33,6 @@ public class RepeatableFileInputStream extends InputStream{
     public void reset() throws IOException {
         this.fis.close();
         this.fis = new FileInputStream(file);
-
         long skipped = 0;
         long toSkip = markPoint;
         while (toSkip > 0) {

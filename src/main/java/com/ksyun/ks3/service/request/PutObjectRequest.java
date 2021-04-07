@@ -2,6 +2,7 @@ package com.ksyun.ks3.service.request;
 
 import com.ksyun.ks3.LengthCheckInputStream;
 import com.ksyun.ks3.RepeatableFileInputStream;
+import com.ksyun.ks3.RepeatableInputStream;
 import com.ksyun.ks3.config.Constants;
 import com.ksyun.ks3.dto.*;
 import com.ksyun.ks3.dto.CallBackConfiguration.MagicVariables;
@@ -11,19 +12,17 @@ import com.ksyun.ks3.http.HttpHeaders;
 import com.ksyun.ks3.http.HttpMethod;
 import com.ksyun.ks3.http.Mimetypes;
 import com.ksyun.ks3.http.Request;
+import com.ksyun.ks3.service.Ks3ClientConfig;
 import com.ksyun.ks3.service.common.StorageClass;
-import com.ksyun.ks3.utils.HttpUtils;
-import com.ksyun.ks3.utils.Md5Utils;
-import com.ksyun.ks3.utils.StringUtils;
+import com.ksyun.ks3.utils.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.lang.reflect.Field;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -375,6 +374,9 @@ public class PutObjectRequest extends Ks3WebServiceRequest implements SSECustome
 				bodyString = bodyString.substring(0, bodyString.length() - 1);
 			}
 			request.addHeader(HttpHeaders.XKssCallbackBody, bodyString);
+			if (callBackConfiguration.getCallBackAuth()){
+				request.addHeader(HttpHeaders.XKssCallbackAuth, "1");
+			}
 		}
 		if (storageClass != null) {
 			request.addHeader(HttpHeaders.StorageClass, storageClass);

@@ -26,6 +26,8 @@ public class Request {
 	private Map<String, String> queryParams = new HashMap<String, String>();
 	private Map<String, String> headers = new HashMap<String, String>();
 	private InputStream content;
+	private String region;
+
 
 	public String toUrl(Ks3ClientConfig ks3config) {
 		String url = "";
@@ -158,4 +160,11 @@ public class Request {
 		return this.expires != null;
 	}
 
+	public String getRegion() {
+		return region;
+	}
+
+	public void setRegion(String region) {
+		this.region = region;
+	}
 }

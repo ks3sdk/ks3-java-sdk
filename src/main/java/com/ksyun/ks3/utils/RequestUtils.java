@@ -14,7 +14,7 @@ public class RequestUtils {
 	public static List<String> subResource = Arrays.asList(new String[]{"acl", "lifecycle", "location", 
 			"logging", "notification", "partNumber", 
             "policy", "requestPayment", "torrent", "uploadId", "uploads", "versionId",
-            "versioning", "versions", "website", "delete", "thumbnail","cors","pfop","querypfop","adp","queryadp","fetch", "restore"});
+            "versioning", "versions", "website", "delete", "thumbnail","cors","crr","pfop","querypfop","adp","queryadp","fetch", "restore", "transfer", "tagging"});
 	
 	public static List<String> QueryParam = Arrays.asList(new String[]{"response-content-type",
 		"response-content-language",

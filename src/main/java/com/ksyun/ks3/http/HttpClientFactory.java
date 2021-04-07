@@ -49,6 +49,7 @@ import org.apache.http.config.SocketConfig;
 import org.apache.http.config.ConnectionConfig;
 import org.apache.http.client.config.RequestConfig;
 import com.ksyun.ks3.exception.Ks3ClientException;
+import com.ksyun.ks3.http.internal.Ks3DnsResolver;
 import com.ksyun.ks3.utils.StringUtils;
 
 /**
@@ -117,7 +118,7 @@ public class HttpClientFactory {
 		Registry<ConnectionSocketFactory> r = RegistryBuilder.<ConnectionSocketFactory> create().register("http", sf).register("https", sslsf).build();
 
 		PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager(r
-				,null,null,null,config.getConnectionTTL(), TimeUnit.MILLISECONDS);
+				,null,null,Ks3DnsResolver.INSTANCE,config.getConnectionTTL(), TimeUnit.MILLISECONDS);
 		connectionManager.setMaxTotal(config.getMaxConnections());
 		connectionManager.setDefaultMaxPerRoute(connectionManager.getMaxTotal());
 		connectionManager.setDefaultConnectionConfig(coConfig);

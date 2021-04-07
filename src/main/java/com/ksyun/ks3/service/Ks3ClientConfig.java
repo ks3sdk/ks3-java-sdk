@@ -1,6 +1,7 @@
 package com.ksyun.ks3.service;
 
 import com.ksyun.ks3.http.HttpClientConfig;
+import com.ksyun.ks3.http.Region;
 
 /**
  * @author lijunwei[lijunwei@kingsoft.com]  
@@ -10,8 +11,27 @@ import com.ksyun.ks3.http.HttpClientConfig;
  * @description 客户端配置
  **/
 public class Ks3ClientConfig {
+	public Region getRegion() {
+		return region;
+	}
+
+	public void setRegion(Region region) {
+		this.region = region;
+	}
+	
+	public SignerVersion getVersion() { 
+		return version; 
+	}
+	 
+	public void setVersion(SignerVersion version) { this.version = version; }
+
 	public static enum PROTOCOL{
 		http,https
+	}
+	public enum SignerVersion{
+	    V2,
+        V4,
+		V4_UNSIGNED_PAYLOAD_SIGNER
 	}
 	/**
 	 * 服务地址,参考{@linkplain http://ks3.ksyun.com/doc/api/index.html} </br>
@@ -28,13 +48,21 @@ public class Ks3ClientConfig {
 	 */
 	private PROTOCOL protocol = PROTOCOL.http;
 	/**
+	 * v2或者v4
+	 */
+	public static SignerVersion version = SignerVersion.V2;
+	/**
 	 * 是否使用path style access方式访问
 	 */
-	private boolean pathStyleAccess = true;
+	private boolean pathStyleAccess = false;
 	/**
 	 * 允许客户端发送匿名请求
 	 */
 	private boolean allowAnonymous = true;
+	/**
+	 * 允许客户端发送匿名请求
+	 */
+	private Region region = null;
 	/**
 	 * 当服务端返回307时是否自动跳转，
 	 * 主要发生在用Region A的endpoint请求Region B的endpoint

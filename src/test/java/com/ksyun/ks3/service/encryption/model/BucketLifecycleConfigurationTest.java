@@ -25,14 +25,14 @@ import com.ksyun.ks3.exception.client.ClientIllegalArgumentException;
 public class BucketLifecycleConfigurationTest {
 
 	/**
-	 * @throws java.lang.Exception
+	 * @throws Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
 	}
 
 	/**
-	 * @throws java.lang.Exception
+	 * @throws Exception
 	 */
 	@After
 	public void tearDown() throws Exception {

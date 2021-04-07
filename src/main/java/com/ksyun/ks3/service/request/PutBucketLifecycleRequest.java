@@ -12,6 +12,7 @@ import com.ksyun.ks3.config.Constants;
 import com.ksyun.ks3.dto.BucketLifecycleConfiguration;
 import com.ksyun.ks3.dto.BucketLifecycleConfiguration.Rule;
 import com.ksyun.ks3.dto.BucketLifecycleConfiguration.Transition;
+import com.ksyun.ks3.dto.ObjectTag;
 import com.ksyun.ks3.http.HttpHeaders;
 import com.ksyun.ks3.http.HttpMethod;
 import com.ksyun.ks3.http.Request;
@@ -56,12 +57,30 @@ public class PutBucketLifecycleRequest extends Ks3WebServiceRequest {
 		XmlWriter writer = new XmlWriter();
 		writer.start("LifecycleConfiguration");
 		List<Rule> rules = lifecycleConfiguration.getRules();
+		boolean hasAndElement = false;
 		for(Rule rule : rules){
 			writer.start("Rule");
 			writer.start("ID").value(rule.getId()).end();
 			//Filter
 			writer.start("Filter");
+			if (rule.getTagSet() != null && rule.getTagSet().size() > 0) {
+				hasAndElement = true;
+				writer.start("And");
+			}
 			writer.start("Prefix").value(rule.getPrefix()).end();
+			if (hasAndElement) {
+				for (ObjectTag tag : rule.getTagSet()) {
+					writer.start("Tag");
+					writer.start("Key").value(tag.getKey()).end();
+					if (tag.getValue() != null) {
+						writer.start("Value").value(tag.getValue()).end();
+					}
+					writer.end();
+				}
+			}
+			if (hasAndElement)
+				writer.end();
+
 			writer.end();
 			//Status
 			writer.start("Status").value(rule.getStatus().status2Str()).end();

@@ -111,4 +111,11 @@ public class DateUtils {
 	        time = time - TimeUnit.HOURS.toMillis(timeZone);
 	        return new Date(time);
 	    }
+	/**
+	 * Returns the number of days since epoch with respect to the given number
+	 * of milliseconds since epoch.
+	 */
+	public static long numberOfDaysSinceEpoch(long milliSinceEpoch) {
+		return TimeUnit.MILLISECONDS.toDays(milliSinceEpoch);
+	}
 }
